@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.RedAlerta.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reg_paso2_titulo"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05" />
+
+        <!-- LOCALIDAD -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/reg_label_localidad" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilLocalidad"
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            app:endIconMode="dropdown_menu">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/etLocalidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:hint="@string/reg_hint_localidad"
+                android:textSize="14sp"
+                android:textColor="@color/ra_light_text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- BARRIO -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/reg_label_barrio" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/reg_hint_barrio">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBarrio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- DIRECCIÓN -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/reg_label_direccion" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/reg_hint_direccion">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDireccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress"
+                android:maxLines="1"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ROL EN EL SISTEMA -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/reg_label_rol" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRolCiudadano"
+                style="@style/Widget.RedAlerta.Chip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reg_rol_ciudadano" />
+
+            <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRolOperador"
+                style="@style/Widget.RedAlerta.Chip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reg_rol_operador" />
+
+            <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRolSupervisor"
+                style="@style/Widget.RedAlerta.Chip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reg_rol_supervisor" />
+        </LinearLayout>
+
+        <!-- Divisor + botones -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/ra_light_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAnterior"
+                style="@style/Widget.RedAlerta.Button.Prev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reg_btn_anterior" />
+
+            <Space android:layout_width="8dp" android:layout_height="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSiguiente"
+                style="@style/Widget.RedAlerta.Button.Next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reg_btn_siguiente" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,115 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Tema principal dark, sin ActionBar -->
+    <style name="Theme.RedAlerta" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/ra_red</item>
+        <item name="colorOnPrimary">@color/ra_white</item>
+        <item name="colorSecondary">@color/ra_red</item>
+        <item name="android:colorBackground">@color/ra_bg</item>
+        <item name="colorSurface">@color/ra_bg_input</item>
+        <item name="colorOnSurface">@color/ra_white</item>
+        <item name="android:statusBarColor">@color/ra_bg</item>
+        <item name="android:navigationBarColor">@color/ra_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="isLightTheme">false</item>
+    </style>
+
+    <!-- Estilo de TextInputLayout para RedAlerta -->
+    <style name="Widget.RedAlerta.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/ra_border_input</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1.5dp</item>
+        <item name="hintTextColor">@color/ra_gray_light</item>
+        <item name="android:textColorHint">@color/ra_gray_light</item>
+        <item name="boxBackgroundColor">@color/ra_bg_input</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+    </style>
+
+    <!-- Botón rojo principal -->
+    <style name="Widget.RedAlerta.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/ra_red</item>
+        <item name="android:textColor">@color/ra_white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="cornerRadius">6dp</item>
+    </style>
+
+    <!-- Botón outlined (registrar) -->
+    <style name="Widget.RedAlerta.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/ra_border_input</item>
+        <item name="android:textColor">@color/ra_white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="cornerRadius">6dp</item>
+    </style>
+
+    <!-- Card blanca para formularios -->
+    <style name="Widget.RedAlerta.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/ra_light_card</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">1dp</item>
+        <item name="strokeColor">@color/ra_light_border</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- Label pequeño en mayúsculas -->
+    <style name="Widget.RedAlerta.Label">
+        <item name="android:textColor">@color/ra_light_label</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <!-- Input outlined claro -->
+    <style name="Widget.RedAlerta.InputLight" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/ra_light_border</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1.5dp</item>
+        <item name="boxBackgroundColor">@color/ra_light_card</item>
+        <item name="hintTextColor">@color/ra_light_label</item>
+        <item name="android:textColorHint">@color/ra_light_hint</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+    </style>
+
+    <!-- Botón "Siguiente" rojo compacto -->
+    <style name="Widget.RedAlerta.Button.Next" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/ra_red</item>
+        <item name="android:textColor">@color/ra_white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="cornerRadius">6dp</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+    </style>
+
+    <!-- Botón "Anterior" outlined claro -->
+    <style name="Widget.RedAlerta.Button.Prev" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/ra_light_border</item>
+        <item name="android:textColor">@color/ra_light_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="cornerRadius">6dp</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+    </style>
+
+    <!-- Chip de rol (no seleccionado) -->
+    <style name="Widget.RedAlerta.Chip" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/ra_light_border</item>
+        <item name="android:textColor">@color/ra_light_text</item>
+        <item name="android:textSize">13sp</item>
+        <item name="cornerRadius">6dp</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+</resources>

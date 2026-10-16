@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ═══ Paleta RedAlerta (Dark) ═══ -->
+    <color name="ra_bg">#0E1726</color>              <!-- Fondo principal -->
+    <color name="ra_bg_input">#1A2436</color>         <!-- Fondo de inputs -->
+    <color name="ra_border_input">#2A3548</color>     <!-- Borde inputs -->
+    <color name="ra_red">#E53935</color>              <!-- Rojo de acento -->
+    <color name="ra_red_dark">#C62828</color>         <!-- Rojo hover/pressed -->
+    <color name="ra_white">#FFFFFF</color>            <!-- Texto principal -->
+    <color name="ra_gray">#8A94A6</color>             <!-- Texto secundario -->
+    <color name="ra_gray_light">#B0B8C4</color>       <!-- Labels -->
+    <color name="ra_divider">#2A3548</color>          <!-- Líneas divisorias -->
+    <color name="ra_error">#FF6B6B</color>            <!-- Errores -->
+
+    <!-- ═══ Paleta Light (registro) ═══ -->
+    <color name="ra_light_bg">#F5F6F8</color>
+    <color name="ra_light_card">#FFFFFF</color>
+    <color name="ra_light_border">#D5D9E0</color>
+    <color name="ra_light_text">#1A1A1A</color>
+    <color name="ra_light_text_secondary">#6B7280</color>
+    <color name="ra_light_label">#5A6270</color>
+    <color name="ra_light_hint">#A0A6B0</color>
+    <color name="ra_light_divider">#E5E7EB</color>
+    <color name="ra_topbar">#1A2436</color>
+    <color name="ra_step_inactive_bg">#E8EAEE</color>
+    <color name="ra_step_inactive_text">#9CA3AF</color>
+
+    <color name="ra_summary_bg">#E3F2FD</color>       <!-- Card azul claro del resumen -->
+    <color name="ra_summary_border">#90CAF9</color>
+    <color name="ra_summary_text">#0D47A1</color>
+
+    <!-- ═══ Pantalla de éxito ═══ -->
+    <color name="ra_success_circle_bg">#FCE4E4</color>       <!-- Rosa claro del círculo -->
+    <color name="ra_success_card_bg">#E8F5E9</color>         <!-- Verde claro del card -->
+    <color name="ra_success_card_border">#A5D6A7</color>     <!-- Borde verde -->
+    <color name="ra_success_card_text">#1B5E20</color>       <!-- Texto verde oscuro -->
+    <color name="ra_success_title">#0E1726</color>           <!-- Título azul oscuro -->
+</resources>

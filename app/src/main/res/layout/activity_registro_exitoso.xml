@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ra_light_bg"
+    android:fillViewport="true"
+    tools:context=".ui.auth.RegistroExitosoActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        android:paddingTop="80dp"
+        android:paddingBottom="32dp">
+
+        <!-- ═══════════ Círculo con check ═══════════ -->
+        <FrameLayout
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:background="@drawable/bg_success_circle">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_check_success"
+                android:contentDescription="@string/reg_exitoso_content_desc" />
+        </FrameLayout>
+
+        <!-- ═══════════ Título ═══════════ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/reg_exitoso_titulo"
+            android:textColor="@color/ra_success_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.02" />
+
+        <!-- ═══════════ Subtítulo ═══════════ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/reg_exitoso_subtitulo"
+            android:textColor="@color/ra_light_text_secondary"
+            android:textSize="14sp" />
+
+        <!-- ═══════════ Nombre + correo ═══════════ -->
+        <TextView
+            android:id="@+id/tvResumenUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textColor="@color/ra_light_text_secondary"
+            android:textSize="13sp"
+            tools:text="S S — s@g.c" />
+
+        <!-- ═══════════ Card de próximos pasos ═══════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="@color/ra_success_card_bg"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ra_success_card_border"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reg_exitoso_proximos"
+                    android:textColor="@color/ra_success_card_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/reg_exitoso_paso1"
+                    android:textColor="@color/ra_success_card_text"
+                    android:textSize="12sp"
+                    android:lineSpacingMultiplier="1.3" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/reg_exitoso_paso2"
+                    android:textColor="@color/ra_success_card_text"
+                    android:textSize="12sp"
+                    android:lineSpacingMultiplier="1.3" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/reg_exitoso_paso3"
+                    android:textColor="@color/ra_success_card_text"
+                    android:textSize="12sp"
+                    android:lineSpacingMultiplier="1.3" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ═══════════ Botón Ir a login ═══════════ -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnIrLogin"
+            style="@style/Widget.RedAlerta.Button.Next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:minWidth="200dp"
+            android:text="@string/reg_exitoso_btn" />
+
+    </LinearLayout>
+</ScrollView>

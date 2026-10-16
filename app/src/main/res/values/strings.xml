@@ -1,0 +1,75 @@
+<resources>
+    <string name="app_name">RedAlerta</string>
+
+    <!-- ═══ Login ═══ -->
+    <string name="login_brand">RED ALERTA</string>
+    <string name="login_title">INICIAR SESIÓN</string>
+    <string name="login_subtitle">Acceda con sus credenciales</string>
+
+    <string name="label_correo">CORREO ELECTRÓNICO</string>
+    <string name="hint_correo">usuario@redalerta.gov</string>
+
+    <string name="label_contrasena">CONTRASEÑA</string>
+    <string name="hint_contrasena">••••••••</string>
+
+    <string name="btn_login">INGRESAR</string>
+
+    <string name="login_no_cuenta">¿No tiene cuenta registrada?</string>
+    <string name="btn_registrar_nuevo">Registrar nuevo usuario</string>
+
+    <string name="msg_admin_web">Los administradores deben ingresar desde el portal web de RedAlerta.</string>
+
+    <!-- ═══ Registro general ═══ -->
+    <string name="reg_topbar_volver">Volver al login</string>
+    <string name="reg_titulo">REGISTRO DE USUARIO</string>
+    <string name="reg_subtitulo">Complete los datos para crear su cuenta en el sistema</string>
+
+    <!-- ═══ Paso 1 ═══ -->
+    <string name="reg_paso1_titulo">DATOS PERSONALES</string>
+    <string name="reg_label_tipo_doc">TIPO DE DOCUMENTO</string>
+    <string name="reg_label_num_doc">NÚMERO DE DOCUMENTO</string>
+    <string name="reg_label_nombre">NOMBRE</string>
+    <string name="reg_label_apellido">APELLIDO</string>
+    <string name="reg_label_correo">CORREO ELECTRÓNICO</string>
+    <string name="reg_label_telefono">TELÉFONO MÓVIL</string>
+    <string name="reg_hint_doc">1234567890</string>
+    <string name="reg_hint_nombre">Nombre</string>
+    <string name="reg_hint_apellido">Apellido</string>
+    <string name="reg_hint_correo_reg">correo@ejemplo.com</string>
+    <string name="reg_hint_telefono">300 000 0000</string>
+
+    <!-- ═══ Paso 2 ═══ -->
+    <string name="reg_paso2_titulo">INFORMACIÓN DE UBICACIÓN</string>
+    <string name="reg_label_localidad">LOCALIDAD</string>
+    <string name="reg_label_barrio">BARRIO</string>
+    <string name="reg_label_direccion">DIRECCIÓN DE RESIDENCIA</string>
+    <string name="reg_label_rol">ROL EN EL SISTEMA</string>
+    <string name="reg_hint_localidad">Seleccionar localidad…</string>
+    <string name="reg_hint_barrio">Nombre del barrio</string>
+    <string name="reg_hint_direccion">Cra / Cll #</string>
+    <string name="reg_rol_ciudadano">Ciudadano</string>
+    <string name="reg_rol_operador">Operador</string>
+    <string name="reg_rol_supervisor">Supervisor</string>
+
+    <!-- ═══ Paso 3 ═══ -->
+    <string name="reg_paso3_titulo">SEGURIDAD Y CONFIRMACIÓN</string>
+    <string name="reg_resumen_titulo">Resumen del registro</string>
+    <string name="reg_label_contrasena">CONTRASEÑA</string>
+    <string name="reg_label_confirmar">CONFIRMAR CONTRASEÑA</string>
+    <string name="reg_hint_contrasena">Mínimo 6 caracteres</string>
+    <string name="reg_hint_confirmar">Repita la contraseña</string>
+    <string name="reg_terminos">Acepto los Términos y condiciones del sistema RedAlerta y autorizo el tratamiento de mis datos personales conforme a la Ley 1581 de 2012.</string>
+    <string name="reg_btn_anterior">← Anterior</string>
+    <string name="reg_btn_siguiente">Siguiente →</string>
+    <string name="reg_btn_crear">Crear cuenta</string>
+
+    <!-- ═══ Registro exitoso ═══ -->
+    <string name="reg_exitoso_titulo">REGISTRO EXITOSO</string>
+    <string name="reg_exitoso_subtitulo">Su cuenta ha sido creada correctamente.</string>
+    <string name="reg_exitoso_proximos">Próximos pasos:</string>
+    <string name="reg_exitoso_paso1">1. Revise su correo para confirmar la cuenta.</string>
+    <string name="reg_exitoso_paso2">2. Su rol inicial es ciudadano.</string>
+    <string name="reg_exitoso_paso3">3. Un administrador puede actualizar su rol si aplica.</string>
+    <string name="reg_exitoso_btn">Ir a inicio de sesión</string>
+    <string name="reg_exitoso_content_desc">Registro completado</string>
+</resources>
