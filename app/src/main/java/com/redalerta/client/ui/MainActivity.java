@@ -16,6 +16,8 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.navigation.NavigationView;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityMainBinding;
+import com.redalerta.client.ui.alert.InicioFragment;
+import com.redalerta.client.ui.alert.MisPublicacionesFragment;
 import com.redalerta.client.ui.alert.RegistroAlertaFragment;
 import com.redalerta.client.ui.auth.LoginActivity;
 import com.redalerta.client.util.SessionManager;
@@ -101,11 +103,12 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_registro_alerta) {
             mostrarFragment(new RegistroAlertaFragment());
         } else if (id == R.id.nav_inicio) {
-            Toast.makeText(this, "Inicio (próximamente)", Toast.LENGTH_SHORT).show();
+            mostrarFragment(new InicioFragment());
         } else if (id == R.id.nav_mi_perfil) {
             Toast.makeText(this, "Mi perfil (próximamente)", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_mis_publicaciones) {
-            Toast.makeText(this, "Mis publicaciones (próximamente)", Toast.LENGTH_SHORT).show();
+            mostrarFragment(new MisPublicacionesFragment());
+            binding.navigationView.setCheckedItem(R.id.nav_mis_publicaciones);
         }
 
         binding.drawerLayout.closeDrawer(GravityCompat.START);

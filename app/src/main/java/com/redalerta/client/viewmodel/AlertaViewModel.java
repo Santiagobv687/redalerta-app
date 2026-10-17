@@ -14,7 +14,9 @@ import com.redalerta.client.model.CrearAlertaRequest;
 import com.redalerta.client.util.Validaciones;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -91,5 +93,105 @@ public class AlertaViewModel extends AndroidViewModel {
         //             error.setValue("Error de conexión: " + t.getMessage());
         //         }
         //     });
+    }
+
+    // ══════════════════════════════════════════════════════
+// Métodos para "Mis Publicaciones"
+// ══════════════════════════════════════════════════════
+    private final MutableLiveData<List<Alerta>> misAlertas = new MutableLiveData<>();
+
+    public LiveData<List<Alerta>> getMisAlertas() { return misAlertas; }
+
+    public void cargarMisAlertas() {
+        if (MODO_MOCK) {
+            // Simular lista de alertas del usuario
+            List<Alerta> mock = new ArrayList<>();
+
+            Alerta a1 = new Alerta();
+            a1.setId("1");
+            a1.setTitulo("Inundación");
+            a1.setDescripcion("Alcantarilla desbordada; el agua está entrando a varias viviendas.");
+            a1.setEstado("EN_REVISION");
+            a1.setDireccion("Calle 48 #12-30");
+            a1.setBarrio("San Luis");
+            a1.setUsuarioNombre("Carlos Ruiz");
+            a1.setFechaActualizacion("2024-11-20 - 10:24");
+            mock.add(a1);
+
+            Alerta a2 = new Alerta();
+            a2.setId("2");
+            a2.setTitulo("Otro");
+            a2.setDescripcion("Árbol caído bloqueando completamente el paso vehicular.");
+            a2.setEstado("RESUELTA");
+            a2.setDireccion("Carrera 21 con Calle 54");
+            a2.setBarrio("Galerías");
+            a2.setUsuarioNombre("Carlos Ruiz");
+            a2.setFechaActualizacion("2024-11-15 - 16:40");
+            mock.add(a2);
+
+            misAlertas.setValue(mock);
+            return;
+        }
+
+        // TODO: Llamar al backend GET /api/alertas/mis-alertas
+    }
+
+    public void eliminarAlerta(Alerta alerta) {
+        List<Alerta> actuales = misAlertas.getValue();
+        if (actuales != null) {
+            actuales.remove(alerta);
+            misAlertas.setValue(actuales); // Notifica al observer
+        }
+        // TODO: Llamar al backend DELETE /api/alertas/{id}
+    }
+
+    // ══════════════════════════════════════════════════════
+// Métodos para "Inicio" (Feed general)
+// ══════════════════════════════════════════════════════
+    private final MutableLiveData<List<Alerta>> todasLasAlertas = new MutableLiveData<>();
+
+    public LiveData<List<Alerta>> getTodasLasAlertas() { return todasLasAlertas; }
+
+    public void cargarTodasLasAlertas() {
+        if (MODO_MOCK) {
+            List<Alerta> mock = new ArrayList<>();
+
+            Alerta a1 = new Alerta();
+            a1.setId("ALR-2024-001");
+            a1.setTitulo("Incendio");
+            a1.setDescripcion("Incendio estructural en edificio de 4 pisos. Llamas visibles en el tercer piso. Hay personas atrapadas.");
+            a1.setEstado("EN_ATENCION");
+            a1.setBarrio("Chapinero Alto");
+            a1.setDireccion("Cra 15 #82-34");
+            a1.setUsuarioNombre("María González");
+            a1.setFechaActualizacion("2024-11-18 - 14:32");
+            mock.add(a1);
+
+            Alerta a2 = new Alerta();
+            a2.setId("ALR-2024-002");
+            a2.setTitulo("Accidente");
+            a2.setDescripcion("Colisión entre bus y camión. Al menos 3 heridos. Vía bloqueada totalmente.");
+            a2.setEstado("VERIFICADA");
+            a2.setBarrio("Teusaquillo");
+            a2.setDireccion("Av. NQS con Calle 68");
+            a2.setUsuarioNombre("Carlos Ramírez");
+            a2.setFechaActualizacion("2024-11-18 - 15:10");
+            mock.add(a2);
+
+            Alerta a3 = new Alerta();
+            a3.setId("ALR-2024-003");
+            a3.setTitulo("Inundación");
+            a3.setDescripcion("Fuerte inundación en el sector, el agua alcanza el nivel de las rodillas.");
+            a3.setEstado("EN_REVISION");
+            a3.setBarrio("Kennedy");
+            a3.setDireccion("Calle 38 Sur #72-15");
+            a3.setUsuarioNombre("Ana Torres");
+            a3.setFechaActualizacion("2024-11-18 - 11:45");
+            mock.add(a3);
+
+            todasLasAlertas.setValue(mock);
+            return;
+        }
+        // TODO: Llamar al backend GET /api/alertas
     }
 }

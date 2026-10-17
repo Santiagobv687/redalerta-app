@@ -115,4 +115,15 @@
     <string name="alerta_registrada_prioridad_label">Prioridad</string>
     <string name="alerta_registrada_ubicacion_label">Ubicación</string>
     <string name="alerta_registrada_btn">Registrar otra alerta</string>
+
+    <!-- Mis Publicaciones -->
+    <string name="mis_pub_titulo">MIS PUBLICACIONES</string>
+    <string name="mis_pub_subtitulo">Consulta el estado de tus alertas. Puedes editar una publicación mientras esté en revisión.</string>
+    <string name="mis_pub_editar">Editar publicación</string>
+    <string name="mis_pub_eliminar">Eliminar publicación</string>
+    <string name="mis_pub_vacio">No tienes publicaciones registradas aún.</string>
+
+    <!-- Inicio -->
+    <string name="inicio_titulo">INICIO</string>
+    <string name="inicio_subtitulo">Conoce las alertas publicadas recientemente por la comunidad.</string>
 </resources>
