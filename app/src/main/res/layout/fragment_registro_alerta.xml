@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ra_light_bg"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="40dp">
+
+        <!-- Título y Subtítulo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alerta_titulo"
+            android:textColor="@color/ra_light_text"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/alerta_subtitulo"
+            android:textColor="@color/ra_text_muted"
+            android:textSize="13sp" />
+
+        <!-- ═══════════ TIPO DE EMERGENCIA ═══════════ -->
+        <TextView
+            style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/alerta_tipo_label" />
+
+        <GridLayout
+            android:id="@+id/gridEmergencias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="true">
+
+            <!-- Incendio -->
+            <LinearLayout android:id="@+id/cardIncendio" style="@style/EmergencyCard">
+                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_fire" />
+                <TextView style="@style/EmergencyText" android:text="@string/tipo_incendio" />
+            </LinearLayout>
+
+            <!-- Inundación -->
+            <LinearLayout android:id="@+id/cardInundacion" style="@style/EmergencyCard">
+                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_flood" />
+                <TextView style="@style/EmergencyText" android:text="@string/tipo_inundacion" />
+            </LinearLayout>
+
+            <!-- Accidente -->
+            <LinearLayout android:id="@+id/cardAccidente" style="@style/EmergencyCard">
+                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_car_crash" />
+                <TextView style="@style/EmergencyText" android:text="@string/tipo_accidente" />
+            </LinearLayout>
+
+            <!-- Robo -->
+            <LinearLayout android:id="@+id/cardRobo" style="@style/EmergencyCard">
+                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_robbery" />
+                <TextView style="@style/EmergencyText" android:text="@string/tipo_robo" />
+            </LinearLayout>
+
+            <!-- Emergencia Médica -->
+            <LinearLayout android:id="@+id/cardMedica" style="@style/EmergencyCard">
+                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_medical" />
+                <TextView style="@style/EmergencyText" android:text="@string/tipo_medica" />
+            </LinearLayout>
+
+            <!-- Desastre Natural -->
+            <LinearLayout android:id="@+id/cardDesastre" style="@style/EmergencyCard">
+                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_disaster" />
+                <TextView style="@style/EmergencyText" android:text="@string/tipo_desastre" />
+            </LinearLayout>
+
+            <!-- Otro -->
+            <LinearLayout android:id="@+id/cardOtro" style="@style/EmergencyCard">
+                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_warning" app:tint="@color/ra_priority_media" />
+                <TextView style="@style/EmergencyText" android:text="@string/tipo_otro" />
+            </LinearLayout>
+
+        </GridLayout>
+
+        <!-- ═══════════ DESCRIPCIÓN ═══════════ -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" android:text="@string/alerta_desc_label" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDescripcion"
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="500"
+            android:hint="@string/alerta_desc_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDescripcion"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="4"
+                android:gravity="top|start"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ═══════════ DIRECCIÓN ═══════════ -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="@string/alerta_dir_label" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:hint="@string/alerta_dir_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDireccion"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:inputType="textPostalAddress"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ═══════════ BARRIO ═══════════ -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:text="@string/alerta_barrio_label" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:hint="@string/alerta_barrio_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBarrio"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ═══════════ PRIORIDAD ═══════════ -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" android:text="@string/alerta_prioridad_label" />
+
+        <RadioGroup
+            android:id="@+id/rgPrioridad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <RadioButton
+                android:id="@+id/rbAlta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alerta_prioridad_alta"
+                android:buttonTint="@color/ra_priority_alta"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rbMedia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alerta_prioridad_media"
+                android:buttonTint="@color/ra_priority_media"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rbBaja"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alerta_prioridad_baja"
+                android:buttonTint="@color/ra_priority_baja"
+                android:textSize="14sp" />
+        </RadioGroup>
+
+        <!-- ═══════════ HERIDOS ═══════════ -->
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbHeridos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/alerta_heridos"
+            android:textSize="14sp" />
+
+        <!-- ═══════════ ANÓNIMO ═══════════ -->
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbAnonimo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/alerta_anonimo"
+            android:textSize="14sp" />
+
+        <!-- ═══════════ EVIDENCIA ═══════════ -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" android:text="@string/alerta_evidencia_label" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:hint="@string/alerta_evidencia_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEvidencia"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:inputType="textUri"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ═══════════ REPORTADO POR ═══════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="@color/ra_summary_bg"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/ra_summary_border"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/ra_summary_text" />
+
+                <TextView
+                    android:id="@+id/tvReportadoPor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/ra_summary_text"
+                    android:textSize="12sp"
+                    tools:text="Reportado por: Carlos Ruiz — 17/10/2026, 8:44:07 a.m." />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ═══════════ BOTÓN REGISTRAR ═══════════ -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegistrarAlerta"
+            style="@style/Widget.RedAlerta.Button.Next"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/alerta_btn_registrar" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

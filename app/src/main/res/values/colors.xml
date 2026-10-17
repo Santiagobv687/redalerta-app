@@ -35,4 +35,20 @@
     <color name="ra_success_card_border">#A5D6A7</color>     <!-- Borde verde -->
     <color name="ra_success_card_text">#1B5E20</color>       <!-- Texto verde oscuro -->
     <color name="ra_success_title">#0E1726</color>           <!-- Título azul oscuro -->
+
+    <!-- Drawer / Sidebar -->
+    <color name="ra_drawer_bg">#111827</color>
+    <color name="ra_drawer_selected">#991B1B</color>
+    <color name="ra_drawer_text">#9CA3AF</color>
+    <color name="ra_drawer_text_selected">#FFFFFF</color>
+
+    <!-- Botones / Cards -->
+    <color name="ra_card_bg">#FFFFFF</color>
+    <color name="ra_border_light">#E5E7EB</color>
+    <color name="ra_text_muted">#6B7280</color>
+
+    <!-- Prioridades -->
+    <color name="ra_priority_alta">#DC2626</color>
+    <color name="ra_priority_media">#F59E0B</color>
+    <color name="ra_priority_baja">#10B981</color>
 </resources>

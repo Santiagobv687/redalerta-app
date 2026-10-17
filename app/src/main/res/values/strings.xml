@@ -72,4 +72,41 @@
     <string name="reg_exitoso_paso3">3. Un administrador puede actualizar su rol si aplica.</string>
     <string name="reg_exitoso_btn">Ir a inicio de sesión</string>
     <string name="reg_exitoso_content_desc">Registro completado</string>
+
+    <!-- Drawer -->
+    <string name="menu_inicio">Inicio</string>
+    <string name="menu_registro_alerta">+ Registro de Alertas</string>
+    <string name="menu_mi_perfil">Mi perfil</string>
+    <string name="menu_mis_publicaciones">Mis publicaciones</string>
+    <string name="menu_salir">Salir</string>
+
+    <!-- Registro de Alerta -->
+    <string name="alerta_titulo">REGISTRO DE ALERTA COMUNITARIA</string>
+    <string name="alerta_subtitulo">Complete el formulario con la información del incidente. Sea preciso para agilizar la respuesta.</string>
+    <string name="alerta_tipo_label">TIPO DE EMERGENCIA *</string>
+    <string name="alerta_desc_label">DESCRIPCIÓN DEL INCIDENTE *</string>
+    <string name="alerta_desc_hint">Describa con detalle qué está ocurriendo, cuántas personas están involucradas, si hay riesgo inmediato de vida...</string>
+    <string name="alerta_dir_label">DIRECCIÓN EXACTA *</string>
+    <string name="alerta_dir_hint">Cra 15 #82-34</string>
+    <string name="alerta_barrio_label">BARRIO / SECTOR *</string>
+    <string name="alerta_barrio_hint">Nombre del barrio</string>
+    <string name="alerta_prioridad_label">NIVEL DE PRIORIDAD *</string>
+    <string name="alerta_prioridad_alta">Alta — Riesgo vital inmediato</string>
+    <string name="alerta_prioridad_media">Media — Situación urgente</string>
+    <string name="alerta_prioridad_baja">Baja — Requiere atención</string>
+    <string name="alerta_heridos">¿Hay personas heridas o atrapadas?</string>
+    <string name="alerta_anonimo">Publicar como anónimo (su nombre no será visible)</string>
+    <string name="alerta_evidencia_label">URL DE EVIDENCIA FOTOGRÁFICA (OPCIONAL)</string>
+    <string name="alerta_evidencia_hint">https://...</string>
+    <string name="alerta_btn_registrar">REGISTRAR ALERTA</string>
+    <string name="alerta_reportado_por">Reportado por:</string>
+
+    <!-- Tipos de emergencia -->
+    <string name="tipo_incendio">Incendio</string>
+    <string name="tipo_inundacion">Inundación</string>
+    <string name="tipo_accidente">Accidente</string>
+    <string name="tipo_robo">Robo / Hurto</string>
+    <string name="tipo_medica">Emergencia Médica</string>
+    <string name="tipo_desastre">Desastre Natural</string>
+    <string name="tipo_otro">Otro</string>
 </resources>

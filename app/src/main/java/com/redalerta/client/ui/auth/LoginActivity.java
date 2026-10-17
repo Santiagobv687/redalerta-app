@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.redalerta.client.databinding.ActivityLoginBinding;
+import com.redalerta.client.ui.MainActivity;
 import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.util.Validaciones;
 import com.redalerta.client.viewmodel.AuthViewModel;
@@ -84,9 +85,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void irAHomeSegunRol(String rol) {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
+    /*
+    private void irAHomeSegunRol(String rol) {
         // Los tres roles móviles van a la lista de alertas.
         // La UI de la lista adapta acciones según el rol (lectura, verificación, atención).
         // startActivity(new Intent(this, ListaAlertasActivity.class));
         finish();
     }
+
+     */
 }
