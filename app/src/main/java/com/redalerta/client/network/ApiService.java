@@ -6,15 +6,14 @@ import retrofit2.http.*;
 
 public interface ApiService {
 
+    // ═══ Auth ═══
     @POST("api/auth/login")
     Call<ApiResponse<LoginResponse>> login(@Body LoginRequest request);
 
     @POST("api/auth/register")
     Call<ApiResponse<Usuario>> registrar(@Body RegistroRequest request);
 
-    //@POST("api/auth/register")
-    //Call<ApiResponse<Usuario>> registrar(@Body RegistroRequest request);
-
- //   @POST("api/auth/recuperar")
-   // Call<ApiResponse<Void>> recuperarContrasena(@Body RecuperarRequest request);
+    // ═══ Alertas ═══
+    @POST("api/alertas")
+    Call<ApiResponse<Alerta>> crearAlerta(@Body CrearAlertaRequest request);
 }

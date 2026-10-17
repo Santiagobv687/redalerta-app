@@ -16,7 +16,7 @@ public class Validaciones {
         return texto != null && !texto.trim().isEmpty();
     }
 
-    /** Regla de negocio: solo 3 roles pueden entrar por la app móvil. */
+    /** Ambos roles son válidos en la app móvil. */
     public static boolean esRolPermitidoEnMovil(String rol) {
         return Rol.esRolMovil(rol);
     }

@@ -102,7 +102,7 @@
             android:text="@string/reg_label_rol" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="105dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="horizontal">
@@ -110,30 +110,11 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRolCiudadano"
                 style="@style/Widget.RedAlerta.Chip"
-                android:layout_width="0dp"
+                android:layout_width="142dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/reg_rol_ciudadano" />
 
-            <Space android:layout_width="8dp" android:layout_height="1dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRolOperador"
-                style="@style/Widget.RedAlerta.Chip"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/reg_rol_operador" />
-
-            <Space android:layout_width="8dp" android:layout_height="1dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRolSupervisor"
-                style="@style/Widget.RedAlerta.Chip"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/reg_rol_supervisor" />
         </LinearLayout>
 
         <!-- Divisor + botones -->

@@ -51,9 +51,7 @@ public class RegistroPaso2Fragment extends Fragment {
         }
 
         // Listeners de los chips de rol
-        binding.btnRolCiudadano.setOnClickListener(v -> seleccionarRol("USUARIO"));
-        binding.btnRolOperador.setOnClickListener(v -> seleccionarRol("LIDER"));
-        binding.btnRolSupervisor.setOnClickListener(v -> seleccionarRol("ORGANIZACION"));
+        binding.btnRolCiudadano.setOnClickListener(v -> seleccionarRol("CIUDADANO"));
 
         // Navegación
         binding.btnAnterior.setOnClickListener(v ->
@@ -78,7 +76,7 @@ public class RegistroPaso2Fragment extends Fragment {
         int textoOscuro = ContextCompat.getColor(requireContext(), R.color.ra_light_text);
 
         MaterialButton[] botones = {
-                binding.btnRolCiudadano, binding.btnRolOperador, binding.btnRolSupervisor
+                binding.btnRolCiudadano
         };
         String[] roles = {"USUARIO", "LIDER", "ORGANIZACION"};
 

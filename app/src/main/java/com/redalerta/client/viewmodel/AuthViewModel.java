@@ -45,12 +45,7 @@ public class AuthViewModel extends AndroidViewModel {
                     u.setId("mock-001");
                     u.setNombre("Usuario Demo");
                     u.setCorreo(correo);
-                    u.setRol("USUARIO"); // Prueba también con "ADMIN" para ver el rechazo
-
-                    if (!Validaciones.esRolPermitidoEnMovil(u.getRol())) {
-                        error.setValue("Los administradores deben ingresar desde el portal web de RedAlerta.");
-                        return;
-                    }
+                    u.setRol("CIUDADANO"); // Prueba también con "ADMINISTRADOR"
 
                     LoginResponse resp = new LoginResponse();
                     resp.setToken("mock-jwt-token-12345");

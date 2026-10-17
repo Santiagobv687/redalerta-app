@@ -48,8 +48,6 @@
     <string name="reg_hint_barrio">Nombre del barrio</string>
     <string name="reg_hint_direccion">Cra / Cll #</string>
     <string name="reg_rol_ciudadano">Ciudadano</string>
-    <string name="reg_rol_operador">Operador</string>
-    <string name="reg_rol_supervisor">Supervisor</string>
 
     <!-- ═══ Paso 3 ═══ -->
     <string name="reg_paso3_titulo">SEGURIDAD Y CONFIRMACIÓN</string>
