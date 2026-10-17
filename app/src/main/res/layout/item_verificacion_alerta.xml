@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp"
+    app:strokeColor="@color/ra_light_border"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Header: ID, Prioridad, Estado -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView android:id="@+id/tvId" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="11sp" android:textColor="@color/ra_text_muted" tools:text="ALR-2024-002" />
+            <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
+
+            <View android:id="@+id/dotPrioridad" android:layout_width="8dp" android:layout_height="8dp" android:layout_marginEnd="4dp"/>
+            <TextView android:id="@+id/tvPrioridad" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="11sp" android:textStyle="bold" tools:text="Alta" />
+            <TextView android:id="@+id/tvEstado" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:paddingHorizontal="6dp" android:paddingVertical="2dp" android:textSize="10sp" android:textStyle="bold" tools:text="Verificada" />
+        </LinearLayout>
+
+        <!-- Título y Barrio -->
+        <TextView android:id="@+id/tvTitulo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textSize="15sp" android:textStyle="bold" android:textColor="@color/ra_light_text" tools:text="Accidente — Teusaquillo" />
+
+        <!-- Descripción corta -->
+        <TextView android:id="@+id/tvDescripcion" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:maxLines="2" android:ellipsize="end" android:textSize="12sp" android:textColor="@color/ra_text_muted" tools:text="Colisión entre bus y camión..." />
+
+        <!-- Footer: Dirección y Fecha -->
+        <TextView android:id="@+id/tvFooter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textSize="11sp" android:textColor="@color/ra_text_muted" tools:text="Av. NQS con Calle 68 · 2024-11-18 15:10" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -161,6 +161,8 @@ public class AlertaViewModel extends AndroidViewModel {
             a1.setTitulo("Incendio");
             a1.setDescripcion("Incendio estructural en edificio de 4 pisos. Llamas visibles en el tercer piso. Hay personas atrapadas.");
             a1.setEstado("EN_ATENCION");
+            a1.setPrioridad("ALTA");           // ⬅️ AGREGAR
+            a1.setCategoria("INCENDIO");       // ⬅️ AGREGAR
             a1.setBarrio("Chapinero Alto");
             a1.setDireccion("Cra 15 #82-34");
             a1.setUsuarioNombre("María González");
@@ -172,6 +174,8 @@ public class AlertaViewModel extends AndroidViewModel {
             a2.setTitulo("Accidente");
             a2.setDescripcion("Colisión entre bus y camión. Al menos 3 heridos. Vía bloqueada totalmente.");
             a2.setEstado("VERIFICADA");
+            a2.setPrioridad("ALTA");           // ⬅️ AGREGAR
+            a2.setCategoria("ACCIDENTE");      // ⬅️ AGREGAR
             a2.setBarrio("Teusaquillo");
             a2.setDireccion("Av. NQS con Calle 68");
             a2.setUsuarioNombre("Carlos Ramírez");
@@ -183,15 +187,42 @@ public class AlertaViewModel extends AndroidViewModel {
             a3.setTitulo("Inundación");
             a3.setDescripcion("Fuerte inundación en el sector, el agua alcanza el nivel de las rodillas.");
             a3.setEstado("EN_REVISION");
+            a3.setPrioridad("ALTA");           // ⬅️ AGREGAR
+            a3.setCategoria("INUNDACION");     // ⬅️ AGREGAR
             a3.setBarrio("Kennedy");
             a3.setDireccion("Calle 38 Sur #72-15");
             a3.setUsuarioNombre("Ana Torres");
             a3.setFechaActualizacion("2024-11-18 - 11:45");
             mock.add(a3);
 
+            // ⬇️ Opcional: una rechazada para probar el filtro de cerradas
+            Alerta a4 = new Alerta();
+            a4.setId("ALR-2024-004");
+            a4.setTitulo("Robo / Hurto");
+            a4.setDescripcion("Atraco a mano armada en tienda de conveniencia.");
+            a4.setEstado("RECHAZADA");
+            a4.setPrioridad("MEDIA");
+            a4.setCategoria("ROBO_HURTO");
+            a4.setBarrio("La Candelaria");
+            a4.setDireccion("Cra 7 #22-15");
+            a4.setUsuarioNombre("Carlos Ruiz");
+            a4.setFechaActualizacion("2024-11-18 - 09:20");
+            mock.add(a4);
+
             todasLasAlertas.setValue(mock);
             return;
         }
         // TODO: Llamar al backend GET /api/alertas
+    }
+
+    public void actualizarEstadoAlerta(Alerta alerta, String nuevoEstado) {
+        if (MODO_MOCK) {
+            alerta.setEstado(nuevoEstado);
+            // Opcional: actualizar fecha
+            alerta.setFechaActualizacion(new java.text.SimpleDateFormat("yyyy-MM-dd - HH:mm", java.util.Locale.getDefault()).format(new java.util.Date()));
+            cargarTodasLasAlertas(); // Recargar la lista para reflejar el cambio
+            return;
+        }
+        // TODO: Llamar al backend PATCH /api/alertas/{id}/estado
     }
 }

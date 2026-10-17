@@ -16,6 +16,8 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.navigation.NavigationView;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityMainBinding;
+import com.redalerta.client.ui.admin.GestionSeguimientoFragment;
+import com.redalerta.client.ui.admin.VerificacionFragment;
 import com.redalerta.client.ui.alert.InicioFragment;
 import com.redalerta.client.ui.alert.MisPublicacionesFragment;
 import com.redalerta.client.ui.alert.RegistroAlertaFragment;
@@ -56,6 +58,11 @@ public class MainActivity extends AppCompatActivity
         binding.navigationView.setNavigationItemSelectedListener(this);
 
         // ══════════════════════════════════════════════════
+        // Control de visibilidad del menú según el ROL
+        // ══════════════════════════════════════════════════
+        configurarMenuSegunRol();
+
+        // ══════════════════════════════════════════════════
         // Fragmento por defecto (Registro de Alertas)
         // ══════════════════════════════════════════════════
         if (savedInstanceState == null) {
@@ -84,13 +91,26 @@ public class MainActivity extends AppCompatActivity
                         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
                             binding.drawerLayout.closeDrawer(GravityCompat.START);
                         } else {
-                            // Deshabilitar este callback y delegar al sistema
-                            // (así se cierra la app o se navega al fragmento anterior si existe backstack)
                             setEnabled(false);
                             getOnBackPressedDispatcher().onBackPressed();
                         }
                     }
                 });
+    }
+
+    // ══════════════════════════════════════════════════════
+    // Mostrar/ocultar opciones del menú según el rol
+    // ══════════════════════════════════════════════════════
+    private void configurarMenuSegunRol() {
+        String rol = session.getRol();
+        boolean esAdmin = "ADMINISTRADOR".equalsIgnoreCase(rol);
+
+        // Habilitar/deshabilitar las opciones de admin
+        MenuItem itemVerificacion = binding.navigationView.getMenu().findItem(R.id.nav_verificacion);
+        MenuItem itemGestion = binding.navigationView.getMenu().findItem(R.id.nav_gestion);
+
+        if (itemVerificacion != null) itemVerificacion.setVisible(esAdmin);
+        if (itemGestion != null) itemGestion.setVisible(esAdmin);
     }
 
     // ══════════════════════════════════════════════════════
@@ -100,15 +120,22 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_registro_alerta) {
-            mostrarFragment(new RegistroAlertaFragment());
-        } else if (id == R.id.nav_inicio) {
+        // --- Opciones de Ciudadano ---
+        if (id == R.id.nav_inicio) {
             mostrarFragment(new InicioFragment());
+        } else if (id == R.id.nav_registro_alerta) {
+            mostrarFragment(new RegistroAlertaFragment());
         } else if (id == R.id.nav_mi_perfil) {
             Toast.makeText(this, "Mi perfil (próximamente)", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_mis_publicaciones) {
             mostrarFragment(new MisPublicacionesFragment());
-            binding.navigationView.setCheckedItem(R.id.nav_mis_publicaciones);
+        }
+
+        // --- Opciones de Administrador ---
+        else if (id == R.id.nav_verificacion) {
+            mostrarFragment(new VerificacionFragment());
+        } else if (id == R.id.nav_gestion) {
+            mostrarFragment(new GestionSeguimientoFragment());
         }
 
         binding.drawerLayout.closeDrawer(GravityCompat.START);

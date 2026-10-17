@@ -1,6 +1,11 @@
 package com.redalerta.client.model;
 
-public class Alerta {
+import java.io.Serializable;
+
+public class Alerta implements Serializable { // ⬅️ IMPLEMENTS SERIALIZABLE
+
+    // Buena práctica: definir un serialVersionUID
+    private static final long serialVersionUID = 1L;
     private String id;
     private String titulo;
     private String descripcion;

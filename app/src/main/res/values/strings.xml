@@ -126,4 +126,23 @@
     <!-- Inicio -->
     <string name="inicio_titulo">INICIO</string>
     <string name="inicio_subtitulo">Conoce las alertas publicadas recientemente por la comunidad.</string>
+
+    <!-- Admin -->
+    <string name="admin_verificacion">Verificación y\nDireccionamiento</string>
+    <string name="admin_gestion">Gestión y Seguimiento</string>
+    <string name="verif_titulo">VERIFICACIÓN Y DIRECCIONAMIENTO</string>
+    <string name="verif_subtitulo">Revise, valide y asigne unidades de respuesta a las alertas recibidas.</string>
+    <string name="verif_pendientes">Pendientes</string>
+    <string name="verif_verificadas">Verificadas</string>
+    <string name="verif_cerradas">Cerradas</string>
+    <string name="verif_filtro_todos">Todas</string>
+    <string name="verif_filtro_pendientes">Pendientes</string>
+    <string name="verif_filtro_verificadas">Verificadas</string>
+    <string name="verif_filtro_cerradas">Cerradas</string>
+    <string name="verif_aceptar">Aceptar</string>
+    <string name="verif_estado_verificada">Verificada</string>
+    <string name="verif_estado_rechazada">Rechazada</string>
+    <string name="verif_asignar_estado">Cambiar estado a...</string>
+    <string name="gestion_titulo">GESTIÓN Y SEGUIMIENTO</string>
+    <string name="gestion_mensaje">Módulo en construcción...</string>
 </resources>

@@ -160,4 +160,36 @@
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
+
+    <!-- ═══ Estilos para Verificación (Admin) ═══ -->
+    <style name="StatCard">
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/bg_stat_card</item>
+        <item name="android:layout_marginEnd">8dp</item> <!-- Margen derecho -->
+    </style>
+
+    <style name="StatNumber">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="StatLabel">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/ra_text_muted</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="FilterChip">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
 </resources>

@@ -39,6 +39,27 @@ public class AuthViewModel extends AndroidViewModel {
         if (MODO_MOCK) {
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 cargando.setValue(false);
+                if (correo.contains("@") && contrasena.length() >= 6) {
+                    Usuario u = new Usuario();
+                    u.setId("mock-admin-001");
+                    u.setNombre("Admin Demo");
+                    u.setCorreo(correo);
+                    u.setRol("ADMINISTRADOR");   // ✅ Ahora es admin
+
+                    LoginResponse resp = new LoginResponse();
+                    resp.setToken("mock-jwt-token-admin");
+                    resp.setUsuario(u);
+                    loginExitoso.setValue(resp);
+                } else {
+                    error.setValue("Credenciales incorrectas");
+                }
+            }, 1200);
+            return;
+        }
+        /*
+        if (MODO_MOCK) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                cargando.setValue(false);
                 // Simula credenciales válidas para cualquier correo con @
                 if (correo.contains("@") && contrasena.length() >= 6) {
                     Usuario u = new Usuario();
@@ -56,8 +77,10 @@ public class AuthViewModel extends AndroidViewModel {
                 }
             }, 1200); // Simula 1.2s de latencia de red
             return;
-        }
 
+
+        }
+ */
         // ---- Código real (backend) ----
         // ApiClient.getApiService(getApplication())
         //     .login(new LoginRequest(correo, contrasena))

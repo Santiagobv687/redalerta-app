@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/ra_light_bg"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/verif_titulo"
+        android:textColor="@color/ra_light_text"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/verif_subtitulo"
+        android:textColor="@color/ra_text_muted"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <!-- StatCard 1 -->
+        <LinearLayout
+            style="@style/StatCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:id="@+id/tvCountPendientes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StatNumber"
+                android:textColor="@color/ra_prio_media"
+                tools:text="2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StatLabel"
+                android:text="@string/verif_pendientes" />
+        </LinearLayout>
+
+        <!-- StatCard 2 -->
+        <LinearLayout
+            style="@style/StatCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:id="@+id/tvCountVerificadas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StatNumber"
+                android:textColor="@color/ra_status_verificada_text"
+                tools:text="2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StatLabel"
+                android:text="@string/verif_verificadas" />
+        </LinearLayout>
+
+        <!-- StatCard 3 -->
+        <LinearLayout
+            style="@style/StatCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="0dp">
+
+            <TextView
+                android:id="@+id/tvCountCerradas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StatNumber"
+                android:textColor="@color/ra_red"
+                tools:text="4"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StatLabel"
+                android:text="@string/verif_cerradas" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/filterTodos"
+            style="@style/FilterChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verif_filtro_todos"
+            android:background="@drawable/bg_filter_selected"
+            android:textColor="@color/ra_white"/>
+
+        <TextView
+            android:id="@+id/filterPendientes"
+            style="@style/FilterChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verif_filtro_pendientes"
+            android:background="@drawable/bg_filter_unselected"
+            android:textColor="@color/ra_filter_text_unselected"/>
+
+        <TextView
+            android:id="@+id/filterVerificadas"
+            style="@style/FilterChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verif_filtro_verificadas"
+            android:background="@drawable/bg_filter_unselected"
+            android:textColor="@color/ra_filter_text_unselected"/>
+
+        <TextView
+            android:id="@+id/filterCerradas"
+            style="@style/FilterChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verif_filtro_cerradas"
+            android:background="@drawable/bg_filter_unselected"
+            android:textColor="@color/ra_filter_text_unselected"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvVerificacion"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:listitem="@layout/item_verificacion_alerta" />
+</LinearLayout>
