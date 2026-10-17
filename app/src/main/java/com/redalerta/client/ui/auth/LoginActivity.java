@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.redalerta.client.databinding.ActivityLoginBinding;
+import com.redalerta.client.ui.MainActivity;
 import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.util.Validaciones;
 import com.redalerta.client.viewmodel.AuthViewModel;
@@ -33,13 +34,14 @@ public class LoginActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         observarViewModel();
-
-        // ══════════════════════════════════════════════
-        // Listeners — ¡ahora SÍ están activos!
-        // ══════════════════════════════════════════════
+/*
         binding.btnLogin.setOnClickListener(v -> intentarLogin());
-        binding.btnIrRegistro.setOnClickListener(v ->
+        binding.tvIrARegistro.setOnClickListener(v ->
                 startActivity(new Intent(this, RegistroActivity.class)));
+        binding.tvRecuperar.setOnClickListener(v ->
+                startActivity(new Intent(this, RecuperacionActivity.class)));
+
+ */
     }
 
     private void intentarLogin() {
@@ -83,8 +85,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void irAHomeSegunRol(String rol) {
-        Toast.makeText(this,
-                "Login OK. Rol: " + rol + "\n(Iría a ListaAlertasActivity)",
-                Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
+    /*
+    private void irAHomeSegunRol(String rol) {
+        // Los tres roles móviles van a la lista de alertas.
+        // La UI de la lista adapta acciones según el rol (lectura, verificación, atención).
+        // startActivity(new Intent(this, ListaAlertasActivity.class));
+        finish();
+    }
+
+     */
 }
