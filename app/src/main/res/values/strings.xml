@@ -109,4 +109,12 @@
     <string name="tipo_medica">Emergencia Médica</string>
     <string name="tipo_desastre">Desastre Natural</string>
     <string name="tipo_otro">Otro</string>
+
+    <!-- ═══ Alerta Registrada ═══ -->
+    <string name="alerta_registrada_titulo">ALERTA REGISTRADA</string>
+    <string name="alerta_registrada_subtitulo">Su alerta ha sido recibida y está en proceso de verificación.</string>
+    <string name="alerta_registrada_tipo_label">Tipo</string>
+    <string name="alerta_registrada_prioridad_label">Prioridad</string>
+    <string name="alerta_registrada_ubicacion_label">Ubicación</string>
+    <string name="alerta_registrada_btn">Registrar otra alerta</string>
 </resources>

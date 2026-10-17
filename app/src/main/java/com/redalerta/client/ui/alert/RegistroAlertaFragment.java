@@ -127,13 +127,21 @@ public class RegistroAlertaFragment extends Fragment {
         String evidencia = binding.etEvidencia.getText().toString().trim();
 
         // TODO: Enviar al backend
-        String resumen = "Alerta registrada (mock):\n" +
-                "Tipo: " + tipoSeleccionado + "\n" +
-                "Prioridad: " + prioridad + "\n" +
-                "Anónimo: " + (anonimo ? "Sí" : "No") + "\n" +
-                "Heridos: " + (heridos ? "Sí" : "No");
+        // TODO: Enviar al backend real (POST /api/alertas)
 
-        Toast.makeText(requireContext(), resumen, Toast.LENGTH_LONG).show();
+// Navegar a la pantalla de éxito
+        AlertaRegistradaFragment exitosoFragment = new AlertaRegistradaFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(AlertaRegistradaFragment.ARG_TIPO, tipoSeleccionado);
+        bundle.putString(AlertaRegistradaFragment.ARG_PRIORIDAD, prioridad);
+        bundle.putString(AlertaRegistradaFragment.ARG_UBICACION, direccion + ", " + barrio);
+        exitosoFragment.setArguments(bundle);
+
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, exitosoFragment)
+                .addToBackStack(null) // Permite volver atrás
+                .commit();
     }
 
     @Override

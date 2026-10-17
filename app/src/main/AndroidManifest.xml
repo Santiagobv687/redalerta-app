@@ -56,7 +56,8 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.RedAlerta.Light" />
 
     </application>
 

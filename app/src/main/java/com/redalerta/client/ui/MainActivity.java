@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.google.android.material.navigation.NavigationView;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityMainBinding;
@@ -30,12 +34,17 @@ public class MainActivity extends AppCompatActivity
 
         session = new SessionManager(this);
 
+        // ══════════════════════════════════════════════════
+        // Configurar Toolbar
+        // ══════════════════════════════════════════════════
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        // Configurar el Drawer
+        // ══════════════════════════════════════════════════
+        // Configurar Drawer
+        // ══════════════════════════════════════════════════
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, binding.drawerLayout, binding.toolbar,
                 R.string.app_name, R.string.app_name);
@@ -44,13 +53,17 @@ public class MainActivity extends AppCompatActivity
 
         binding.navigationView.setNavigationItemSelectedListener(this);
 
-        // Por defecto, mostrar Registro de Alertas
+        // ══════════════════════════════════════════════════
+        // Fragmento por defecto (Registro de Alertas)
+        // ══════════════════════════════════════════════════
         if (savedInstanceState == null) {
             mostrarFragment(new RegistroAlertaFragment());
             binding.navigationView.setCheckedItem(R.id.nav_registro_alerta);
         }
 
+        // ══════════════════════════════════════════════════
         // Botón Salir
+        // ══════════════════════════════════════════════════
         binding.btnSalir.setOnClickListener(v -> {
             session.cerrarSesion();
             Intent intent = new Intent(this, LoginActivity.class);
@@ -58,8 +71,29 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         });
+
+        // ══════════════════════════════════════════════════
+        // Manejo del botón "atrás" físico
+        // ══════════════════════════════════════════════════
+        getOnBackPressedDispatcher().addCallback(this,
+                new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                            binding.drawerLayout.closeDrawer(GravityCompat.START);
+                        } else {
+                            // Deshabilitar este callback y delegar al sistema
+                            // (así se cierra la app o se navega al fragmento anterior si existe backstack)
+                            setEnabled(false);
+                            getOnBackPressedDispatcher().onBackPressed();
+                        }
+                    }
+                });
     }
 
+    // ══════════════════════════════════════════════════════
+    // Navegación del menú lateral
+    // ══════════════════════════════════════════════════════
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -78,19 +112,18 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void mostrarFragment(androidx.fragment.app.Fragment fragment) {
+    // ══════════════════════════════════════════════════════
+    // Reemplazar fragmento actual
+    // ══════════════════════════════════════════════════════
+    private void mostrarFragment(Fragment fragment) {
+        // Limpiar el backstack para que al navegar por el menú
+        // no se acumulen fragmentos anteriores
+        getSupportFragmentManager().popBackStack(
+                null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .commit();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 }
