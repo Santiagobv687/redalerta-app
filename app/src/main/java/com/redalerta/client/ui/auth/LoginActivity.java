@@ -33,14 +33,13 @@ public class LoginActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         observarViewModel();
-/*
-        binding.btnLogin.setOnClickListener(v -> intentarLogin());
-        binding.tvIrARegistro.setOnClickListener(v ->
-                startActivity(new Intent(this, RegistroActivity.class)));
-        binding.tvRecuperar.setOnClickListener(v ->
-                startActivity(new Intent(this, RecuperacionActivity.class)));
 
- */
+        // ══════════════════════════════════════════════
+        // Listeners — ¡ahora SÍ están activos!
+        // ══════════════════════════════════════════════
+        binding.btnLogin.setOnClickListener(v -> intentarLogin());
+        binding.btnIrRegistro.setOnClickListener(v ->
+                startActivity(new Intent(this, RegistroActivity.class)));
     }
 
     private void intentarLogin() {
@@ -84,9 +83,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void irAHomeSegunRol(String rol) {
-        // Los tres roles móviles van a la lista de alertas.
-        // La UI de la lista adapta acciones según el rol (lectura, verificación, atención).
-        // startActivity(new Intent(this, ListaAlertasActivity.class));
-        finish();
+        Toast.makeText(this,
+                "Login OK. Rol: " + rol + "\n(Iría a ListaAlertasActivity)",
+                Toast.LENGTH_LONG).show();
     }
 }

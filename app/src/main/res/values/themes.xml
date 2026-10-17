@@ -1,5 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- ═══ Estilo base vacío para herencia implícita ═══ -->
+    <style name="Widget.RedAlerta" parent="" />
     <!-- Tema principal dark, sin ActionBar -->
     <style name="Theme.RedAlerta" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/ra_red</item>

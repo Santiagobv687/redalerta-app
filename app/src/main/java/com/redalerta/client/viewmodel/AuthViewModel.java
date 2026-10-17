@@ -1,6 +1,100 @@
 package com.redalerta.client.viewmodel;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import com.redalerta.client.model.*;
+import com.redalerta.client.util.Validaciones;
+
+public class AuthViewModel extends AndroidViewModel {
+
+    // ⚠️ MODO PRUEBA: cambia a false cuando tengas el backend
+    private static final boolean MODO_MOCK = true;
+
+    private final MutableLiveData<Boolean> cargando = new MutableLiveData<>(false);
+    private final MutableLiveData<String> error = new MutableLiveData<>();
+    private final MutableLiveData<LoginResponse> loginExitoso = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> registroExitoso = new MutableLiveData<>();
+
+    public AuthViewModel(@NonNull Application application) {
+        super(application);
+    }
+
+    public LiveData<Boolean> getCargando() { return cargando; }
+    public LiveData<String> getError() { return error; }
+    public LiveData<LoginResponse> getLoginExitoso() { return loginExitoso; }
+    public LiveData<Boolean> getRegistroExitoso() { return registroExitoso; }
+
+    // ══════════════════════════════════════════════════
+    // LOGIN
+    // ══════════════════════════════════════════════════
+    public void login(String correo, String contrasena) {
+        cargando.setValue(true);
+        error.setValue(null);
+
+        if (MODO_MOCK) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                cargando.setValue(false);
+                // Simula credenciales válidas para cualquier correo con @
+                if (correo.contains("@") && contrasena.length() >= 6) {
+                    Usuario u = new Usuario();
+                    u.setId("mock-001");
+                    u.setNombre("Usuario Demo");
+                    u.setCorreo(correo);
+                    u.setRol("USUARIO"); // Prueba también con "ADMIN" para ver el rechazo
+
+                    if (!Validaciones.esRolPermitidoEnMovil(u.getRol())) {
+                        error.setValue("Los administradores deben ingresar desde el portal web de RedAlerta.");
+                        return;
+                    }
+
+                    LoginResponse resp = new LoginResponse();
+                    resp.setToken("mock-jwt-token-12345");
+                    resp.setUsuario(u);
+                    loginExitoso.setValue(resp);
+                } else {
+                    error.setValue("Credenciales incorrectas");
+                }
+            }, 1200); // Simula 1.2s de latencia de red
+            return;
+        }
+
+        // ---- Código real (backend) ----
+        // ApiClient.getApiService(getApplication())
+        //     .login(new LoginRequest(correo, contrasena))
+        //     .enqueue(...); // tu implementación real
+    }
+
+    // ══════════════════════════════════════════════════
+    // REGISTRO
+    // ══════════════════════════════════════════════════
+    public void registrar(RegistroRequest request) {
+        cargando.setValue(true);
+        error.setValue(null);
+
+        if (MODO_MOCK) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                cargando.setValue(false);
+                // Simula registro exitoso siempre
+                registroExitoso.setValue(true);
+            }, 1500);
+            return;
+        }
+
+        // ---- Código real (backend) ----
+        // ApiClient.getApiService(getApplication())
+        //     .registrar(request)
+        //     .enqueue(...); // tu implementación real
+    }
+}
+/*
+package com.redalerta.client.viewmodel;
+
+import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -105,3 +199,5 @@ public class AuthViewModel extends AndroidViewModel {
                 });
     }
 }
+
+ */
