@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityRegistroBinding;
-import com.redalerta.client.model.RegistroRequest;
+import com.redalerta.client.model.auth.RegistroRequest;
 
 public class RegistroActivity extends AppCompatActivity {
 

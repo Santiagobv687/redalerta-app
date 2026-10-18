@@ -1,6 +1,9 @@
 package com.redalerta.client.network;
 
-import com.redalerta.client.model.*;
+import com.redalerta.client.model.alerta.*;
+import com.redalerta.client.model.auth.*;
+import com.redalerta.client.model.common.*;
+import com.redalerta.client.model.usuario.*;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.*;

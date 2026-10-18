@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentVerificacionBinding;
-import com.redalerta.client.model.*;
+import com.redalerta.client.model.alerta.*;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 import java.util.ArrayList;
 import java.util.List;

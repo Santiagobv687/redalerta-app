@@ -9,7 +9,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.redalerta.client.model.*;
+import com.redalerta.client.model.alerta.*;
+import com.redalerta.client.model.auth.*;
+import com.redalerta.client.model.common.*;
+import com.redalerta.client.model.usuario.*;
 import com.redalerta.client.network.ApiClient;
 import com.redalerta.client.network.ApiResponse;
 import com.redalerta.client.util.ManejadorErrores;

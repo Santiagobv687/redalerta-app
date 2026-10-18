@@ -1,7 +1,7 @@
 package com.redalerta.client.util;
 
 import android.util.Patterns;
-import com.redalerta.client.model.Rol;
+import com.redalerta.client.model.usuario.Rol;
 
 public class Validaciones {
     public static boolean esCorreoValido(String correo) {

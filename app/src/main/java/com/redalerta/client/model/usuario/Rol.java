@@ -1,4 +1,4 @@
-package com.redalerta.client.model;
+package com.redalerta.client.model.usuario;
 
 public class Rol {
     public static final String ROLE_CIUDADANO = "ROLE_CIUDADANO";

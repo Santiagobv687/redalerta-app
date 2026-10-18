@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.BottomSheetVerificacionBinding;
-import com.redalerta.client.model.*;
+import com.redalerta.client.model.alerta.*;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 public class VerificacionBottomSheet extends BottomSheetDialogFragment {
