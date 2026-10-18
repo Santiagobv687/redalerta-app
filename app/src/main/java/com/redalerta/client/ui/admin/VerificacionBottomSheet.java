@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.BottomSheetVerificacionBinding;
-import com.redalerta.client.model.Alerta;
+import com.redalerta.client.model.*;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 public class VerificacionBottomSheet extends BottomSheetDialogFragment {
@@ -53,8 +53,8 @@ public class VerificacionBottomSheet extends BottomSheetDialogFragment {
             binding.bsFecha.setText(alertaActual.getFechaActualizacion());
 
             binding.bsPrioridad.setText(alertaActual.getPrioridad());
-            int colorPrio = alertaActual.getPrioridad().equalsIgnoreCase("ALTA") ? R.color.ra_prio_alta :
-                    alertaActual.getPrioridad().equalsIgnoreCase("MEDIA") ? R.color.ra_prio_media : R.color.ra_prio_baja;
+            int colorPrio = alertaActual.getPrioridad().equalsIgnoreCase(PrioridadAlerta.ALTA) ? R.color.ra_prio_alta :
+                    alertaActual.getPrioridad().equalsIgnoreCase(PrioridadAlerta.MEDIA) ? R.color.ra_prio_media : R.color.ra_prio_baja;
             binding.bsPrioridad.setTextColor(ContextCompat.getColor(requireContext(), colorPrio));
             binding.bsDotPrioridad.setBackgroundColor(ContextCompat.getColor(requireContext(), colorPrio));
 

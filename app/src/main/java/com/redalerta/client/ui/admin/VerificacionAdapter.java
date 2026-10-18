@@ -1,6 +1,5 @@
 package com.redalerta.client.ui.admin;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.redalerta.client.R;
-import com.redalerta.client.model.Alerta;
+import com.redalerta.client.model.*;
+
 import java.util.List;
 
 public class VerificacionAdapter extends RecyclerView.Adapter<VerificacionAdapter.ViewHolder> {
@@ -44,11 +44,11 @@ public class VerificacionAdapter extends RecyclerView.Adapter<VerificacionAdapte
         holder.tvFooter.setText(direccion + " · " + (fecha != null ? fecha : ""));
 
         // ⬇️ Prioridad con protección null
-        String prioridad = a.getPrioridad() != null ? a.getPrioridad() : "BAJA";
+        String prioridad = a.getPrioridad() != null ? a.getPrioridad() : PrioridadAlerta.BAJA;
         holder.tvPrioridad.setText(prioridad);
 
-        int colorPrio = prioridad.equalsIgnoreCase("ALTA") ? R.color.ra_prio_alta :
-                prioridad.equalsIgnoreCase("MEDIA") ? R.color.ra_prio_media : R.color.ra_prio_baja;
+        int colorPrio = prioridad.equalsIgnoreCase(PrioridadAlerta.ALTA) ? R.color.ra_prio_alta :
+                prioridad.equalsIgnoreCase(PrioridadAlerta.MEDIA) ? R.color.ra_prio_media : R.color.ra_prio_baja;
 
         holder.tvPrioridad.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), colorPrio));
         holder.dotPrioridad.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), colorPrio));
