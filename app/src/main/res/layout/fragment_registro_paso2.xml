@@ -21,27 +21,58 @@
             android:textStyle="bold"
             android:letterSpacing="0.05" />
 
-        <!-- LOCALIDAD -->
+        <!-- DEPARTAMENTO -->
         <TextView style="@style/Widget.RedAlerta.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/reg_label_localidad" />
+            android:labelFor="@+id/etDepartamento"
+            android:text="@string/reg_label_departamento" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilLocalidad"
+            android:id="@+id/tilDepartamento"
             style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:hint="@string/reg_label_departamento"
             app:endIconMode="dropdown_menu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/etLocalidad"
+                android:id="@+id/etDepartamento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:hint="@string/reg_hint_localidad"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textSize="14sp"
+                android:textColor="@color/ra_light_text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- MUNICIPIO / CIUDAD -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@+id/etMunicipio"
+            android:text="@string/reg_label_municipio" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilMunicipio"
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/reg_label_municipio"
+            app:endIconMode="dropdown_menu">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/etMunicipio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textSize="14sp"
                 android:textColor="@color/ra_light_text" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -54,6 +85,7 @@
             android:text="@string/reg_label_barrio" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBarrio"
             style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,7 +102,7 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- DIRECCIÓN -->
+        <!-- DIRECCIÓN DE RESIDENCIA -->
         <TextView style="@style/Widget.RedAlerta.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,6 +110,7 @@
             android:text="@string/reg_label_direccion" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDireccion"
             style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,29 +126,6 @@
                 android:textColor="@color/ra_light_text"
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- ROL EN EL SISTEMA -->
-        <TextView style="@style/Widget.RedAlerta.Label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/reg_label_rol" />
-
-        <LinearLayout
-            android:layout_width="105dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRolCiudadano"
-                style="@style/Widget.RedAlerta.Chip"
-                android:layout_width="142dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/reg_rol_ciudadano" />
-
-        </LinearLayout>
 
         <!-- Divisor + botones -->
         <View
