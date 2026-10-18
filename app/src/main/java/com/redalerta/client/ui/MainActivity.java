@@ -19,6 +19,7 @@ import com.redalerta.client.databinding.ActivityMainBinding;
 import com.redalerta.client.ui.admin.GestionSeguimientoFragment;
 import com.redalerta.client.ui.admin.VerificacionFragment;
 import com.redalerta.client.ui.alert.InicioFragment;
+import com.redalerta.client.ui.alert.MiPerfilFragment;
 import com.redalerta.client.ui.alert.MisPublicacionesFragment;
 import com.redalerta.client.ui.alert.RegistroAlertaFragment;
 import com.redalerta.client.ui.auth.LoginActivity;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity
                 binding.navigationView.setCheckedItem(R.id.nav_mis_alertas);
                 return true;
             } else if (id == R.id.nav_perfil) {
-                Toast.makeText(this, "Mi perfil (próximamente)", Toast.LENGTH_SHORT).show();
+                mostrarFragmentInternal(new MiPerfilFragment());
                 binding.navigationView.setCheckedItem(R.id.nav_mi_perfil);
                 return true;
             }
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_registro_alerta) {
             mostrarFragment(new RegistroAlertaFragment());
         } else if (id == R.id.nav_mi_perfil) {
-            Toast.makeText(this, "Mi perfil (próximamente)", Toast.LENGTH_SHORT).show();
+            mostrarFragment(new MiPerfilFragment());
         } else if (id == R.id.nav_mis_alertas) {
             mostrarFragment(new MisPublicacionesFragment());
         }
@@ -171,6 +172,8 @@ public class MainActivity extends AppCompatActivity
             binding.bottomNavigation.setSelectedItemId(R.id.nav_inicio);
         } else if (fragment instanceof MisPublicacionesFragment) {
             binding.bottomNavigation.setSelectedItemId(R.id.nav_mis_alertas);
+        } else if (fragment instanceof MiPerfilFragment) {
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_perfil);
         } else {
             mostrarFragmentInternal(fragment);
         }

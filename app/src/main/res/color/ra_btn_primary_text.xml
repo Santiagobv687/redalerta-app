@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Estado Deshabilitado: Texto Gris Legible -->
+    <item android:state_enabled="false" android:color="#9CA3AF" />
+    <!-- Estado Habilitado / Reposo: Blanco -->
+    <item android:color="#FFFFFF" />
+</selector>

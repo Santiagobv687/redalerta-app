@@ -11,6 +11,7 @@ public class ActualizarPerfilRequest implements Serializable {
     private String nombre;
     private String email;
     private String telefono;
+    private UbicacionRequest ubicacion;
     private String passwordActual;
     private String passwordNuevo;
 
@@ -45,6 +46,14 @@ public class ActualizarPerfilRequest implements Serializable {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public UbicacionRequest getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(UbicacionRequest ubicacion) {
+        this.ubicacion = ubicacion;
     }
 
     public String getPasswordActual() {
