@@ -1,24 +1,24 @@
 package com.redalerta.client.ui.auth;
 
-import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import com.google.android.material.button.MaterialButton;
-import com.redalerta.client.R;
+import com.google.android.material.textfield.TextInputLayout;
 import com.redalerta.client.databinding.FragmentRegistroPaso2Binding;
-import com.redalerta.client.model.RegistroRequest;
+import com.redalerta.client.model.auth.RegistroRequest;
+import com.redalerta.client.model.usuario.UbicacionRequest;
 
 public class RegistroPaso2Fragment extends Fragment {
 
     private FragmentRegistroPaso2Binding binding;
-    private String rolSeleccionado = null;
 
     @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -30,34 +30,32 @@ public class RegistroPaso2Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        // Localidades de ejemplo — en producción vienen del backend
-        String[] localidades = {
-                "Armenia", "Barrios Unidos", "Laureles", "El Poblado",
-                "Centro", "La Esperanza", "Villa Jardín", "Otro"
-        };
-        binding.etLocalidad.setAdapter(new ArrayAdapter<>(
+        RegistroRequest req = ((RegistroActivity) requireActivity()).getRegistroRequest();
+
+        // Dropdown de Departamentos
+        String[] departamentos = {"Quindío", "Risaralda", "Caldas", "Antioquia", "Cundinamarca", "Otro"};
+        binding.etDepartamento.setAdapter(new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_dropdown_item_1line,
-                localidades));
+                departamentos));
 
-        // Restaurar datos previos si existen
-        RegistroRequest req = ((RegistroActivity) requireActivity()).getRegistroRequest();
-        if (req.getLocalidad() != null) binding.etLocalidad.setText(req.getLocalidad(), false);
-        if (req.getBarrio() != null) binding.etBarrio.setText(req.getBarrio());
-        if (req.getDireccion() != null) binding.etDireccion.setText(req.getDireccion());
-        if (req.getRol() != null) {
-            rolSeleccionado = req.getRol();
-            resaltarRol();
-        }
+        // Dropdown de Municipios
+        String[] municipios = {"Armenia", "Calarcá", "Circasia", "Salento", "Montenegro", "Quimbaya", "La Tebaida", "Pereira", "Manizales", "Bogotá D.C.", "Otro"};
+        binding.etMunicipio.setAdapter(new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                municipios));
 
-        // Listeners de los chips de rol
-        binding.btnRolCiudadano.setOnClickListener(v -> seleccionarRol("USUARIO"));
-        binding.btnRolOperador.setOnClickListener(v -> seleccionarRol("LIDER"));
-        binding.btnRolSupervisor.setOnClickListener(v -> seleccionarRol("ORGANIZACION"));
+        // Cargar datos previos si existen
+        cargardatosPrevios(req);
+
+        // Configurar limpieza dinámica de errores al digitar
+        configurarLimpiezaErrores();
 
         // Navegación
         binding.btnAnterior.setOnClickListener(v ->
                 ((RegistroActivity) requireActivity()).mostrarPaso(1));
+
         binding.btnSiguiente.setOnClickListener(v -> {
             if (validar()) {
                 guardarDatos(req);
@@ -66,76 +64,71 @@ public class RegistroPaso2Fragment extends Fragment {
         });
     }
 
-    private void seleccionarRol(String rol) {
-        rolSeleccionado = rol;
-        resaltarRol();
+    private void configurarLimpiezaErrores() {
+        limpiarErrorAlDigitar(binding.tilDepartamento, binding.etDepartamento);
+        limpiarErrorAlDigitar(binding.tilMunicipio, binding.etMunicipio);
+        limpiarErrorAlDigitar(binding.tilBarrio, binding.etBarrio);
+        limpiarErrorAlDigitar(binding.tilDireccion, binding.etDireccion);
     }
 
-    private void resaltarRol() {
-        int rojo = ContextCompat.getColor(requireContext(), R.color.ra_red);
-        int blanco = Color.WHITE;
-        int bordeGris = ContextCompat.getColor(requireContext(), R.color.ra_light_border);
-        int textoOscuro = ContextCompat.getColor(requireContext(), R.color.ra_light_text);
-
-        MaterialButton[] botones = {
-                binding.btnRolCiudadano, binding.btnRolOperador, binding.btnRolSupervisor
-        };
-        String[] roles = {"USUARIO", "LIDER", "ORGANIZACION"};
-
-        for (int i = 0; i < botones.length; i++) {
-            MaterialButton b = botones[i];
-            if (roles[i].equals(rolSeleccionado)) {
-                b.setBackgroundTintList(android.content.res.ColorStateList.valueOf(rojo));
-                b.setTextColor(blanco);
-                b.setStrokeColor(android.content.res.ColorStateList.valueOf(rojo));
-            } else {
-                b.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.TRANSPARENT));
-                b.setTextColor(textoOscuro);
-                b.setStrokeColor(android.content.res.ColorStateList.valueOf(bordeGris));
+    private void limpiarErrorAlDigitar(TextInputLayout til, EditText et) {
+        if (til == null || et == null) return;
+        et.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                til.setError(null);
             }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void cargardatosPrevios(RegistroRequest req) {
+        if (req != null) {
+            UbicacionRequest u = req.getUbicacion();
+            if (u != null) {
+                if (u.getDepartamento() != null) binding.etDepartamento.setText(u.getDepartamento(), false);
+                if (u.getMunicipio() != null) binding.etMunicipio.setText(u.getMunicipio(), false);
+                if (u.getDireccionResidencia() != null) binding.etDireccion.setText(req.getDireccion() != null ? req.getDireccion() : u.getDireccionResidencia());
+            }
+            if (req.getBarrio() != null) binding.etBarrio.setText(req.getBarrio());
         }
     }
 
     private boolean validar() {
         boolean ok = true;
-        String localidad = binding.etLocalidad.getText().toString().trim();
+        String departamento = binding.etDepartamento.getText().toString().trim();
+        String municipio = binding.etMunicipio.getText().toString().trim();
         String barrio = binding.etBarrio.getText().toString().trim();
         String direccion = binding.etDireccion.getText().toString().trim();
 
-        if (localidad.isEmpty()) {
-            binding.tilLocalidad.setError("Seleccione una localidad");
-            ok = false;
-        } else {
-            binding.tilLocalidad.setError(null);
-        }
+        if (departamento.isEmpty()) { binding.tilDepartamento.setError("Seleccione departamento"); ok = false; } else { binding.tilDepartamento.setError(null); }
+        if (municipio.isEmpty()) { binding.tilMunicipio.setError("Seleccione municipio"); ok = false; } else { binding.tilMunicipio.setError(null); }
+        if (barrio.isEmpty()) { binding.tilBarrio.setError("Barrio requerido"); ok = false; } else { binding.tilBarrio.setError(null); }
+        if (direccion.isEmpty()) { binding.tilDireccion.setError("Dirección requerida"); ok = false; } else { binding.tilDireccion.setError(null); }
 
-        if (barrio.isEmpty()) {
-            binding.etBarrio.setError("Requerido");
-            ok = false;
-        } else {
-            binding.etBarrio.setError(null);
-        }
-
-        if (direccion.isEmpty()) {
-            binding.etDireccion.setError("Requerido");
-            ok = false;
-        } else {
-            binding.etDireccion.setError(null);
-        }
-
-        if (rolSeleccionado == null) {
-            android.widget.Toast.makeText(requireContext(),
-                    "Seleccione un rol en el sistema", android.widget.Toast.LENGTH_SHORT).show();
-            ok = false;
-        }
         return ok;
     }
 
     private void guardarDatos(RegistroRequest req) {
-        req.setLocalidad(binding.etLocalidad.getText().toString().trim());
-        req.setBarrio(binding.etBarrio.getText().toString().trim());
-        req.setDireccion(binding.etDireccion.getText().toString().trim());
-        req.setRol(rolSeleccionado);
+        if (req != null) {
+            String departamento = binding.etDepartamento.getText().toString().trim();
+            String municipio = binding.etMunicipio.getText().toString().trim();
+            String barrio = binding.etBarrio.getText().toString().trim();
+            String direccion = binding.etDireccion.getText().toString().trim();
+
+            req.setLocalidad(municipio);
+            req.setBarrio(barrio);
+            req.setDireccion(direccion);
+            req.setRol("ROLE_CIUDADANO");
+
+            UbicacionRequest u = req.getUbicacion();
+            if (u == null) u = new UbicacionRequest();
+            u.setDepartamento(departamento);
+            u.setMunicipio(municipio);
+            String dirFinal = direccion + (barrio.isEmpty() ? "" : ", " + barrio);
+            u.setDireccionResidencia(dirFinal);
+            req.setUbicacion(u);
+        }
     }
 
     @Override

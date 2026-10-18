@@ -3,17 +3,29 @@ package com.redalerta.client.viewmodel;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.redalerta.client.model.*;
-import com.redalerta.client.util.Validaciones;
+
+import com.redalerta.client.model.alerta.*;
+import com.redalerta.client.model.auth.*;
+import com.redalerta.client.model.common.*;
+import com.redalerta.client.model.usuario.*;
+import com.redalerta.client.network.ApiClient;
+import com.redalerta.client.network.ApiResponse;
+import com.redalerta.client.util.ManejadorErrores;
+import com.redalerta.client.util.ManejadorErrores.ContextoOperacion;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AuthViewModel extends AndroidViewModel {
 
-    // ⚠️ MODO PRUEBA: cambia a false cuando tengas el backend
-    private static final boolean MODO_MOCK = true;
+    // Se establece MODO_MOCK a false para consumir la API REST real
+    private static final boolean MODO_MOCK = false;
 
     private final MutableLiveData<Boolean> cargando = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
@@ -39,18 +51,12 @@ public class AuthViewModel extends AndroidViewModel {
         if (MODO_MOCK) {
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 cargando.setValue(false);
-                // Simula credenciales válidas para cualquier correo con @
                 if (correo.contains("@") && contrasena.length() >= 6) {
                     Usuario u = new Usuario();
-                    u.setId("mock-001");
+                    u.setId("1");
                     u.setNombre("Usuario Demo");
-                    u.setCorreo(correo);
-                    u.setRol("USUARIO"); // Prueba también con "ADMIN" para ver el rechazo
-
-                    if (!Validaciones.esRolPermitidoEnMovil(u.getRol())) {
-                        error.setValue("Los administradores deben ingresar desde el portal web de RedAlerta.");
-                        return;
-                    }
+                    u.setEmail(correo);
+                    u.setRol("ROLE_CIUDADANO");
 
                     LoginResponse resp = new LoginResponse();
                     resp.setToken("mock-jwt-token-12345");
@@ -59,14 +65,36 @@ public class AuthViewModel extends AndroidViewModel {
                 } else {
                     error.setValue("Credenciales incorrectas");
                 }
-            }, 1200); // Simula 1.2s de latencia de red
+            }, 1200);
             return;
         }
 
-        // ---- Código real (backend) ----
-        // ApiClient.getApiService(getApplication())
-        //     .login(new LoginRequest(correo, contrasena))
-        //     .enqueue(...); // tu implementación real
+        LoginRequest request = new LoginRequest(correo, contrasena);
+        ApiClient.getApiService(getApplication())
+                .login(request)
+                .enqueue(new Callback<ApiResponse<LoginResponse>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse<LoginResponse>> call,
+                                           @NonNull Response<ApiResponse<LoginResponse>> response) {
+                        cargando.setValue(false);
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<LoginResponse> body = response.body();
+                            if (body.isSuccess() && body.getData() != null) {
+                                loginExitoso.setValue(body.getData());
+                            } else {
+                                error.setValue(body.getMessage() != null ? body.getMessage() : "Credenciales inválidas");
+                            }
+                        } else {
+                            error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ContextoOperacion.LOGIN));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse<LoginResponse>> call, @NonNull Throwable t) {
+                        cargando.setValue(false);
+                        error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
+                    }
+                });
     }
 
     // ══════════════════════════════════════════════════
@@ -79,125 +107,35 @@ public class AuthViewModel extends AndroidViewModel {
         if (MODO_MOCK) {
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 cargando.setValue(false);
-                // Simula registro exitoso siempre
                 registroExitoso.setValue(true);
             }, 1500);
             return;
         }
 
-        // ---- Código real (backend) ----
-        // ApiClient.getApiService(getApplication())
-        //     .registrar(request)
-        //     .enqueue(...); // tu implementación real
-    }
-}
-/*
-package com.redalerta.client.viewmodel;
-
-import android.app.Application;
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import com.redalerta.client.model.*;
-import com.redalerta.client.network.ApiClient;
-import com.redalerta.client.network.ApiResponse;
-import com.redalerta.client.util.Validaciones;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class AuthViewModel extends AndroidViewModel {
-
-    private final MutableLiveData<Boolean> cargando = new MutableLiveData<>(false);
-    private final MutableLiveData<String> error = new MutableLiveData<>();
-    private final MutableLiveData<LoginResponse> loginExitoso = new MutableLiveData<>();
-
-    public AuthViewModel(@NonNull Application application) {
-        super(application);
-    }
-
-    public LiveData<Boolean> getCargando() { return cargando; }
-    public LiveData<String> getError() { return error; }
-    public LiveData<LoginResponse> getLoginExitoso() { return loginExitoso; }
-
-    public void login(String correo, String contrasena) {
-        cargando.setValue(true);
-        error.setValue(null);
-
-        ApiClient.getApiService(getApplication())
-                .login(new LoginRequest(correo, contrasena))
-                .enqueue(new Callback<ApiResponse<LoginResponse>>() {
-                    @Override
-                    public void onResponse(Call<ApiResponse<LoginResponse>> call,
-                                           Response<ApiResponse<LoginResponse>> response) {
-                        cargando.setValue(false);
-
-                        if (!response.isSuccessful() || response.body() == null) {
-                            error.setValue("Credenciales incorrectas");
-                            return;
-                        }
-                        ApiResponse<LoginResponse> body = response.body();
-                        if (!body.isSuccess() || body.getData() == null) {
-                            error.setValue(body.getMessage() != null
-                                    ? body.getMessage() : "No fue posible iniciar sesión");
-                            return;
-                        }
-
-                        LoginResponse data = body.getData();
-                        String rol = data.getUsuario().getRol();
-
-                        // 🔒 Regla clave: admin NO entra por la app móvil
-                        if (!Validaciones.esRolPermitidoEnMovil(rol)) {
-                            error.setValue(
-                                    "Los administradores deben ingresar desde el portal web de RedAlerta."
-                            );
-                            return;
-                        }
-
-                        loginExitoso.setValue(data);
-                    }
-
-                    @Override
-                    public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
-                        cargando.setValue(false);
-                        error.setValue("Error de conexión: " + t.getMessage());
-                    }
-                });
-    }
-
-    private final MutableLiveData<Boolean> registroExitoso = new MutableLiveData<>();
-
-    public LiveData<Boolean> getRegistroExitoso() { return registroExitoso; }
-
-    public void registrar(RegistroRequest request) {
-        cargando.setValue(true);
-        error.setValue(null);
-
         ApiClient.getApiService(getApplication())
                 .registrar(request)
                 .enqueue(new Callback<ApiResponse<Usuario>>() {
                     @Override
-                    public void onResponse(Call<ApiResponse<Usuario>> call,
-                                           Response<ApiResponse<Usuario>> response) {
+                    public void onResponse(@NonNull Call<ApiResponse<Usuario>> call,
+                                           @NonNull Response<ApiResponse<Usuario>> response) {
                         cargando.setValue(false);
-                        if (response.isSuccessful() && response.body() != null
-                                && response.body().isSuccess()) {
-                            registroExitoso.setValue(true);
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<Usuario> body = response.body();
+                            if (body.isSuccess()) {
+                                registroExitoso.setValue(true);
+                            } else {
+                                error.setValue(body.getMessage() != null ? body.getMessage() : "No fue posible registrar la cuenta");
+                            }
                         } else {
-                            error.setValue(response.body() != null
-                                    ? response.body().getMessage()
-                                    : "No fue posible completar el registro");
+                            error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ContextoOperacion.REGISTRO));
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ApiResponse<Usuario>> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ApiResponse<Usuario>> call, @NonNull Throwable t) {
                         cargando.setValue(false);
-                        error.setValue("Error de conexión: " + t.getMessage());
+                        error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                     }
                 });
     }
 }
-
- */

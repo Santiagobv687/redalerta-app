@@ -1,0 +1,5 @@
+<!-- Ejemplo para Alta -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/ra_prio_alta" />
+    <size android:width="8dp" android:height="8dp" />
+</shape>

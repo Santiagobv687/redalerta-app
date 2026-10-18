@@ -40,19 +40,38 @@
 
     <!-- ═══ Paso 2 ═══ -->
     <string name="reg_paso2_titulo">INFORMACIÓN DE UBICACIÓN</string>
+    <string name="reg_label_departamento">DEPARTAMENTO</string>
+    <string name="reg_label_municipio">MUNICIPIO / CIUDAD</string>
     <string name="reg_label_localidad">LOCALIDAD</string>
-    <string name="reg_label_barrio">BARRIO</string>
+    <string name="reg_label_barrio">BARRIO / SECTOR</string>
     <string name="reg_label_direccion">DIRECCIÓN DE RESIDENCIA</string>
     <string name="reg_label_rol">ROL EN EL SISTEMA</string>
+    <string name="reg_hint_departamento">Seleccionar departamento…</string>
+    <string name="reg_hint_municipio">Seleccionar municipio…</string>
     <string name="reg_hint_localidad">Seleccionar localidad…</string>
-    <string name="reg_hint_barrio">Nombre del barrio</string>
-    <string name="reg_hint_direccion">Cra / Cll #</string>
+    <string name="reg_hint_barrio">Nombre del barrio o sector</string>
+    <string name="reg_hint_direccion">Calle / Carrera #</string>
     <string name="reg_rol_ciudadano">Ciudadano</string>
-    <string name="reg_rol_operador">Operador</string>
-    <string name="reg_rol_supervisor">Supervisor</string>
 
     <!-- ═══ Paso 3 ═══ -->
-    <string name="reg_paso3_titulo">SEGURIDAD Y CONFIRMACIÓN</string>
+    <string name="reg_paso3_titulo">CARACTERIZACIÓN SOCIAL</string>
+    <string name="reg_paso3_caracterizacion_titulo">ENCUESTA DE CARACTERIZACIÓN</string>
+    <string name="reg_label_fecha_nacimiento">FECHA DE NACIMIENTO *</string>
+    <string name="reg_label_genero">GÉNERO *</string>
+    <string name="reg_label_integrantes">INTEGRANTES DEL HOGAR *</string>
+    <string name="reg_hint_fecha_nacimiento">AAAA-MM-DD</string>
+    <string name="reg_hint_genero">Seleccionar género…</string>
+    <string name="reg_hint_integrantes">1</string>
+    <string name="reg_sw_gestacion">¿En estado de gestación o lactancia?</string>
+    <string name="reg_sw_menores">¿Convive con menores de edad?</string>
+    <string name="reg_label_cant_menores">CANTIDAD DE MENORES</string>
+    <string name="reg_sw_discapacidad">¿Algún integrante con discapacidad?</string>
+    <string name="reg_label_espec_discapacidad">ESPECIFIQUE LA DISCAPACIDAD</string>
+    <string name="reg_sw_etnico">¿Pertenece a un grupo étnico?</string>
+    <string name="reg_label_espec_etnico">ESPECIFIQUE EL GRUPO ÉTNICO</string>
+
+    <!-- ═══ Paso 4 ═══ -->
+    <string name="reg_paso4_titulo">SEGURIDAD Y CONFIRMACIÓN</string>
     <string name="reg_resumen_titulo">Resumen del registro</string>
     <string name="reg_label_contrasena">CONTRASEÑA</string>
     <string name="reg_label_confirmar">CONFIRMAR CONTRASEÑA</string>
@@ -64,20 +83,20 @@
     <string name="reg_btn_crear">Crear cuenta</string>
 
     <!-- ═══ Registro exitoso ═══ -->
-    <string name="reg_exitoso_titulo">REGISTRO EXITOSO</string>
-    <string name="reg_exitoso_subtitulo">Su cuenta ha sido creada correctamente.</string>
-    <string name="reg_exitoso_proximos">Próximos pasos:</string>
-    <string name="reg_exitoso_paso1">1. Revise su correo para confirmar la cuenta.</string>
-    <string name="reg_exitoso_paso2">2. Su rol inicial es ciudadano.</string>
-    <string name="reg_exitoso_paso3">3. Un administrador puede actualizar su rol si aplica.</string>
-    <string name="reg_exitoso_btn">Ir a inicio de sesión</string>
-    <string name="reg_exitoso_content_desc">Registro completado</string>
+    <string name="reg_exitoso_titulo">¡REGISTRO COMPLETADO!</string>
+    <string name="reg_exitoso_subtitulo">Su cuenta ha sido creada y activada con éxito en RedAlerta.</string>
+    <string name="reg_exitoso_que_hacer">¿Qué puedes hacer en RedAlerta?</string>
+    <string name="reg_exitoso_guia1">• Reportar alertas comunitarias e incidentes de seguridad en tiempo real.</string>
+    <string name="reg_exitoso_guia2">• Consultar el listado de emergencias y avisos activos en tu municipio.</string>
+    <string name="reg_exitoso_guia3">• Realizar seguimiento al estado de verificación de tus publicaciones.</string>
+    <string name="reg_exitoso_btn">INICIAR SESIÓN AHORA</string>
+    <string name="reg_exitoso_content_desc">Registro completado exitosamente</string>
 
     <!-- Drawer -->
     <string name="menu_inicio">Inicio</string>
     <string name="menu_registro_alerta">+ Registro de Alertas</string>
     <string name="menu_mi_perfil">Mi perfil</string>
-    <string name="menu_mis_publicaciones">Mis publicaciones</string>
+    <string name="menu_mis_publicaciones">Mis alertas</string>
     <string name="menu_salir">Salir</string>
 
     <!-- Registro de Alerta -->
@@ -117,4 +136,53 @@
     <string name="alerta_registrada_prioridad_label">Prioridad</string>
     <string name="alerta_registrada_ubicacion_label">Ubicación</string>
     <string name="alerta_registrada_btn">Registrar otra alerta</string>
+
+    <!-- Mis Publicaciones / Mis Alertas -->
+    <string name="mis_pub_titulo">MIS ALERTAS</string>
+    <string name="mis_pub_subtitulo">Consulta el estado de tus alertas. Puedes editar una publicación mientras esté en revisión.</string>
+    <string name="mis_pub_editar">Editar publicación</string>
+    <string name="mis_pub_eliminar">Eliminar publicación</string>
+    <string name="mis_pub_vacio">No tienes alertas registradas aún.</string>
+
+    <!-- Inicio -->
+    <string name="inicio_titulo">INICIO</string>
+    <string name="inicio_subtitulo">Conoce las alertas publicadas recientemente por la comunidad.</string>
+
+    <!-- Admin -->
+    <string name="admin_verificacion">Verificación y\nDireccionamiento</string>
+    <string name="admin_gestion">Gestión y Seguimiento</string>
+    <string name="verif_titulo">VERIFICACIÓN Y DIRECCIONAMIENTO</string>
+    <string name="verif_subtitulo">Revise, valide y asigne unidades de respuesta a las alertas recibidas.</string>
+    <string name="verif_pendientes">Pendientes</string>
+    <string name="verif_verificadas">Verificadas</string>
+    <string name="verif_cerradas">Cerradas</string>
+    <string name="verif_filtro_todos">Todas</string>
+    <string name="verif_filtro_pendientes">Pendientes</string>
+    <string name="verif_filtro_verificadas">Verificadas</string>
+    <string name="verif_filtro_cerradas">Cerradas</string>
+    <string name="verif_aceptar">Aceptar</string>
+    <string name="verif_estado_verificada">Verificada</string>
+    <string name="verif_estado_rechazada">Rechazada</string>
+    <string name="verif_asignar_estado">Cambiar estado a...</string>
+    <!-- Feed de Alertas / Territorio -->
+    <string name="territorio_departamento_fijo">QUINDÍO</string>
+    <string name="territorio_municipio_activo">Armenia</string>
+    <string name="filtro_todos_municipios">Todo el departamento</string>
+    <string name="filtro_municipio_puntual">Municipio: %1$s</string>
+    <string name="filtro_estado_todas">Todas</string>
+    <string name="filtro_estado_revision">En revisión</string>
+    <string name="filtro_estado_gestion">En gestión</string>
+    <string name="filtro_estado_direccionadas">Direccionadas</string>
+    <string name="filtro_estado_resueltas">Resueltas</string>
+    <string name="alerta_evidencia_desc">Vista previa de evidencia fotográfica</string>
+    <string name="empty_alertas_titulo">Sin incidentes reportados</string>
+    <string name="empty_alertas_subtitulo">No hay incidentes reportados en este municipio.</string>
+    <string name="error_conexion_subtitulo">No fue posible conectar con el servicio de RedAlerta. Por favor, verifica tu conexión a internet e intenta nuevamente.</string>
+    <string name="loading_alertas">Cargando alertas comunitarias...</string>
+    <string name="btn_actualizar">Actualizar</string>
+    <string name="reportar_alerta_fab">Reportar Alerta</string>
+    <string name="reportar_alerta_desc">Reportar nueva alerta comunitaria</string>
+
+    <string name="gestion_titulo">GESTIÓN Y SEGUIMIENTO</string>
+    <string name="gestion_mensaje">Módulo en construcción...</string>
 </resources>

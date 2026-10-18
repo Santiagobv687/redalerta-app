@@ -15,7 +15,19 @@
             android:title="@string/menu_mi_perfil" />
         <item
             android:id="@+id/nav_mis_publicaciones"
-            android:icon="@drawable/ic_list"
+            android:icon="@drawable/ic_my_alerts"
             android:title="@string/menu_mis_publicaciones" />
+
+        <!-- ═══ ADMINISTRADOR ═══ -->
+        <item
+            android:id="@+id/nav_verificacion"
+            android:icon="@drawable/ic_add_alert"
+            android:title="@string/admin_verificacion"
+            android:visible="false" />
+        <item
+            android:id="@+id/nav_gestion"
+            android:icon="@drawable/ic_list"
+            android:title="@string/admin_gestion"
+            android:visible="false" />
     </group>
 </menu>

@@ -15,7 +15,7 @@
         android:gravity="center_horizontal"
         android:paddingStart="28dp"
         android:paddingEnd="28dp"
-        android:paddingTop="80dp"
+        android:paddingTop="60dp"
         android:paddingBottom="32dp">
 
         <!-- ═══════════ Círculo con check ═══════════ -->
@@ -39,7 +39,7 @@
             android:layout_marginTop="24dp"
             android:text="@string/reg_exitoso_titulo"
             android:textColor="@color/ra_success_title"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:letterSpacing="0.02" />
 
@@ -47,28 +47,30 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="@string/reg_exitoso_subtitulo"
             android:textColor="@color/ra_light_text_secondary"
             android:textSize="14sp" />
 
-        <!-- ═══════════ Nombre + correo ═══════════ -->
+        <!-- ═══════════ Saludo personalizado y Correo ═══════════ -->
         <TextView
             android:id="@+id/tvResumenUsuario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:textColor="@color/ra_light_text_secondary"
-            android:textSize="13sp"
-            tools:text="S S — s@g.c" />
+            android:textColor="@color/ra_light_text"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:lineSpacingMultiplier="1.2"
+            tools:text="¡Bienvenido(a), Juan Pérez!\njuan.perez@ejemplo.com" />
 
-        <!-- ═══════════ Card de próximos pasos ═══════════ -->
+        <!-- ═══════════ Card de guía para el ciudadano ═══════════ -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             app:cardBackgroundColor="@color/ra_success_card_bg"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
@@ -84,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/reg_exitoso_proximos"
+                    android:text="@string/reg_exitoso_que_hacer"
                     android:textColor="@color/ra_success_card_text"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -92,40 +94,39 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/reg_exitoso_guia1"
+                    android:textColor="@color/ra_success_card_text"
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.2" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/reg_exitoso_paso1"
+                    android:text="@string/reg_exitoso_guia2"
                     android:textColor="@color/ra_success_card_text"
-                    android:textSize="12sp"
-                    android:lineSpacingMultiplier="1.3" />
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.2" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/reg_exitoso_paso2"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/reg_exitoso_guia3"
                     android:textColor="@color/ra_success_card_text"
-                    android:textSize="12sp"
-                    android:lineSpacingMultiplier="1.3" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/reg_exitoso_paso3"
-                    android:textColor="@color/ra_success_card_text"
-                    android:textSize="12sp"
-                    android:lineSpacingMultiplier="1.3" />
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.2" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ═══════════ Botón Ir a login ═══════════ -->
+        <!-- ═══════════ Botón Iniciar Sesión ═══════════ -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnIrLogin"
             style="@style/Widget.RedAlerta.Button.Next"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:minWidth="200dp"
+            android:layout_marginTop="28dp"
             android:text="@string/reg_exitoso_btn" />
 
     </LinearLayout>

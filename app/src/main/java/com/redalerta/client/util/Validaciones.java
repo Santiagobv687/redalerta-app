@@ -1,7 +1,7 @@
 package com.redalerta.client.util;
 
 import android.util.Patterns;
-import com.redalerta.client.model.Rol;
+import com.redalerta.client.model.usuario.Rol;
 
 public class Validaciones {
     public static boolean esCorreoValido(String correo) {
@@ -16,7 +16,7 @@ public class Validaciones {
         return texto != null && !texto.trim().isEmpty();
     }
 
-    /** Regla de negocio: solo 3 roles pueden entrar por la app móvil. */
+    /** Ambos roles son válidos en la app móvil. */
     public static boolean esRolPermitidoEnMovil(String rol) {
         return Rol.esRolMovil(rol);
     }

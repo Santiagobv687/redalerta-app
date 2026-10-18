@@ -83,14 +83,15 @@
         <item name="android:textColorHighlight">#33E53935</item>
     </style>
 
-    <!-- Botón "Siguiente" rojo compacto -->
+    <!-- Botón "Siguiente" rojo -->
     <style name="Widget.RedAlerta.Button.Next" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/ra_red</item>
         <item name="android:textColor">@color/ra_white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">14sp</item>
         <item name="cornerRadius">6dp</item>
-        <item name="android:minHeight">44dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">48dp</item>
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
     </style>
@@ -101,7 +102,8 @@
         <item name="android:textColor">@color/ra_light_text</item>
         <item name="android:textSize">14sp</item>
         <item name="cornerRadius">6dp</item>
-        <item name="android:minHeight">44dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">48dp</item>
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
     </style>
@@ -112,7 +114,8 @@
         <item name="android:textColor">@color/ra_light_text</item>
         <item name="android:textSize">13sp</item>
         <item name="cornerRadius">6dp</item>
-        <item name="android:minHeight">44dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">48dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
     </style>
@@ -159,5 +162,37 @@
         <item name="android:navigationBarColor">@color/ra_light_bg</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <!-- ═══ Estilos para Verificación (Admin) ═══ -->
+    <style name="StatCard">
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/bg_stat_card</item>
+        <item name="android:layout_marginEnd">8dp</item> <!-- Margen derecho -->
+    </style>
+
+    <style name="StatNumber">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="StatLabel">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/ra_text_muted</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="FilterChip">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginEnd">8dp</item>
     </style>
 </resources>
