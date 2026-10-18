@@ -29,6 +29,10 @@
             "description": "Endpoints para la gestion de alertas comunitarias"
         },
         {
+            "name": "Administracion - Solicitudes",
+            "description": "Endpoints para la auditoria, revision y gestion de postulaciones de registro"
+        },
+        {
             "name": "Usuarios",
             "description": "Endpoints para consulta y actualizacion del perfil del usuario"
         },
@@ -437,12 +441,12 @@
                 "tags": [
                     "Autenticacion"
                 ],
-                "summary": "Cerrar sesi\u00f3n",
-                "description": "Invalida la sesi\u00f3n del usuario en el contexto de seguridad y notifica a la aplicaci\u00f3n cliente para purgar sus credenciales locales.",
+                "summary": "Cerrar sesión",
+                "description": "Invalida la sesión del usuario en el contexto de seguridad y notifica a la aplicación cliente para purgar sus credenciales locales.",
                 "operationId": "logout",
                 "responses": {
                     "200": {
-                        "description": "Sesi\u00f3n cerrada exitosamente",
+                        "description": "Sesión cerrada exitosamente",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -452,7 +456,7 @@
                         }
                     },
                     "401": {
-                        "description": "Token de autenticaci\u00f3n ausente o inv\u00e1lido",
+                        "description": "Token de autenticación ausente o inválido",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -522,20 +526,13 @@
                     "Alertas"
                 ],
                 "summary": "Listar alertas con filtros",
-                "description": "Obtiene un listado paginado de alertas activas o filtradas por ubicacion (departamento, municipio), estado y rango de fechas.",
+                "description": "Obtiene un listado paginado de alertas activas o filtradas. El departamento es un valor fijo ligado a la cuenta del usuario autenticado. Permite filtrar opcionalmente por municipio territorial, estado y rango de fechas.",
                 "operationId": "listarAlertas",
                 "parameters": [
                     {
-                        "name": "departamento",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "municipio",
                         "in": "query",
+                        "description": "Municipio territorial dentro del departamento del usuario para filtrar (opcional)",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -544,6 +541,7 @@
                     {
                         "name": "estado",
                         "in": "query",
+                        "description": "Estado puntual de la alerta (opcional)",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -559,6 +557,7 @@
                     {
                         "name": "fechaInicio",
                         "in": "query",
+                        "description": "Fecha inicial del rango de creacion (opcional, formato YYYY-MM-DD)",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -568,6 +567,7 @@
                     {
                         "name": "fechaFin",
                         "in": "query",
+                        "description": "Fecha final del rango de creacion (opcional, formato YYYY-MM-DD)",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -783,6 +783,181 @@
                 ]
             }
         },
+        "/admin/solicitudes-registro/{id}/rechazar": {
+            "post": {
+                "tags": [
+                    "Administracion - Solicitudes"
+                ],
+                "summary": "Rechazar solicitud de registro",
+                "description": "Rechaza una solicitud de registro en estado PENDIENTE, registrando el motivo de rechazo obligatorio y manteniendo inactiva la cuenta de usuario.",
+                "operationId": "rechazarSolicitud",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RechazarSolicitudRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Solicitud de registro rechazada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseSolicitudRegistroResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La solicitud no se encuentra en estado PENDIENTE o motivo invalido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o cuenta inactiva",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol ROLE_ADMIN)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Solicitud de registro no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/solicitudes-registro/{id}/aprobar": {
+            "post": {
+                "tags": [
+                    "Administracion - Solicitudes"
+                ],
+                "summary": "Aprobar solicitud de registro y activar cuenta",
+                "description": "Aprueba una solicitud de registro en estado PENDIENTE, activa la cuenta de usuario correspondiente para que pueda operar en la plataforma y registra la trazabilidad del administrador auditor.",
+                "operationId": "aprobarSolicitud",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AprobarSolicitudRequestDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Solicitud aprobada y cuenta activada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseSolicitudRegistroResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La solicitud no se encuentra en estado PENDIENTE o datos invalidos",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o cuenta inactiva",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol ROLE_ADMIN)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Solicitud de registro no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/alertas/mis-alertas": {
             "get": {
                 "tags": [
@@ -824,6 +999,168 @@
                     },
                     "403": {
                         "description": "Acceso denegado (requiere rol CIUDADANO)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/solicitudes-registro": {
+            "get": {
+                "tags": [
+                    "Administracion - Solicitudes"
+                ],
+                "summary": "Consultar bandeja de postulaciones",
+                "description": "Obtiene la bandeja paginada de solicitudes de registro de lideres y organizaciones. Por defecto muestra las pendientes de verificacion.",
+                "operationId": "listarSolicitudes",
+                "parameters": [
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "PENDIENTE",
+                                "APROBADA",
+                                "RECHAZADA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "rol",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ROLE_CIUDADANO",
+                                "ROLE_LIDER",
+                                "ROLE_ORGANIZACION",
+                                "ROLE_ADMIN"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bandeja de solicitudes recuperada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponsePageSolicitudRegistroResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Filtro de rol invalido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o cuenta inactiva",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol ROLE_ADMIN)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/solicitudes-registro/{id}": {
+            "get": {
+                "tags": [
+                    "Administracion - Solicitudes"
+                ],
+                "summary": "Consultar detalle y evidencias de una postulacion",
+                "description": "Obtiene el detalle exhaustivo de una solicitud de registro institucional o comunitaria, incluyendo sus soportes probatorios y datos del postulante.",
+                "operationId": "obtenerSolicitudPorId",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle de la solicitud recuperado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseSolicitudRegistroResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o cuenta inactiva",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol ROLE_ADMIN)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Solicitud de registro no encontrada",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -1159,11 +1496,42 @@
                         ],
                         "example": "PENDIENTE_REVISION"
                     },
+                    "categoria": {
+                        "type": "string",
+                        "description": "Categoria tematica de la alerta",
+                        "enum": [
+                            "DESASTRE_NATURAL",
+                            "INCENDIO",
+                            "SEGURIDAD_CIUDADANA",
+                            "INFRAESTRUCTURA_Y_SERVICIOS",
+                            "SALUD_Y_EMERGENCIA_MEDICA",
+                            "AMBIENTAL",
+                            "OTRO"
+                        ],
+                        "example": "DESASTRE_NATURAL"
+                    },
+                    "prioridad": {
+                        "type": "string",
+                        "description": "Nivel de prioridad o urgencia asignado a la alerta",
+                        "enum": [
+                            "ALTA",
+                            "MEDIA",
+                            "BAJA"
+                        ],
+                        "example": "ALTA"
+                    },
                     "evidencias": {
                         "type": "array",
                         "description": "Evidencias fotograficas adjuntas",
                         "items": {
                             "$ref": "#/components/schemas/EvidenciaResponseDto"
+                        }
+                    },
+                    "historial": {
+                        "type": "array",
+                        "description": "Historial cronologico de cambios de estado y acciones ejecutadas",
+                        "items": {
+                            "$ref": "#/components/schemas/RegistroHistorialResponseDto"
                         }
                     },
                     "esAnonimo": {
@@ -1226,6 +1594,50 @@
                         "type": "string",
                         "format": "date-time",
                         "description": "Fecha de subida del archivo"
+                    }
+                }
+            },
+            "RegistroHistorialResponseDto": {
+                "type": "object",
+                "description": "Registro de trazabilidad y cambio de estado de una alerta",
+                "properties": {
+                    "motivoOAccion": {
+                        "type": "string",
+                        "description": "Motivo, accion o justificacion de la transicion",
+                        "example": "Alerta reportada por ciudadano"
+                    },
+                    "fechaAccion": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha y hora en que se ejecuto la accion"
+                    },
+                    "estadoResultante": {
+                        "type": "string",
+                        "description": "Estado resultante tras la accion",
+                        "enum": [
+                            "PENDIENTE_REVISION",
+                            "EN_GESTION",
+                            "DIRECCIONADA",
+                            "RESUELTA",
+                            "RECHAZADA"
+                        ],
+                        "example": "PENDIENTE_REVISION"
+                    },
+                    "responsableId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador del usuario que ejecuto la accion",
+                        "example": 1
+                    },
+                    "responsableNombre": {
+                        "type": "string",
+                        "description": "Nombre del usuario responsable",
+                        "example": "Juan Perez"
+                    },
+                    "responsableRol": {
+                        "type": "string",
+                        "description": "Rol del usuario responsable",
+                        "example": "ROLE_CIUDADANO"
                     }
                 }
             },
@@ -1569,6 +1981,211 @@
                     }
                 }
             },
+            "RechazarSolicitudRequestDto": {
+                "type": "object",
+                "description": "Datos requeridos para rechazar una solicitud de registro",
+                "properties": {
+                    "motivo": {
+                        "type": "string",
+                        "description": "Motivo o justificacion administrativa del rechazo de la postulacion",
+                        "example": "El documento soporte adjunto no corresponde a la personeria juridica de la entidad.",
+                        "maxLength": 1000,
+                        "minLength": 0
+                    }
+                },
+                "required": [
+                    "motivo"
+                ]
+            },
+            "ApiResponseSolicitudRegistroResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/SolicitudRegistroResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "EvidenciaSolicitudResponseDto": {
+                "type": "object",
+                "description": "Soporte documental adjunto a la solicitud de registro",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador unico de la evidencia",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "URL publica o de acceso al archivo en almacenamiento seguro",
+                        "example": "https://s3.amazonaws.com/redalerta/soportes/cert.pdf"
+                    },
+                    "nombreArchivo": {
+                        "type": "string",
+                        "description": "Nombre original o descriptivo del archivo",
+                        "example": "certificado_jac.pdf"
+                    },
+                    "fechaSubida": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha y hora de carga del archivo"
+                    }
+                }
+            },
+            "SolicitudRegistroResponseDto": {
+                "type": "object",
+                "description": "Datos de resumen de una solicitud de registro en la bandeja administrativa",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador unico de la solicitud",
+                        "example": 1
+                    },
+                    "usuarioId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador del usuario postulante",
+                        "example": 10
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "description": "Nombre completo del postulante o representante",
+                        "example": "Carlos Gomez"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Correo electronico del usuario",
+                        "example": "lider@comunidad.org"
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "description": "Telefono de contacto",
+                        "example": 3001234567
+                    },
+                    "rol": {
+                        "type": "string",
+                        "description": "Rol solicitado para la activacion",
+                        "enum": [
+                            "ROLE_CIUDADANO",
+                            "ROLE_LIDER",
+                            "ROLE_ORGANIZACION",
+                            "ROLE_ADMIN"
+                        ],
+                        "example": "ROLE_LIDER"
+                    },
+                    "documentoNumero": {
+                        "type": "string",
+                        "description": "Numero de documento de identidad o identificacion",
+                        "example": 1094857213
+                    },
+                    "documentoTipo": {
+                        "type": "string",
+                        "description": "Tipo de documento de identidad",
+                        "enum": [
+                            "CEDULA",
+                            "PASAPORTE",
+                            "TARJETA_EXTRANJERIA"
+                        ],
+                        "example": "CEDULA"
+                    },
+                    "departamento": {
+                        "type": "string",
+                        "description": "Departamento territorial",
+                        "example": "Quindio"
+                    },
+                    "municipio": {
+                        "type": "string",
+                        "description": "Municipio territorial",
+                        "example": "Armenia"
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "description": "Direccion detallada de despacho o residencia",
+                        "example": "Carrera 14 # 20-30"
+                    },
+                    "sectorComunidad": {
+                        "type": "string",
+                        "description": "Sector o comunidad representada (en caso de lider)",
+                        "example": "Barrio La Castellana - JAC"
+                    },
+                    "razonSocial": {
+                        "type": "string",
+                        "description": "Razon social o nombre institucional (en caso de organizacion)",
+                        "example": "Cuerpo de Bomberos Voluntarios"
+                    },
+                    "nit": {
+                        "type": "string",
+                        "description": "NIT institucional (en caso de organizacion)",
+                        "example": "900123456-1"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "description": "Estado actual de la solicitud",
+                        "enum": [
+                            "PENDIENTE",
+                            "APROBADA",
+                            "RECHAZADA"
+                        ],
+                        "example": "PENDIENTE"
+                    },
+                    "observacionesAdmin": {
+                        "type": "string",
+                        "description": "Observaciones o justificacion del administrador",
+                        "example": "Documentacion pendiente de revision"
+                    },
+                    "fechaPostulacion": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha y hora en que se envio la postulacion"
+                    },
+                    "fechaRevision": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha y hora en que fue evaluada por el administrador"
+                    },
+                    "revisadoPorNombre": {
+                        "type": "string",
+                        "description": "Nombre del administrador que reviso la solicitud"
+                    },
+                    "totalEvidencias": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Cantidad de evidencias o soportes adjuntos",
+                        "example": 2
+                    },
+                    "evidencias": {
+                        "type": "array",
+                        "description": "Listado de soportes probatorios adjuntos",
+                        "items": {
+                            "$ref": "#/components/schemas/EvidenciaSolicitudResponseDto"
+                        }
+                    }
+                }
+            },
+            "AprobarSolicitudRequestDto": {
+                "type": "object",
+                "description": "Datos para la aprobacion y activacion de una solicitud de registro",
+                "properties": {
+                    "observaciones": {
+                        "type": "string",
+                        "description": "Observaciones o justificacion del administrador para la aprobacion",
+                        "example": "Soportes validados y conforme a las politicas comunitarias.",
+                        "maxLength": 1000,
+                        "minLength": 0
+                    }
+                }
+            },
             "Pageable": {
                 "type": "object",
                 "properties": {
@@ -1639,15 +2256,15 @@
                     "sort": {
                         "$ref": "#/components/schemas/SortObject"
                     },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
                     "first": {
                         "type": "boolean"
                     },
                     "last": {
                         "type": "boolean"
-                    },
-                    "numberOfElements": {
-                        "type": "integer",
-                        "format": "int32"
                     },
                     "empty": {
                         "type": "boolean"
@@ -1690,6 +2307,70 @@
                         "type": "boolean"
                     },
                     "unsorted": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApiResponsePageSolicitudRegistroResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/PageSolicitudRegistroResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "PageSolicitudRegistroResponseDto": {
+                "type": "object",
+                "properties": {
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SolicitudRegistroResponseDto"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/PageableObject"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/SortObject"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "empty": {
                         "type": "boolean"
                     }
                 }

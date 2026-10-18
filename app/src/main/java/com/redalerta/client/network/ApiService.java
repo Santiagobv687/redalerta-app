@@ -30,7 +30,6 @@ public interface ApiService {
     // ═══ Alertas ═══
     @GET("alertas")
     Call<ApiResponse<PageAlertaResponse>> listarAlertas(
-            @Query("departamento") String departamento,
             @Query("municipio") String municipio,
             @Query("estado") String estado,
             @Query("fechaInicio") String fechaInicio,
