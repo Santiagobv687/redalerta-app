@@ -10,8 +10,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
 
-    // Cambia esta URL por la del backend Spring Boot
-    private static final String BASE_URL = "https://redalerta-api.example.com/";
+    // URL por defecto para emulador Android apuntando a Spring Boot backend
+    private static final String BASE_URL = "http://10.0.2.2:8080/api/v1/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getRetrofit(Context context) {
