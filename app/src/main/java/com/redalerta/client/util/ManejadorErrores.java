@@ -40,7 +40,7 @@ public class ManejadorErrores {
 
     public static String obtenerMensajeAmigable(Response<?> response, ContextoOperacion contexto) {
         if (response == null) {
-            return "No se recibió respuesta del servidor. Intente nuevamente.";
+            return "No fue posible recibir respuesta del sistema RedAlerta. Por favor, intenta nuevamente.";
         }
 
         String rawJson = null;
@@ -76,7 +76,7 @@ public class ManejadorErrores {
                     return sb.toString();
                 }
 
-                // 2. Si no cuadró con ErrorResponse estricto, buscar campos "message", "error" o "errors" genéricos de Spring Boot
+                // 2. Si no cuadró con ErrorResponse estricto, buscar campos genéricos
                 JsonElement jsonElement = JsonParser.parseString(rawJson);
                 if (jsonElement.isJsonObject()) {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -105,7 +105,7 @@ public class ManejadorErrores {
             }
         }
 
-        // 3. Fallback de respuesta amigable basado en el código HTTP de respuesta según OpenAPI
+        // 3. Fallback de respuesta amigable centrado en el ciudadano
         int code = response.code();
         switch (code) {
             case 400:
@@ -114,47 +114,44 @@ public class ManejadorErrores {
                 } else if (contexto == ContextoOperacion.REGISTRO) {
                     return "Los datos ingresados contienen inconsistencias o el número de documento ya está registrado.";
                 }
-                return "Los datos enviados no son válidos. Por favor revise el formulario.";
+                return "La información ingresada no es válida. Por favor revise el formulario.";
 
             case 401:
                 if (contexto == ContextoOperacion.LOGIN) {
-                    return "Credenciales inválidas. Por favor verifique su correo y contraseña.";
+                    return "Credenciales incorrectas. Por favor verifique su correo y contraseña.";
                 }
-                return "Su sesión ha caducado o no se encuentra autenticado.";
+                return "Su sesión ha caducado. Por favor inicie sesión nuevamente.";
 
             case 403:
-                return "No tiene permisos para realizar esta acción.";
+                return "No tiene autorización para realizar esta acción.";
 
             case 404:
-                return "El usuario o recurso solicitado no fue encontrado.";
+                return "La información o alerta solicitada no se encuentra disponible.";
 
             case 409:
                 if (contexto == ContextoOperacion.REGISTRO) {
-                    return "El correo electrónico o número de documento ya se encuentra registrado. Por favor intente iniciar sesión.";
+                    return "El correo electrónico o número de documento ya se encuentra registrado.";
                 }
-                return "Existe un conflicto con los datos ingresados en el servidor.";
+                return "Existe un conflicto con la solicitud enviada. Por favor intente nuevamente.";
 
             case 500:
             case 502:
             case 503:
-                return "El servidor de RedAlerta está experimentando problemas técnicos. Por favor intente más tarde.";
+                return "El sistema RedAlerta está experimentando un mantenimiento o problema temporal. Por favor intente en unos momentos.";
 
             default:
-                return "Ocurrió un error inesperado al comunicarse con el servidor (Código " + code + ").";
+                return "No fue posible completar la solicitud. Por favor intente más tarde.";
         }
     }
 
     public static String obtenerMensajeFalloRed(Throwable t) {
         if (t == null) {
-            return "No fue posible conectar con el servidor de RedAlerta.";
+            return "No pudimos conectar con los servicios de RedAlerta. Por favor, verifica tu conexión a internet o intenta de nuevo en unos momentos.";
         }
         String msg = t.getLocalizedMessage() != null ? t.getLocalizedMessage().toLowerCase() : "";
-        if (msg.contains("connect") || msg.contains("failed to connect") || msg.contains("refused")) {
-            return "No fue posible conectar con el servidor. Verifique que la aplicación backend esté ejecutándose y que su teléfono esté en la misma red.";
+        if (msg.contains("timeout") || msg.contains("timed out")) {
+            return "El servicio de RedAlerta tardó demasiado en responder. Por favor, verifica la señal de tu red e intenta nuevamente.";
         }
-        if (msg.contains("timeout")) {
-            return "La conexión con el servidor tardó demasiado tiempo. Verifique su red e intente nuevamente.";
-        }
-        return "No fue posible establecer conexión con el servidor. Verifique su red e intente nuevamente.";
+        return "No fue posible conectar con el servicio de RedAlerta. Por favor, verifica que tu dispositivo tenga acceso a internet e intenta nuevamente.";
     }
 }

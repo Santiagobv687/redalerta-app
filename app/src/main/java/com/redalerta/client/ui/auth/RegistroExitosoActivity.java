@@ -24,12 +24,16 @@ public class RegistroExitosoActivity extends AppCompatActivity {
         String apellido = getIntent().getStringExtra(EXTRA_APELLIDO);
         String correo   = getIntent().getStringExtra(EXTRA_CORREO);
 
-        // Mostrar iniciales + correo (ej: "S S — s@g.c")
-        String iniciales = construirIniciales(nombre, apellido);
-        String resumen = iniciales + " — " + (correo != null ? correo : "");
-        binding.tvResumenUsuario.setText(resumen);
+        // Mostrar saludo personalizado limpio con Nombre + Apellido
+        String nombreCompleto = ((nombre != null ? nombre : "") + " " + (apellido != null ? apellido : "")).trim();
+        if (nombreCompleto.isEmpty()) {
+            nombreCompleto = "Ciudadano";
+        }
 
-        // Botón: volver al login
+        String saludo = "¡Bienvenido(a), " + nombreCompleto + "!\n" + (correo != null ? correo : "");
+        binding.tvResumenUsuario.setText(saludo);
+
+        // Botón: ir a iniciar sesión
         binding.btnIrLogin.setOnClickListener(v -> {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -37,20 +41,12 @@ public class RegistroExitosoActivity extends AppCompatActivity {
             finish();
         });
 
-        // Bloquear botón "atrás" para que no vuelva al formulario
+        // Bloquear botón "atrás" para que no vuelva al formulario de registro
         getOnBackPressedDispatcher().addCallback(this,
                 new androidx.activity.OnBackPressedCallback(true) {
                     @Override public void handleOnBackPressed() {
                         binding.btnIrLogin.performClick();
                     }
                 });
-    }
-
-    private String construirIniciales(String nombre, String apellido) {
-        String n = (nombre != null && !nombre.isEmpty())
-                ? String.valueOf(nombre.charAt(0)).toUpperCase() : "";
-        String a = (apellido != null && !apellido.isEmpty())
-                ? String.valueOf(apellido.charAt(0)).toUpperCase() : "";
-        return (n + " " + a).trim();
     }
 }
