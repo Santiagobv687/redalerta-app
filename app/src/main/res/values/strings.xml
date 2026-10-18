@@ -83,14 +83,14 @@
     <string name="reg_btn_crear">Crear cuenta</string>
 
     <!-- ═══ Registro exitoso ═══ -->
-    <string name="reg_exitoso_titulo">REGISTRO EXITOSO</string>
-    <string name="reg_exitoso_subtitulo">Su cuenta ha sido creada correctamente.</string>
-    <string name="reg_exitoso_proximos">Próximos pasos:</string>
-    <string name="reg_exitoso_paso1">1. Revise su correo para confirmar la cuenta.</string>
-    <string name="reg_exitoso_paso2">2. Su rol inicial es ciudadano.</string>
-    <string name="reg_exitoso_paso3">3. Un administrador puede actualizar su rol si aplica.</string>
-    <string name="reg_exitoso_btn">Ir a inicio de sesión</string>
-    <string name="reg_exitoso_content_desc">Registro completado</string>
+    <string name="reg_exitoso_titulo">¡REGISTRO COMPLETADO!</string>
+    <string name="reg_exitoso_subtitulo">Su cuenta ha sido creada y activada con éxito en RedAlerta.</string>
+    <string name="reg_exitoso_que_hacer">¿Qué puedes hacer en RedAlerta?</string>
+    <string name="reg_exitoso_guia1">• Reportar alertas comunitarias e incidentes de seguridad en tiempo real.</string>
+    <string name="reg_exitoso_guia2">• Consultar el listado de emergencias y avisos activos en tu municipio.</string>
+    <string name="reg_exitoso_guia3">• Realizar seguimiento al estado de verificación de tus publicaciones.</string>
+    <string name="reg_exitoso_btn">INICIAR SESIÓN AHORA</string>
+    <string name="reg_exitoso_content_desc">Registro completado exitosamente</string>
 
     <!-- Drawer -->
     <string name="menu_inicio">Inicio</string>
