@@ -115,6 +115,45 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- ═══════════ UBICACIÓN TERRITORIAL (CATÁLOGO) ═══════════ -->
+        <TextView style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" android:text="UBICACIÓN Y TERRITORIO *" />
+
+        <!-- DEPARTAMENTO -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDepartamento"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:hint="DEPARTAMENTO *"
+            app:endIconMode="dropdown_menu"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/etDepartamento"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:inputType="none"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- MUNICIPIO -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilMunicipio"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:hint="MUNICIPIO / CIUDAD *"
+            app:endIconMode="dropdown_menu"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/etMunicipio"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:inputType="none"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- ═══════════ DIRECCIÓN ═══════════ -->
         <TextView style="@style/Widget.RedAlerta.Label"
             android:layout_width="wrap_content" android:layout_height="wrap_content"

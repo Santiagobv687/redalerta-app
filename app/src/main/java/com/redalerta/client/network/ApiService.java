@@ -4,6 +4,7 @@ import com.redalerta.client.model.alerta.*;
 import com.redalerta.client.model.auth.*;
 import com.redalerta.client.model.common.*;
 import com.redalerta.client.model.usuario.*;
+import java.util.List;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.*;
@@ -19,6 +20,10 @@ public interface ApiService {
 
     @POST("auth/logout")
     Call<ApiResponse<Void>> logout();
+
+    // ═══ Catálogos Públicos ═══
+    @GET("catalogo/ubicaciones")
+    Call<ApiResponse<List<DepartamentoResponse>>> obtenerUbicaciones();
 
     // ═══ Usuarios / Perfil ═══
     @GET("usuarios/perfil")

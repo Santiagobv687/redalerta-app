@@ -139,53 +139,53 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <!-- Input Departamento -->
+            <!-- Input Departamento (ExposedDropdownMenu) -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilDepartamento"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="DEPARTAMENTO DE RESIDENCIA"
+                android:hint="DEPARTAMENTO DE RESIDENCIA *"
+                app:endIconMode="dropdown_menu"
                 app:errorEnabled="true">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/etDepartamento"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textCapWords"
-                    android:maxLength="100"
+                    android:inputType="none"
                     android:textColor="@color/ra_light_text"
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Input Municipio -->
+            <!-- Input Municipio (ExposedDropdownMenu encadenado) -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilMunicipio"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:hint="MUNICIPIO / CIUDAD DE RESIDENCIA"
+                android:hint="MUNICIPIO / CIUDAD DE RESIDENCIA *"
+                app:endIconMode="dropdown_menu"
                 app:errorEnabled="true">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/etMunicipio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textCapWords"
-                    android:maxLength="100"
+                    android:inputType="none"
                     android:textColor="@color/ra_light_text"
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Input Dirección Detallada -->
+            <!-- Input Dirección Detallada (Campo libre) -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilDireccionResidencia"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:hint="DIRECCIÓN DE RESIDENCIA DETALLADA"
+                android:hint="DIRECCIÓN DE RESIDENCIA DETALLADA *"
                 app:counterEnabled="true"
                 app:counterMaxLength="150"
                 app:errorEnabled="true">

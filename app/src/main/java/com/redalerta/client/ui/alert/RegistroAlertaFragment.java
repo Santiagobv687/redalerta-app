@@ -18,6 +18,7 @@ import com.redalerta.client.model.alerta.*;
 import com.redalerta.client.model.auth.*;
 import com.redalerta.client.model.usuario.*;
 import com.redalerta.client.util.SessionManager;
+import com.redalerta.client.util.UbicacionCatalogoHelper;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 import java.text.SimpleDateFormat;
@@ -44,6 +45,20 @@ public class RegistroAlertaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         session = new SessionManager(requireContext());
         viewModel = new ViewModelProvider(this).get(AlertaViewModel.class);
+
+        // 0. Configurar selectores encadenados de ubicación
+        UbicacionCatalogoHelper.configurarSelectoresEncadenados(
+                requireContext(),
+                binding.tilDepartamento,
+                binding.etDepartamento,
+                binding.tilMunicipio,
+                binding.etMunicipio,
+                null
+        );
+
+        // Precargar "Quindío" y "Armenia" por defecto
+        binding.etDepartamento.setText("Quindío", false);
+        binding.etMunicipio.setText("Armenia", false);
 
         // 1. Mostrar fecha y nombre del reportante
         actualizarReportadoPor();
@@ -159,6 +174,20 @@ public class RegistroAlertaFragment extends Fragment {
         }
         binding.tilDescripcion.setError(null);
 
+        String departamento = binding.etDepartamento.getText().toString().trim();
+        if (departamento.isEmpty()) {
+            binding.tilDepartamento.setError("Seleccione departamento");
+            return;
+        }
+        binding.tilDepartamento.setError(null);
+
+        String municipio = binding.etMunicipio.getText().toString().trim();
+        if (municipio.isEmpty()) {
+            binding.tilMunicipio.setError("Seleccione municipio");
+            return;
+        }
+        binding.tilMunicipio.setError(null);
+
         String direccion = binding.etDireccion.getText().toString().trim();
         if (direccion.isEmpty()) {
             binding.etDireccion.setError("Requerido");
@@ -166,10 +195,6 @@ public class RegistroAlertaFragment extends Fragment {
         }
 
         String barrio = binding.etBarrio.getText().toString().trim();
-        if (barrio.isEmpty()) {
-            binding.etBarrio.setError("Requerido");
-            return;
-        }
 
         int idPrioridad = binding.rgPrioridad.getCheckedRadioButtonId();
         if (idPrioridad == -1) {
@@ -188,13 +213,20 @@ public class RegistroAlertaFragment extends Fragment {
         // ══════════════════════════════════════════════════
         // Construir el request
         // ══════════════════════════════════════════════════
+        UbicacionAlertaDto ubAlerta = new UbicacionAlertaDto();
+        ubAlerta.setDepartamento(departamento);
+        ubAlerta.setMunicipio(municipio);
+        String dirDetallada = direccion + (!barrio.isEmpty() ? " - Barrio " + barrio : "");
+        ubAlerta.setDireccionDetallada(dirDetallada);
+
         CrearAlertaRequest req = new CrearAlertaRequest();
         req.setTitulo(tipoSeleccionado);
         req.setDescripcion(descripcion);
         req.setCategoria(mapearCategoria(tipoSeleccionado));
         req.setPrioridad(mapearPrioridad(prioridad));
-        req.setDireccion(direccion);
-        req.setBarrio(barrio);
+        req.setUbicacion(ubAlerta);
+        req.setDireccion(dirDetallada);
+        req.setBarrio(barrio.isEmpty() ? municipio : barrio);
         req.setHayHeridos(heridos);
         req.setEsAnonima(anonimo);
         req.setEvidenciaUrl(evidencia.isEmpty() ? null : evidencia);
