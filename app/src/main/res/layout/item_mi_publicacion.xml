@@ -2,11 +2,17 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardMiAlerta"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="48dp"
     app:cardBackgroundColor="@color/ra_light_card"
-    app:cardCornerRadius="8dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="1dp"
     app:strokeColor="@color/ra_light_border"
     app:strokeWidth="1dp">
@@ -17,99 +23,169 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Fila Superior: Fecha de Actualización + Estado + Menú -->
+        <!-- Fila Superior: Fecha Legible + Chip de Estado Accesible -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvFechaActualizacion"
+                android:id="@+id/tvFechaCreacion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/ra_text_muted"
                 android:textSize="12sp"
-                tools:text="2024-11-20 - 10:24" />
-
-            <TextView
-                android:id="@+id/tvEstado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                tools:text="En revisión" />
+                tools:text="18 oct, 11:45 am" />
 
             <Space
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/btnOpciones"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_more_vert"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Opciones" />
+            <!-- Status Badge con Icono + Texto Descriptivo (WCAG 2.1 AA) -->
+            <TextView
+                android:id="@+id/tvEstadoBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_status_revision"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/ra_status_revision_text"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_schedule"
+                app:drawableTint="@color/ra_status_revision_text"
+                tools:text="PENDIENTE DE REVISIÓN" />
         </LinearLayout>
 
-        <!-- Título -->
-        <TextView
-            android:id="@+id/tvTitulo"
+        <!-- Fila Central: Título, Descripción, Ubicación y Miniatura Cuadrada 64x64 dp -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/ra_light_text"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="Inundación" />
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <!-- Descripción -->
-        <TextView
-            android:id="@+id/tvDescripcion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/ra_text_muted"
-            android:textSize="13sp"
-            android:maxLines="2"
-            android:ellipsize="end"
-            tools:text="Alcantarilla desbordada; el agua está entrando a varias viviendas." />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTitulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="Inundación por alcantarilla" />
+
+                <TextView
+                    android:id="@+id/tvDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/ra_light_text_secondary"
+                    android:textSize="13sp"
+                    tools:text="Se observa inundación severa en la vía principal tras fuertes lluvias impidiendo el paso vehicular." />
+
+                <!-- Ubicación: Municipio y Dirección detallada -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_location_on"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:id="@+id/tvUbicacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ra_light_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="Armenia • Carrera 14 # 12-25" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Miniatura de Evidencia Cuadrada (64 x 64 dp) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMiniaturaContainer"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="12dp"
+                android:visibility="gone"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/ra_light_border"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/imgMiniaturaEvidencia"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/alerta_evidencia_desc"
+                    tools:src="@drawable/ic_photo_library" />
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/ra_border_light" />
+            android:background="@color/ra_light_border" />
 
-        <!-- Fila Inferior: Ubicación, Fecha, Autor -->
+        <!-- Pie de la Tarjeta: Código e Indicador "Ver seguimiento" -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvUbicacion"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/ra_light_text_secondary"
-                android:textSize="11sp"
-                tools:text="Calle 48 #12-30, San Luis" />
-
-            <TextView
-                android:id="@+id/tvAutor"
+                android:id="@+id/tvCodigoAlerta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/ra_light_text_secondary"
+                android:textColor="@color/ra_text_muted"
                 android:textSize="11sp"
-                tools:text="Por Carlos Ruiz" />
+                android:textStyle="bold"
+                tools:text="ALR-001" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mis_alertas_ver_seguimiento"
+                android:textColor="@color/ra_summary_text"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_chevron_right"
+                app:tint="@color/ra_summary_text"
+                android:contentDescription="@null" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
