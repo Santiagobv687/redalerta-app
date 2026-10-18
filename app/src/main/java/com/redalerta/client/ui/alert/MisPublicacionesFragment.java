@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.redalerta.client.databinding.FragmentMisPublicacionesBinding;
-import com.redalerta.client.model.*;
+import com.redalerta.client.model.alerta.*;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 import java.util.ArrayList;

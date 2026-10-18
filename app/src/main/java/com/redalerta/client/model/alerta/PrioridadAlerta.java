@@ -1,4 +1,4 @@
-package com.redalerta.client.model;
+package com.redalerta.client.model.alerta;
 
 public class PrioridadAlerta {
     public static final String ALTA = "ALTA";

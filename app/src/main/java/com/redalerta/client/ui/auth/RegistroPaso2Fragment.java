@@ -13,8 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.textfield.TextInputLayout;
 import com.redalerta.client.databinding.FragmentRegistroPaso2Binding;
-import com.redalerta.client.model.RegistroRequest;
-import com.redalerta.client.model.UbicacionRequest;
+import com.redalerta.client.model.auth.RegistroRequest;
+import com.redalerta.client.model.usuario.UbicacionRequest;
 
 public class RegistroPaso2Fragment extends Fragment {
 

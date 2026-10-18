@@ -1,4 +1,4 @@
-package com.redalerta.client.model;
+package com.redalerta.client.model.usuario;
 
 import java.io.Serializable;
 

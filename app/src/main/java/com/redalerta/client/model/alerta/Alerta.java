@@ -1,4 +1,4 @@
-package com.redalerta.client.model;
+package com.redalerta.client.model.alerta;
 
 import java.io.Serializable;
 import java.util.ArrayList;

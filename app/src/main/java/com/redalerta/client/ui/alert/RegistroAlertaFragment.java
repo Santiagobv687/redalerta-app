@@ -14,7 +14,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentRegistroAlertaBinding;
-import com.redalerta.client.model.*;
+import com.redalerta.client.model.alerta.*;
+import com.redalerta.client.model.auth.*;
+import com.redalerta.client.model.usuario.*;
 import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 

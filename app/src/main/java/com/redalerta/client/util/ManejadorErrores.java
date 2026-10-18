@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.redalerta.client.model.ErrorResponse;
+import com.redalerta.client.model.common.ErrorResponse;
 import retrofit2.Response;
 
 public class ManejadorErrores {
