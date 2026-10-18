@@ -33,6 +33,10 @@
             "description": "Endpoints para la auditoria, revision y gestion de postulaciones de registro"
         },
         {
+            "name": "Catálogos",
+            "description": "Endpoints públicos para consulta de catálogos y listas predefinidas"
+        },
+        {
             "name": "Usuarios",
             "description": "Endpoints para consulta y actualizacion del perfil del usuario"
         },
@@ -93,7 +97,7 @@
                     "Usuarios"
                 ],
                 "summary": "Actualizar perfil",
-                "description": "Modifica los datos permitidos del usuario autenticado. Para cambiar la contrasena se debe suministrar la clave actual.",
+                "description": "Modifica los datos permitidos del usuario autenticado, incluyendo su ubicacion de residencia. Para cambiar la contrasena se debe suministrar la clave actual.",
                 "operationId": "actualizarPerfil",
                 "requestBody": {
                     "content": {
@@ -958,6 +962,84 @@
                 ]
             }
         },
+        "/catalogo/ubicaciones": {
+            "get": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Obtener catálogo geográfico completo",
+                "description": "Retorna todos los departamentos y sus respectivos municipios disponibles en el sistema",
+                "operationId": "obtenerUbicaciones",
+                "responses": {
+                    "200": {
+                        "description": "Catálogo recuperado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListDepartamentoResponseDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/catalogo/departamentos": {
+            "get": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Listar departamentos disponibles",
+                "description": "Retorna la lista de nombres de departamentos soportados en el sistema",
+                "operationId": "obtenerDepartamentos",
+                "responses": {
+                    "200": {
+                        "description": "Departamentos recuperados exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/catalogo/departamentos/{departamento}/municipios": {
+            "get": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Listar municipios por departamento",
+                "description": "Retorna la lista oficial de municipios para un departamento dado (búsqueda agnóstica a tildes)",
+                "operationId": "obtenerMunicipios",
+                "parameters": [
+                    {
+                        "name": "departamento",
+                        "in": "path",
+                        "description": "Nombre del departamento",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Quindío"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Municipios recuperados exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/alertas/mis-alertas": {
             "get": {
                 "tags": [
@@ -1203,6 +1285,10 @@
                         "maxLength": 20,
                         "minLength": 0
                     },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionRequestDto",
+                        "description": "Datos territoriales y direccion de residencia del usuario (opcional si no se modifica)"
+                    },
                     "passwordActual": {
                         "type": "string",
                         "description": "Contrasena actual (requerida solo si se va a modificar la contrasena)",
@@ -1219,6 +1305,38 @@
                 "required": [
                     "email",
                     "nombre"
+                ]
+            },
+            "UbicacionRequestDto": {
+                "type": "object",
+                "description": "Datos territoriales y direccion de residencia del usuario",
+                "properties": {
+                    "departamento": {
+                        "type": "string",
+                        "description": "Departamento de residencia",
+                        "example": "Quindio",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "municipio": {
+                        "type": "string",
+                        "description": "Municipio de residencia",
+                        "example": "Armenia",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "direccionResidencia": {
+                        "type": "string",
+                        "description": "Direccion detallada de residencia",
+                        "example": "Calle 10 # 20-30",
+                        "maxLength": 150,
+                        "minLength": 0
+                    }
+                },
+                "required": [
+                    "departamento",
+                    "direccionResidencia",
+                    "municipio"
                 ]
             },
             "ErrorResponse": {
@@ -1754,38 +1872,6 @@
                     "ubicacion"
                 ]
             },
-            "UbicacionRequestDto": {
-                "type": "object",
-                "description": "Datos territoriales y direccion de residencia del usuario",
-                "properties": {
-                    "departamento": {
-                        "type": "string",
-                        "description": "Departamento de residencia",
-                        "example": "Quindio",
-                        "maxLength": 100,
-                        "minLength": 0
-                    },
-                    "municipio": {
-                        "type": "string",
-                        "description": "Municipio de residencia",
-                        "example": "Armenia",
-                        "maxLength": 100,
-                        "minLength": 0
-                    },
-                    "direccionResidencia": {
-                        "type": "string",
-                        "description": "Direccion detallada de residencia",
-                        "example": "Calle 10 # 20-30",
-                        "maxLength": 150,
-                        "minLength": 0
-                    }
-                },
-                "required": [
-                    "departamento",
-                    "direccionResidencia",
-                    "municipio"
-                ]
-            },
             "ApiResponseVoid": {
                 "type": "object",
                 "properties": {
@@ -2186,6 +2272,71 @@
                     }
                 }
             },
+            "ApiResponseListDepartamentoResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DepartamentoResponseDto"
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "DepartamentoResponseDto": {
+                "type": "object",
+                "description": "Catalogo de departamento con municipios asociados",
+                "properties": {
+                    "departamento": {
+                        "type": "string",
+                        "description": "Nombre oficial del departamento",
+                        "example": "Quindío"
+                    },
+                    "municipios": {
+                        "type": "array",
+                        "description": "Lista oficial de municipios pertenecientes al departamento",
+                        "example": [
+                            "Armenia",
+                            "Calarcá",
+                            "Circasia"
+                        ],
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "ApiResponseListString": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
             "Pageable": {
                 "type": "object",
                 "properties": {
@@ -2256,15 +2407,15 @@
                     "sort": {
                         "$ref": "#/components/schemas/SortObject"
                     },
-                    "numberOfElements": {
-                        "type": "integer",
-                        "format": "int32"
-                    },
                     "first": {
                         "type": "boolean"
                     },
                     "last": {
                         "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
                     },
                     "empty": {
                         "type": "boolean"
@@ -2360,15 +2511,15 @@
                     "sort": {
                         "$ref": "#/components/schemas/SortObject"
                     },
-                    "numberOfElements": {
-                        "type": "integer",
-                        "format": "int32"
-                    },
                     "first": {
                         "type": "boolean"
                     },
                     "last": {
                         "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
                     },
                     "empty": {
                         "type": "boolean"
