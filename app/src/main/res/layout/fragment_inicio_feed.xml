@@ -287,19 +287,6 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- BARRA DE NAVEGACIÓN INFERIOR -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/ra_topbar"
-        app:elevation="8dp"
-        app:itemIconTint="@color/ra_bottom_nav_colors"
-        app:itemTextColor="@color/ra_bottom_nav_colors"
-        app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_nav_menu" />
-
     <!-- BOTÓN DE ACCIÓN PRIMARIA (Reportar Alerta FAB) -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabReportarAlerta"

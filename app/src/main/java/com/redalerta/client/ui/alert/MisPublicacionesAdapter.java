@@ -1,33 +1,38 @@
 package com.redalerta.client.ui.alert;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.redalerta.client.R;
-import com.redalerta.client.model.alerta.*;
+import com.redalerta.client.databinding.ItemMiPublicacionBinding;
+import com.redalerta.client.model.alerta.Alerta;
+import com.redalerta.client.model.alerta.EvidenciaResponse;
+import com.redalerta.client.util.TimeUtils;
 
 import java.util.List;
 
 public class MisPublicacionesAdapter extends RecyclerView.Adapter<MisPublicacionesAdapter.ViewHolder> {
 
-    public interface OnItemActionListener {
-        void onEditar(Alerta alerta);
-        void onEliminar(Alerta alerta);
+    public interface OnAlertaClickListener {
+        void onAlertaClick(Alerta alerta);
     }
 
     private final List<Alerta> alertas;
-    private final OnItemActionListener listener;
+    private final OnAlertaClickListener listener;
 
-    public MisPublicacionesAdapter(List<Alerta> alertas, OnItemActionListener listener) {
+    public MisPublicacionesAdapter(List<Alerta> alertas, OnAlertaClickListener listener) {
         this.alertas = alertas;
         this.listener = listener;
     }
@@ -35,92 +40,143 @@ public class MisPublicacionesAdapter extends RecyclerView.Adapter<MisPublicacion
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_mi_publicacion, parent, false);
-        return new ViewHolder(view);
+        ItemMiPublicacionBinding binding = ItemMiPublicacionBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Alerta alerta = alertas.get(position);
-
-        holder.tvFechaActualizacion.setText(
-                alerta.getFechaActualizacion() != null
-                        ? alerta.getFechaActualizacion()
-                        : alerta.getFechaCreacion()
-        );
-
-        holder.tvTitulo.setText(alerta.getTitulo());
-        holder.tvDescripcion.setText(alerta.getDescripcion());
-        holder.tvUbicacion.setText(alerta.getDireccion() + ", " + alerta.getBarrio());
-        holder.tvAutor.setText(alerta.isEsAnonima() ? "Anónimo" : "Por " + alerta.getUsuarioNombre());
-
-        // Configurar estado (color y texto)
-        configurarEstado(holder.tvEstado, alerta.getEstado());
-
-        // Menú de 3 puntos
-        holder.btnOpciones.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(v.getContext(), v);
-            popup.getMenu().add(0, 1, 1, R.string.mis_pub_editar);
-            popup.getMenu().add(0, 2, 2, R.string.mis_pub_eliminar);
-
-            popup.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == 1) {
-                    listener.onEditar(alerta);
-                    return true;
-                } else if (item.getItemId() == 2) {
-                    listener.onEliminar(alerta);
-                    return true;
-                }
-                return false;
-            });
-            popup.show();
-        });
-    }
-
-    private void configurarEstado(TextView tvEstado, String estado) {
-        Context ctx = tvEstado.getContext();
-        if (estado == null) estado = "PENDIENTE";
-
-        switch (estado.toUpperCase()) {
-            case "RESUELTA":
-            case "CERRADA":
-                tvEstado.setText("Resuelta");
-                tvEstado.setBackgroundResource(R.drawable.bg_status_resuelta);
-                tvEstado.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_resuelta_text));
-                break;
-            case "EN_REVISION":
-            case "VERIFICADA":
-                tvEstado.setText("En revisión");
-                tvEstado.setBackgroundResource(R.drawable.bg_status_revision);
-                tvEstado.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_revision_text));
-                break;
-            default:
-                tvEstado.setText("Pendiente");
-                tvEstado.setBackgroundResource(R.drawable.bg_status_pendiente);
-                tvEstado.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_pendiente_text));
-                break;
-        }
+        holder.bind(alerta, listener);
     }
 
     @Override
     public int getItemCount() {
-        return alertas.size();
+        return alertas != null ? alertas.size() : 0;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFechaActualizacion, tvEstado, tvTitulo, tvDescripcion, tvUbicacion, tvAutor;
-        ImageView btnOpciones;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvFechaActualizacion = itemView.findViewById(R.id.tvFechaActualizacion);
-            tvEstado = itemView.findViewById(R.id.tvEstado);
-            tvTitulo = itemView.findViewById(R.id.tvTitulo);
-            tvDescripcion = itemView.findViewById(R.id.tvDescripcion);
-            tvUbicacion = itemView.findViewById(R.id.tvUbicacion);
-            tvAutor = itemView.findViewById(R.id.tvAutor);
-            btnOpciones = itemView.findViewById(R.id.btnOpciones);
+        private final ItemMiPublicacionBinding binding;
+
+        public ViewHolder(@NonNull ItemMiPublicacionBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void bind(Alerta alerta, OnAlertaClickListener listener) {
+            Context context = itemView.getContext();
+
+            // 1. Fecha legible
+            String fecha = alerta.getFechaCreacion() != null ? alerta.getFechaCreacion() : alerta.getFechaActualizacion();
+            binding.tvFechaCreacion.setText(TimeUtils.obtenerTiempoTranscurrido(fecha));
+
+            // 2. Estado accesible (WCAG 2.1 AA)
+            configurarEstadoAccesible(alerta.getEstado());
+
+            // 3. Título y Descripción
+            binding.tvTitulo.setText(alerta.getTitulo());
+            binding.tvDescripcion.setText(alerta.getDescripcion());
+
+            // 4. Ubicación (Municipio y Dirección)
+            String mun = alerta.getBarrio() != null ? alerta.getBarrio() : "Armenia";
+            String dir = alerta.getDireccion() != null ? alerta.getDireccion() : "";
+            binding.tvUbicacion.setText(!dir.isEmpty() ? mun + " • " + dir : mun);
+
+            // 5. Miniatura de evidencia cuadrada (64x64 dp)
+            String urlEvidencia = alerta.getEvidenciaUrl();
+            List<EvidenciaResponse> evidencias = alerta.getEvidencias();
+
+            if (!esUrlImagenValida(urlEvidencia) && evidencias != null && !evidencias.isEmpty()) {
+                if (evidencias.get(0) != null) {
+                    urlEvidencia = evidencias.get(0).getUrl();
+                }
+            }
+
+            if (esUrlImagenValida(urlEvidencia)) {
+                binding.cardMiniaturaContainer.setVisibility(View.VISIBLE);
+
+                Glide.with(context)
+                        .load(urlEvidencia.trim())
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.ic_photo_library)
+                        .error(R.drawable.ic_photo_library)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                        Target<Drawable> target, boolean isFirstResource) {
+                                binding.cardMiniaturaContainer.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model,
+                                                          Target<Drawable> target, DataSource dataSource,
+                                                          boolean isFirstResource) {
+                                binding.cardMiniaturaContainer.setVisibility(View.VISIBLE);
+                                return false;
+                            }
+                        })
+                        .into(binding.imgMiniaturaEvidencia);
+            } else {
+                binding.cardMiniaturaContainer.setVisibility(View.GONE);
+            }
+
+            // 6. Pie: Código de la alerta
+            binding.tvCodigoAlerta.setText(alerta.getId() != null ? "ALR-" + alerta.getId() : "ALR-000");
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onAlertaClick(alerta);
+            });
+        }
+
+        private boolean esUrlImagenValida(String url) {
+            if (url == null) return false;
+            String urlClean = url.trim().toLowerCase();
+            if (urlClean.isEmpty() || urlClean.equals("null") || urlClean.equals("none")
+                    || urlClean.equals("n/a") || urlClean.equals("{}") || urlClean.equals("[]")) {
+                return false;
+            }
+            return urlClean.startsWith("http://") || urlClean.startsWith("https://")
+                    || urlClean.startsWith("data:image/") || urlClean.startsWith("content://")
+                    || urlClean.startsWith("file://");
+        }
+
+        private void configurarEstadoAccesible(String estado) {
+            Context ctx = itemView.getContext();
+            String estadoNormalizado = estado != null ? estado.toUpperCase() : "PENDIENTE_REVISION";
+
+            switch (estadoNormalizado) {
+                case "RESUELTA" -> {
+                    binding.tvEstadoBadge.setText("RESUELTA");
+                    binding.tvEstadoBadge.setBackgroundResource(R.drawable.bg_status_resuelta);
+                    binding.tvEstadoBadge.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_resuelta_text));
+                    binding.tvEstadoBadge.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(ctx, R.drawable.ic_check_success), null, null, null);
+                }
+                case "DIRECCIONADA", "EN_GESTION", "EN_ATENCION" -> {
+                    binding.tvEstadoBadge.setText("EN GESTIÓN");
+                    binding.tvEstadoBadge.setBackgroundResource(R.drawable.bg_status_atencion);
+                    binding.tvEstadoBadge.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_atencion_text));
+                    binding.tvEstadoBadge.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(ctx, R.drawable.ic_refresh), null, null, null);
+                }
+                case "RECHAZADA" -> {
+                    binding.tvEstadoBadge.setText("RECHAZADA");
+                    binding.tvEstadoBadge.setBackgroundResource(R.drawable.bg_status_pendiente);
+                    binding.tvEstadoBadge.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_pendiente_text));
+                    binding.tvEstadoBadge.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(ctx, R.drawable.ic_warning), null, null, null);
+                }
+                default -> {
+                    binding.tvEstadoBadge.setText("EN REVISIÓN");
+                    binding.tvEstadoBadge.setBackgroundResource(R.drawable.bg_status_revision);
+                    binding.tvEstadoBadge.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_revision_text));
+                    binding.tvEstadoBadge.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(ctx, R.drawable.ic_schedule), null, null, null);
+                }
+            }
         }
     }
 }

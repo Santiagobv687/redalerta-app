@@ -58,7 +58,6 @@ public class InicioFragment extends Fragment {
         setupFabScrollBehavior();
         setupTerritorioFilter();
         setupEstadoFilter();
-        setupBottomNavigation();
         setupErrorRetry();
         observeViewModel();
 
@@ -180,27 +179,6 @@ public class InicioFragment extends Fragment {
             } else {
                 viewModel.setEstadoFiltro(null);
             }
-        });
-    }
-
-    private void setupBottomNavigation() {
-        binding.bottomNavigation.setSelectedItemId(R.id.nav_inicio);
-        binding.bottomNavigation.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_inicio) {
-                binding.rvFeedAlertas.smoothScrollToPosition(0);
-                return true;
-            } else if (itemId == R.id.nav_mis_alertas) {
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragmentContainer, new MisPublicacionesFragment())
-                        .commit();
-                return true;
-            } else if (itemId == R.id.nav_perfil) {
-                Toast.makeText(requireContext(), "Mi Perfil RedAlerta - Sesión Activa", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-            return false;
         });
     }
 

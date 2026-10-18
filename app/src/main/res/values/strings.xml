@@ -139,10 +139,13 @@
 
     <!-- Mis Publicaciones / Mis Alertas -->
     <string name="mis_pub_titulo">MIS ALERTAS</string>
-    <string name="mis_pub_subtitulo">Consulta el estado de tus alertas. Puedes editar una publicación mientras esté en revisión.</string>
+    <string name="mis_pub_subtitulo">Consulta el historial y seguimiento de tus alertas comunitarias reportadas.</string>
     <string name="mis_pub_editar">Editar publicación</string>
     <string name="mis_pub_eliminar">Eliminar publicación</string>
-    <string name="mis_pub_vacio">No tienes alertas registradas aún.</string>
+    <string name="mis_pub_vacio">No tienes alertas reportadas en este momento.</string>
+    <string name="mis_alertas_empty_subtitle">Puedes reportar un incidente de seguridad o desastre para recibir atención prioritaria.</string>
+    <string name="btn_crear_primer_reporte">Crear mi primer reporte</string>
+    <string name="mis_alertas_ver_seguimiento">Ver seguimiento</string>
 
     <!-- Inicio -->
     <string name="inicio_titulo">INICIO</string>

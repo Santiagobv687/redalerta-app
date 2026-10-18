@@ -1,35 +1,282 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayoutMisPublicaciones"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/ra_light_bg"
-    android:padding="20dp"
     tools:context=".ui.alert.MisPublicacionesFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mis_pub_titulo"
-        android:textColor="@color/ra_light_text"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <TextView
+    <!-- BARRA SUPERIOR (TopAppBar M3) -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayoutMisPublicaciones"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/mis_pub_subtitulo"
-        android:textColor="@color/ra_text_muted"
-        android:textSize="13sp" />
+        android:elevation="4dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMisPublicaciones"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarMisPublicaciones"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/ra_topbar"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mis_pub_titulo"
+                android:textColor="@color/ra_white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </com.google.android.material.appbar.MaterialToolbar>
+
+        <!-- Chips de Filtro por Estado (Fila deslizable) -->
+        <HorizontalScrollView
+            android:id="@+id/scrollChipsEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/ra_topbar"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="8dp"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupMisPublicaciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMisTodas"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/filtro_estado_todas" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMisRevision"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filtro_estado_revision" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMisGestion"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filtro_estado_gestion" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMisResueltas"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filtro_estado_resueltas" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- CONTENEDOR DE CONTENIDO PRINCIPAL -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="20dp"
-        tools:listitem="@layout/item_mi_publicacion" />
-</LinearLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- SwipeRefreshLayout y RecyclerView -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshMisPublicaciones"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMisPublicaciones"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="88dp"
+                tools:listitem="@layout/item_mi_publicacion" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <!-- Estado de Carga (Loading State) -->
+        <LinearLayout
+            android:id="@+id/layoutLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminate="true"
+                app:indicatorColor="@color/ra_red"
+                app:trackColor="@color/ra_light_border" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/loading_alertas"
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Estado Vacío (Empty State) -->
+        <LinearLayout
+            android:id="@+id/layoutEmpty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_empty_inbox"
+                app:tint="@color/ra_gray"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:id="@+id/tvEmptyTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/mis_pub_vacio"
+                android:textColor="@color/ra_light_text"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvEmptySubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Puedes reportar un incidente de seguridad o desastre para recibir atención prioritaria."
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="14sp"
+                android:lineSpacingMultiplier="1.2" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCrearPrimerReporte"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:minWidth="140dp"
+                    android:text="Crear reporte"
+                    android:textColor="@color/ra_white"
+                    android:textSize="14sp"
+                    app:backgroundTint="@color/ra_red"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/ic_siren_alert"
+                    app:iconTint="@color/ra_white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActualizarEmpty"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="12dp"
+                    android:minWidth="120dp"
+                    android:text="@string/btn_actualizar"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/ic_refresh"
+                    app:iconTint="@color/ra_light_text"
+                    app:strokeColor="@color/ra_light_border" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Estado de Error / Sin Conexión -->
+        <LinearLayout
+            android:id="@+id/layoutError"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_warning"
+                app:tint="@color/ra_red"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:id="@+id/tvErrorMensaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/error_conexion_subtitulo"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp"
+                android:lineSpacingMultiplier="1.2" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReintentar"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                android:minWidth="140dp"
+                android:text="@string/btn_actualizar"
+                android:textColor="@color/ra_white"
+                android:textSize="14sp"
+                app:backgroundTint="@color/ra_red"
+                app:cornerRadius="24dp"
+                app:icon="@drawable/ic_refresh"
+                app:iconTint="@color/ra_white" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- FAB ACCIÓN DE REPORTAR -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabReportar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="88dp"
+        android:contentDescription="@string/reportar_alerta_desc"
+        android:text="@string/reportar_alerta_fab"
+        android:textColor="@color/ra_white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/ra_red"
+        app:elevation="12dp"
+        app:icon="@drawable/ic_siren_alert"
+        app:iconTint="@color/ra_white" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -14,7 +14,7 @@
             android:icon="@drawable/ic_person"
             android:title="@string/menu_mi_perfil" />
         <item
-            android:id="@+id/nav_mis_publicaciones"
+            android:id="@+id/nav_mis_alertas"
             android:icon="@drawable/ic_my_alerts"
             android:title="@string/menu_mis_publicaciones" />
 
