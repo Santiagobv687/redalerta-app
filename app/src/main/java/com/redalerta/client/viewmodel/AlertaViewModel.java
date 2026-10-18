@@ -136,21 +136,27 @@ public class AlertaViewModel extends AndroidViewModel {
     // MIS ALERTAS
     // ══════════════════════════════════════════════════
     public void cargarMisAlertas() {
+        cargando.setValue(true);
+        error.setValue(null);
+
         if (MODO_MOCK) {
-            List<Alerta> mock = new ArrayList<>();
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                cargando.setValue(false);
+                List<Alerta> mock = new ArrayList<>();
 
-            Alerta a1 = new Alerta();
-            a1.setId("1");
-            a1.setTitulo("Inundación");
-            a1.setDescripcion("Alcantarilla desbordada; el agua está entrando a varias viviendas.");
-            a1.setEstado("PENDIENTE_REVISION");
-            a1.setDireccion("Calle 48 #12-30");
-            a1.setBarrio("San Luis");
-            a1.setUsuarioNombre("Carlos Ruiz");
-            a1.setFechaActualizacion("2024-11-20T10:24:00");
-            mock.add(a1);
+                Alerta a1 = new Alerta();
+                a1.setId("1");
+                a1.setTitulo("Inundación");
+                a1.setDescripcion("Alcantarilla desbordada; el agua está entrando a varias viviendas.");
+                a1.setEstado("PENDIENTE_REVISION");
+                a1.setDireccion("Calle 48 #12-30");
+                a1.setBarrio("San Luis");
+                a1.setUsuarioNombre("Carlos Ruiz");
+                a1.setFechaActualizacion("2024-11-20T10:24:00");
+                mock.add(a1);
 
-            misAlertas.setValue(mock);
+                misAlertas.setValue(mock);
+            }, 600);
             return;
         }
 
@@ -160,8 +166,14 @@ public class AlertaViewModel extends AndroidViewModel {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse<PageAlertaResponse>> call,
                                            @NonNull Response<ApiResponse<PageAlertaResponse>> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                            misAlertas.setValue(response.body().getData().getContent());
+                        cargando.setValue(false);
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<PageAlertaResponse> body = response.body();
+                            if (body.isSuccess() && body.getData() != null) {
+                                misAlertas.setValue(body.getData().getContent());
+                            } else {
+                                error.setValue(body.getMessage() != null ? body.getMessage() : "Error al obtener tus alertas");
+                            }
                         } else {
                             error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ContextoOperacion.ALERTAS));
                         }
@@ -169,6 +181,7 @@ public class AlertaViewModel extends AndroidViewModel {
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse<PageAlertaResponse>> call, @NonNull Throwable t) {
+                        cargando.setValue(false);
                         error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                     }
                 });
