@@ -1,12 +1,25 @@
 package com.redalerta.client.model;
 
-public class Usuario {
+import java.io.Serializable;
+
+/**
+ * Corresponde a UsuarioResponseDto / UsuarioSesionDto en OpenAPI.
+ */
+public class Usuario implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String id;
     private String nombre;
-    private String correo;
-    private String rol; // "USUARIO" | "LIDER" | "ORGANIZACION"
+    private String email;
+    private String telefono;
+    private String rol; // "ROLE_CIUDADANO", "ROLE_LIDER", "ROLE_ORGANIZACION", "ROLE_ADMIN"
+    private Boolean activo;
+    private DocumentoRequest documento;
+    private UbicacionRequest ubicacion;
+    private CaracterizacionRequest caracterizacion;
 
-    // getters y setters
+    public Usuario() {
+    }
 
     public String getId() {
         return id;
@@ -24,12 +37,28 @@ public class Usuario {
         this.nombre = nombre;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getCorreo() {
-        return correo;
+        return email;
     }
 
     public void setCorreo(String correo) {
-        this.correo = correo;
+        this.email = correo;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public String getRol() {
@@ -39,5 +68,36 @@ public class Usuario {
     public void setRol(String rol) {
         this.rol = rol;
     }
-}
 
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public DocumentoRequest getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(DocumentoRequest documento) {
+        this.documento = documento;
+    }
+
+    public UbicacionRequest getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(UbicacionRequest ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public CaracterizacionRequest getCaracterizacion() {
+        return caracterizacion;
+    }
+
+    public void setCaracterizacion(CaracterizacionRequest caracterizacion) {
+        this.caracterizacion = caracterizacion;
+    }
+}

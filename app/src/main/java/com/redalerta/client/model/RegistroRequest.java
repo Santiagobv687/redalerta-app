@@ -1,52 +1,29 @@
 package com.redalerta.client.model;
 
-public class RegistroRequest {
-    private String tipoDocumento;
-    private String numeroDocumento;
+import java.io.Serializable;
+
+/**
+ * Corresponde a RegistroRequestDto en OpenAPI.
+ */
+public class RegistroRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String nombre;
-    private String apellido;
-    private String correo;
+    private DocumentoRequest documento = new DocumentoRequest();
+    private UbicacionRequest ubicacion = new UbicacionRequest();
+    private String email;
+    private String password;
     private String telefono;
-    private String localidad;
-    private String barrio;
-    private String direccion;
-    private String rol;              // "USUARIO", "LIDER", "ORGANIZACION"
-    private String contrasena;
+    private CaracterizacionRequest caracterizacion = new CaracterizacionRequest();
 
-    // Constructor + getters/setters
-
+    // Campos temporales UI
+    private transient String apellido;
+    private transient String localidad;
+    private transient String barrio;
+    private transient String direccion;
+    private transient String rol;
 
     public RegistroRequest() {
-    }
-
-    public RegistroRequest(String tipoDocumento, String numeroDocumento, String nombre, String apellido, String correo, String telefono, String localidad, String barrio, String direccion, String rol, String contrasena) {
-        this.tipoDocumento = tipoDocumento;
-        this.numeroDocumento = numeroDocumento;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.correo = correo;
-        this.telefono = telefono;
-        this.localidad = localidad;
-        this.barrio = barrio;
-        this.direccion = direccion;
-        this.rol = rol;
-        this.contrasena = contrasena;
-    }
-
-    public String getTipoDocumento() {
-        return tipoDocumento;
-    }
-
-    public void setTipoDocumento(String tipoDocumento) {
-        this.tipoDocumento = tipoDocumento;
-    }
-
-    public String getNumeroDocumento() {
-        return numeroDocumento;
-    }
-
-    public void setNumeroDocumento(String numeroDocumento) {
-        this.numeroDocumento = numeroDocumento;
     }
 
     public String getNombre() {
@@ -63,14 +40,57 @@ public class RegistroRequest {
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
+        if (this.nombre != null && apellido != null && !this.nombre.contains(apellido)) {
+            this.nombre = (this.nombre.trim() + " " + apellido.trim()).trim();
+        }
+    }
+
+    public DocumentoRequest getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(DocumentoRequest documento) {
+        this.documento = documento;
+    }
+
+    public UbicacionRequest getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(UbicacionRequest ubicacion) {
+        this.ubicacion = ubicacion;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getCorreo() {
-        return correo;
+        return email;
     }
 
     public void setCorreo(String correo) {
-        this.correo = correo;
+        this.email = correo;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getContrasena() {
+        return password;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.password = contrasena;
     }
 
     public String getTelefono() {
@@ -81,12 +101,52 @@ public class RegistroRequest {
         this.telefono = telefono;
     }
 
+    public CaracterizacionRequest getCaracterizacion() {
+        return caracterizacion;
+    }
+
+    public void setCaracterizacion(CaracterizacionRequest caracterizacion) {
+        this.caracterizacion = caracterizacion;
+    }
+
+    // Helpers UI
+    public String getTipoDocumento() {
+        return documento != null ? documento.getTipo() : null;
+    }
+
+    public void setTipoDocumento(String tipoDocumento) {
+        if (this.documento == null) this.documento = new DocumentoRequest();
+        if (tipoDocumento == null) return;
+        String t = tipoDocumento.toUpperCase();
+        if (t.contains("CE") || t.contains("EXTRANJERÍA") || t.contains("EXTRANJERIA") || t.contains("TARJETA_EXTRANJERIA")) {
+            this.documento.setTipo("TARJETA_EXTRANJERIA");
+        } else if (t.contains("PASAPORTE") || t.contains("PAS")) {
+            this.documento.setTipo("PASAPORTE");
+        } else {
+            this.documento.setTipo("CEDULA");
+        }
+    }
+
+    public String getNumeroDocumento() {
+        return documento != null ? documento.getNumero() : null;
+    }
+
+    public void setNumeroDocumento(String numeroDocumento) {
+        if (this.documento == null) this.documento = new DocumentoRequest();
+        this.documento.setNumero(numeroDocumento);
+    }
+
     public String getLocalidad() {
         return localidad;
     }
 
     public void setLocalidad(String localidad) {
         this.localidad = localidad;
+        if (this.ubicacion == null) this.ubicacion = new UbicacionRequest();
+        this.ubicacion.setMunicipio(localidad);
+        if (this.ubicacion.getDepartamento() == null) {
+            this.ubicacion.setDepartamento("Quindío");
+        }
     }
 
     public String getBarrio() {
@@ -95,6 +155,7 @@ public class RegistroRequest {
 
     public void setBarrio(String barrio) {
         this.barrio = barrio;
+        actualizarDireccionResidencia();
     }
 
     public String getDireccion() {
@@ -103,6 +164,13 @@ public class RegistroRequest {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+        actualizarDireccionResidencia();
+    }
+
+    private void actualizarDireccionResidencia() {
+        if (this.ubicacion == null) this.ubicacion = new UbicacionRequest();
+        String dirFinal = (direccion != null ? direccion : "") + (barrio != null ? ", " + barrio : "");
+        this.ubicacion.setDireccionResidencia(dirFinal.trim());
     }
 
     public String getRol() {
@@ -111,13 +179,5 @@ public class RegistroRequest {
 
     public void setRol(String rol) {
         this.rol = rol;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
     }
 }
