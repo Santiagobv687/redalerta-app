@@ -6,21 +6,24 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.material.textfield.TextInputLayout;
 import com.redalerta.client.databinding.FragmentRegistroPaso2Binding;
 import com.redalerta.client.model.auth.RegistroRequest;
 import com.redalerta.client.model.usuario.UbicacionRequest;
+import com.redalerta.client.util.UbicacionCatalogoHelper;
 
 public class RegistroPaso2Fragment extends Fragment {
 
     private FragmentRegistroPaso2Binding binding;
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -32,19 +35,15 @@ public class RegistroPaso2Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RegistroRequest req = ((RegistroActivity) requireActivity()).getRegistroRequest();
 
-        // Dropdown de Departamentos
-        String[] departamentos = {"Quindío", "Risaralda", "Caldas", "Antioquia", "Cundinamarca", "Otro"};
-        binding.etDepartamento.setAdapter(new ArrayAdapter<>(
+        // Configurar selectores encadenados dinámicos con el catálogo oficial
+        UbicacionCatalogoHelper.configurarSelectoresEncadenados(
                 requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                departamentos));
-
-        // Dropdown de Municipios
-        String[] municipios = {"Armenia", "Calarcá", "Circasia", "Salento", "Montenegro", "Quimbaya", "La Tebaida", "Pereira", "Manizales", "Bogotá D.C.", "Otro"};
-        binding.etMunicipio.setAdapter(new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                municipios));
+                binding.tilDepartamento,
+                binding.etDepartamento,
+                binding.tilMunicipio,
+                binding.etMunicipio,
+                null
+        );
 
         // Cargar datos previos si existen
         cargardatosPrevios(req);

@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.redalerta.client.databinding.FragmentEditarPerfilBinding;
 import com.redalerta.client.model.usuario.UbicacionRequest;
 import com.redalerta.client.model.usuario.Usuario;
+import com.redalerta.client.util.UbicacionCatalogoHelper;
 import com.redalerta.client.viewmodel.PerfilViewModel;
 
 public class EditarPerfilFragment extends Fragment {
@@ -51,6 +52,7 @@ public class EditarPerfilFragment extends Fragment {
 
         setupToolbar();
         setupButtons();
+        setupUbicacionSelectores();
         setupTextWatchers();
         observeViewModel();
 
@@ -65,6 +67,17 @@ public class EditarPerfilFragment extends Fragment {
         binding.btnCancelarDatos.setOnClickListener(v -> cancelarYVolver());
         binding.btnGuardarDatos.setOnClickListener(v -> procesarGuardarDatos());
         binding.btnGuardarDatos.setEnabled(false);
+    }
+
+    private void setupUbicacionSelectores() {
+        UbicacionCatalogoHelper.configurarSelectoresEncadenados(
+                requireContext(),
+                binding.tilDepartamento,
+                binding.etDepartamento,
+                binding.tilMunicipio,
+                binding.etMunicipio,
+                this::validarEstadoBotonGuardar
+        );
     }
 
     private void setupTextWatchers() {
@@ -110,8 +123,8 @@ public class EditarPerfilFragment extends Fragment {
 
             UbicacionRequest ub = u.getUbicacion();
             if (ub != null) {
-                originalDepartamento = ub.getDepartamento() != null ? ub.getDepartamento().trim() : "";
-                originalMunicipio = ub.getMunicipio() != null ? ub.getMunicipio().trim() : "";
+                originalDepartamento = ub.getDepartamento() != null ? ub.getDepartamento().trim() : "Quindío";
+                originalMunicipio = ub.getMunicipio() != null ? ub.getMunicipio().trim() : "Armenia";
                 originalDireccion = ub.getDireccionResidencia() != null ? ub.getDireccionResidencia().trim() : "";
             } else {
                 originalDepartamento = "Quindío";
@@ -123,8 +136,8 @@ public class EditarPerfilFragment extends Fragment {
             binding.etApellido.setText(originalApellido);
             binding.etEmail.setText(originalEmail);
             binding.etTelefono.setText(originalTelefono);
-            binding.etDepartamento.setText(originalDepartamento);
-            binding.etMunicipio.setText(originalMunicipio);
+            binding.etDepartamento.setText(originalDepartamento, false);
+            binding.etMunicipio.setText(originalMunicipio, false);
             binding.etDireccionResidencia.setText(originalDireccion);
 
             // Tras precargar, verificar estado del botón
@@ -213,12 +226,12 @@ public class EditarPerfilFragment extends Fragment {
         }
 
         if (departamento.isEmpty()) {
-            binding.tilDepartamento.setError("Ingresa tu departamento de residencia");
+            binding.tilDepartamento.setError("Selecciona tu departamento de residencia");
             esValido = false;
         }
 
         if (municipio.isEmpty()) {
-            binding.tilMunicipio.setError("Ingresa tu municipio de residencia");
+            binding.tilMunicipio.setError("Selecciona tu municipio de residencia");
             esValido = false;
         }
 
