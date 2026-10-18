@@ -96,7 +96,7 @@
     <string name="menu_inicio">Inicio</string>
     <string name="menu_registro_alerta">+ Registro de Alertas</string>
     <string name="menu_mi_perfil">Mi perfil</string>
-    <string name="menu_mis_publicaciones">Mis publicaciones</string>
+    <string name="menu_mis_publicaciones">Mis alertas</string>
     <string name="menu_salir">Salir</string>
 
     <!-- Registro de Alerta -->
@@ -137,12 +137,12 @@
     <string name="alerta_registrada_ubicacion_label">Ubicación</string>
     <string name="alerta_registrada_btn">Registrar otra alerta</string>
 
-    <!-- Mis Publicaciones -->
-    <string name="mis_pub_titulo">MIS PUBLICACIONES</string>
+    <!-- Mis Publicaciones / Mis Alertas -->
+    <string name="mis_pub_titulo">MIS ALERTAS</string>
     <string name="mis_pub_subtitulo">Consulta el estado de tus alertas. Puedes editar una publicación mientras esté en revisión.</string>
     <string name="mis_pub_editar">Editar publicación</string>
     <string name="mis_pub_eliminar">Eliminar publicación</string>
-    <string name="mis_pub_vacio">No tienes publicaciones registradas aún.</string>
+    <string name="mis_pub_vacio">No tienes alertas registradas aún.</string>
 
     <!-- Inicio -->
     <string name="inicio_titulo">INICIO</string>
@@ -164,6 +164,25 @@
     <string name="verif_estado_verificada">Verificada</string>
     <string name="verif_estado_rechazada">Rechazada</string>
     <string name="verif_asignar_estado">Cambiar estado a...</string>
+    <!-- Feed de Alertas / Territorio -->
+    <string name="territorio_departamento_fijo">QUINDÍO</string>
+    <string name="territorio_municipio_activo">Armenia</string>
+    <string name="filtro_todos_municipios">Todo el departamento</string>
+    <string name="filtro_municipio_puntual">Municipio: %1$s</string>
+    <string name="filtro_estado_todas">Todas</string>
+    <string name="filtro_estado_revision">En revisión</string>
+    <string name="filtro_estado_gestion">En gestión</string>
+    <string name="filtro_estado_direccionadas">Direccionadas</string>
+    <string name="filtro_estado_resueltas">Resueltas</string>
+    <string name="alerta_evidencia_desc">Vista previa de evidencia fotográfica</string>
+    <string name="empty_alertas_titulo">Sin incidentes reportados</string>
+    <string name="empty_alertas_subtitulo">No hay incidentes reportados en este municipio.</string>
+    <string name="error_conexion_subtitulo">No fue posible conectar con el servicio de RedAlerta. Por favor, verifica tu conexión a internet e intenta nuevamente.</string>
+    <string name="loading_alertas">Cargando alertas comunitarias...</string>
+    <string name="btn_actualizar">Actualizar</string>
+    <string name="reportar_alerta_fab">Reportar Alerta</string>
+    <string name="reportar_alerta_desc">Reportar nueva alerta comunitaria</string>
+
     <string name="gestion_titulo">GESTIÓN Y SEGUIMIENTO</string>
     <string name="gestion_mensaje">Módulo en construcción...</string>
 </resources>
