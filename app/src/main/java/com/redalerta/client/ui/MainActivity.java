@@ -63,11 +63,11 @@ public class MainActivity extends AppCompatActivity
         configurarMenuSegunRol();
 
         // ══════════════════════════════════════════════════
-        // Fragmento por defecto (Registro de Alertas)
+        // Fragmento por defecto (Feed Principal de Inicio)
         // ══════════════════════════════════════════════════
         if (savedInstanceState == null) {
-            mostrarFragment(new RegistroAlertaFragment());
-            binding.navigationView.setCheckedItem(R.id.nav_registro_alerta);
+            mostrarFragment(new InicioFragment());
+            binding.navigationView.setCheckedItem(R.id.nav_inicio);
         }
 
         // ══════════════════════════════════════════════════

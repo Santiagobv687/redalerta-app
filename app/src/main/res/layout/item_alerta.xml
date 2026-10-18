@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardAlerta"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="48dp"
+    app:cardBackgroundColor="@color/ra_light_card"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/ra_light_border"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header: Categoría Chip, Estado Accesible y Tiempo Transcurrido -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="8dp">
+
+            <!-- Chip / Píldora de Categoría -->
+            <TextView
+                android:id="@+id/chipCategoria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_category_chip"
+                android:minHeight="32dp"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:textColor="@color/ra_light_text"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="INCENDIO" />
+
+            <!-- Indicador de Estado Accesible (Texto claro + Badge + Fondo sobrio) -->
+            <TextView
+                android:id="@+id/tvStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_status_revision"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textColor="@color/ra_status_revision_text"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="PENDIENTE REVISIÓN" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Tiempo Transcurrido Legible -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_schedule"
+                    app:tint="@color/ra_light_text_secondary"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvTiempoTranscurrido"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ra_light_text_secondary"
+                    android:textSize="12sp"
+                    tools:text="Hace 15 min" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Título y Extracto de la Descripción del Incidente -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:id="@+id/tvTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ra_light_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="2dp"
+                tools:text="Incendio Estructural en Edificio de Vivienda" />
+
+            <TextView
+                android:id="@+id/tvDescripcionExcerpt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="14sp"
+                android:lineSpacingMultiplier="1.2"
+                tools:text="Incendio de gran magnitud reportado en el tercer piso. Presencia de fuego y humo denso. Bomberos en camino al lugar del incidente." />
+        </LinearLayout>
+
+        <!-- Ubicación del Evento (Municipio y Dirección/Barrio) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="12dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="6dp"
+                android:src="@drawable/ic_location_on"
+                android:contentDescription="@string/alerta_registrada_ubicacion_label" />
+
+            <TextView
+                android:id="@+id/tvUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ra_light_text"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="Armenia • Cra 15 #82-34, Barrio Chapinero" />
+        </LinearLayout>
+
+        <!-- Vista Previa de la Primera Evidencia Fotográfica (16:9 con altura fija 200dp) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/layoutEvidenciaContainer"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            tools:visibility="visible">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/ra_filter_bg">
+
+                <!-- Foto de Vista Previa -->
+                <ImageView
+                    android:id="@+id/imgEvidenciaPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/alerta_evidencia_desc"
+                    tools:src="@drawable/ic_photo_library" />
+
+                <!-- Badge Superpuesto de Fotos Adicionales (ej. "+2") -->
+                <TextView
+                    android:id="@+id/tvBadgeFotosExtra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_badge_evidence"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:textColor="@color/ra_white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_photo_library"
+                    app:drawableTint="@color/ra_white"
+                    android:visibility="gone"
+                    tools:text="+2"
+                    tools:visibility="visible" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Footer / Metadatos: Autor y Código de Seguimiento -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/ra_footer_bg"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="10dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvAutor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="12sp"
+                tools:text="Reportado por: María González" />
+
+            <TextView
+                android:id="@+id/tvCodigoAlerta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ra_text_muted"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="ALR-2024-101" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
