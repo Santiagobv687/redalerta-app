@@ -7,67 +7,87 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-    <!-- Contenido Principal -->
-    <LinearLayout
+    <!-- Contenido Principal con Barra de Navegación Inferior Persistente -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="@color/ra_light_bg">
 
-        <!-- Barra Superior (Topbar) -->
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/ra_topbar"
-            app:titleTextColor="@color/ra_white">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <!-- Logo / Título -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+            <!-- Barra Superior (Topbar) -->
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/ra_topbar"
+                app:titleTextColor="@color/ra_white">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_warning"
-                    app:tint="@color/ra_red" />
-                <TextView
+                <!-- Logo / Título -->
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="RED ALERTA"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_warning"
+                        app:tint="@color/ra_red"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="RED ALERTA"
+                        android:textColor="@color/ra_white"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Botón Salir -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSalir"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/menu_salir"
                     android:textColor="@color/ra_white"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                    android:textSize="12sp"
+                    app:strokeColor="@color/ra_white"
+                    app:icon="@drawable/ic_logout"
+                    app:iconTint="@color/ra_white"
+                    app:iconSize="16dp" />
+            </com.google.android.material.appbar.MaterialToolbar>
 
-            <!-- Botón Salir -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSalir"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_gravity="end"
-                android:layout_marginEnd="8dp"
-                android:text="@string/menu_salir"
-                android:textColor="@color/ra_white"
-                android:textSize="12sp"
-                app:strokeColor="@color/ra_white"
-                app:icon="@drawable/ic_logout"
-                app:iconTint="@color/ra_white"
-                app:iconSize="16dp" />
-        </com.google.android.material.appbar.MaterialToolbar>
+            <!-- Contenedor de Fragmentos -->
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        </LinearLayout>
 
-        <!-- Contenedor de Fragmentos -->
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainer"
+        <!-- BARRA DE NAVEGACIÓN INFERIOR PERSISTENTE Y COMPARTIDA (M3) -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/ra_topbar"
+            app:elevation="8dp"
+            app:itemIconTint="@color/ra_bottom_nav_colors"
+            app:itemTextColor="@color/ra_bottom_nav_colors"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- Menú Lateral (Drawer) -->
     <com.google.android.material.navigation.NavigationView

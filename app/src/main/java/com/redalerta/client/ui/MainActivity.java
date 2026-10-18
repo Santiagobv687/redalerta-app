@@ -63,6 +63,27 @@ public class MainActivity extends AppCompatActivity
         configurarMenuSegunRol();
 
         // ══════════════════════════════════════════════════
+        // Configurar la Barra de Navegación Inferior Única (M3)
+        // ══════════════════════════════════════════════════
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_inicio) {
+                mostrarFragmentInternal(new InicioFragment());
+                binding.navigationView.setCheckedItem(R.id.nav_inicio);
+                return true;
+            } else if (id == R.id.nav_mis_alertas) {
+                mostrarFragmentInternal(new MisPublicacionesFragment());
+                binding.navigationView.setCheckedItem(R.id.nav_mis_alertas);
+                return true;
+            } else if (id == R.id.nav_perfil) {
+                Toast.makeText(this, "Mi perfil (próximamente)", Toast.LENGTH_SHORT).show();
+                binding.navigationView.setCheckedItem(R.id.nav_mi_perfil);
+                return true;
+            }
+            return false;
+        });
+
+        // ══════════════════════════════════════════════════
         // Fragmento por defecto (Feed Principal de Inicio)
         // ══════════════════════════════════════════════════
         if (savedInstanceState == null) {
@@ -127,7 +148,7 @@ public class MainActivity extends AppCompatActivity
             mostrarFragment(new RegistroAlertaFragment());
         } else if (id == R.id.nav_mi_perfil) {
             Toast.makeText(this, "Mi perfil (próximamente)", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_mis_publicaciones) {
+        } else if (id == R.id.nav_mis_alertas) {
             mostrarFragment(new MisPublicacionesFragment());
         }
 
@@ -146,8 +167,16 @@ public class MainActivity extends AppCompatActivity
     // Reemplazar fragmento actual
     // ══════════════════════════════════════════════════════
     private void mostrarFragment(Fragment fragment) {
-        // Limpiar el backstack para que al navegar por el menú
-        // no se acumulen fragmentos anteriores
+        if (fragment instanceof InicioFragment) {
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_inicio);
+        } else if (fragment instanceof MisPublicacionesFragment) {
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_mis_alertas);
+        } else {
+            mostrarFragmentInternal(fragment);
+        }
+    }
+
+    private void mostrarFragmentInternal(Fragment fragment) {
         getSupportFragmentManager().popBackStack(
                 null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
