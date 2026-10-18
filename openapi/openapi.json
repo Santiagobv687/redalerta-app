@@ -1,0 +1,1708 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "RedAlerta Backend API",
+        "description": "API RESTful para la gestion de seguridad comunitaria, alertas tempranas y caracterizacion de usuarios.",
+        "contact": {
+            "name": "Equipo de Desarrollo RedAlerta",
+            "email": "soporte@redalerta.uniquindio.edu.co"
+        },
+        "license": {
+            "name": "Uso Academico e Institucional"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080/api/v1",
+            "description": "Generated server url"
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Alertas",
+            "description": "Endpoints para la gestion de alertas comunitarias"
+        },
+        {
+            "name": "Usuarios",
+            "description": "Endpoints para consulta y actualizacion del perfil del usuario"
+        },
+        {
+            "name": "Autenticacion",
+            "description": "Endpoints para registro de nuevos usuarios e inicio de sesion con tokens JWT"
+        }
+    ],
+    "paths": {
+        "/usuarios/perfil": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Consultar perfil",
+                "description": "Obtiene los datos del usuario autenticado a partir del token JWT portador.",
+                "operationId": "obtenerPerfil",
+                "responses": {
+                    "200": {
+                        "description": "Perfil consultado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseUsuarioResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o token invalido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Actualizar perfil",
+                "description": "Modifica los datos permitidos del usuario autenticado. Para cambiar la contrasena se debe suministrar la clave actual.",
+                "operationId": "actualizarPerfil",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ActualizarPerfilRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Perfil actualizado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseUsuarioResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Datos de entrada invalidos o contrasena actual incorrecta",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o cuenta inactiva",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "El nuevo correo electronico ya esta registrado por otro usuario",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/{id}": {
+            "get": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Consultar detalle de alerta por ID",
+                "description": "Obtiene el detalle exhaustivo de una alerta comunitaria especifica, disponible para ciudadanos y miembros del equipo de respuesta.",
+                "operationId": "obtenerAlertaPorId",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alerta consultada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Modificar alerta",
+                "description": "Permite a un ciudadano modificar una alerta propia, unicamente si esta en estado PENDIENTE_REVISION.",
+                "operationId": "modificarAlerta",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ModificarAlertaRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Alerta modificada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Datos de entrada invalidos o estado diferente de PENDIENTE_REVISION",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (no es el autor de la alerta)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Eliminar alerta",
+                "description": "Permite a un ciudadano eliminar una alerta propia, unicamente si esta en estado PENDIENTE_REVISION.",
+                "operationId": "eliminarAlerta",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alerta eliminada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La alerta no se encuentra en estado PENDIENTE_REVISION",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (no es el autor de la alerta)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/registro": {
+            "post": {
+                "tags": [
+                    "Autenticacion"
+                ],
+                "summary": "Registrar nuevo usuario",
+                "description": "Crea un usuario con rol ROLE_CIUDADANO y persiste su encuesta de caracterizacion de forma atomica.",
+                "operationId": "registrar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistroRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseUsuarioResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Datos de entrada invalidos o documento de identidad ya registrado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Correo electronico ya registrado en la plataforma",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Autenticacion"
+                ],
+                "summary": "Cerrar sesi\u00f3n",
+                "description": "Invalida la sesi\u00f3n del usuario en el contexto de seguridad y notifica a la aplicaci\u00f3n cliente para purgar sus credenciales locales.",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "Sesi\u00f3n cerrada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token de autenticaci\u00f3n ausente o inv\u00e1lido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Autenticacion"
+                ],
+                "summary": "Iniciar sesion",
+                "description": "Valida las credenciales proporcionadas y genera un token JWT firmado criptograficamente.",
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inicio de sesion exitoso con emision de token JWT",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseLoginResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Formato de credenciales invalido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciales invalidas o cuenta inactiva",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alertas": {
+            "get": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Listar alertas con filtros",
+                "description": "Obtiene un listado paginado de alertas activas o filtradas por ubicacion (departamento, municipio), estado y rango de fechas.",
+                "operationId": "listarAlertas",
+                "parameters": [
+                    {
+                        "name": "departamento",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "municipio",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "PENDIENTE_REVISION",
+                                "EN_GESTION",
+                                "DIRECCIONADA",
+                                "RESUELTA",
+                                "RECHAZADA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "fechaInicio",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fechaFin",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de alertas recuperado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponsePageAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parametros de filtro invalidos (ej. fecha de inicio posterior a fecha de fin)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Crear nueva alerta",
+                "description": "Permite a un usuario con rol ROLE_CIUDADANO registrar una alerta comunitaria.",
+                "operationId": "crearAlerta",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrearAlertaRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Alerta creada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Datos de entrada invalidos",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol CIUDADANO)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/evidencias/upload": {
+            "post": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Subir evidencia fotografica",
+                "description": "Recibe un archivo de imagen, valida su formato (JPEG, PNG o WebP), lo comprime de forma automatica y lo almacena en AWS S3.",
+                "operationId": "subirEvidencia",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "archivo": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Archivo binario de imagen a subir (JPEG, PNG o WebP)"
+                                    }
+                                },
+                                "required": [
+                                    "archivo"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Evidencia fotografica subida y optimizada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseUploadEvidenciaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Archivo vacio, formato no admitido o imagen corrupta",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol CIUDADANO)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Fallo en la comunicacion con el almacenamiento en la nube",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/mis-alertas": {
+            "get": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Listar mis alertas",
+                "description": "Obtiene las alertas comunitarias reportadas por el ciudadano autenticado de forma paginada.",
+                "operationId": "listarMisAlertas",
+                "parameters": [
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de alertas recuperado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponsePageAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol CIUDADANO)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ActualizarPerfilRequestDto": {
+                "type": "object",
+                "description": "Datos para la actualizacion del perfil del usuario",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "description": "Nombre completo del usuario",
+                        "example": "Maria Gomez",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Correo electronico de contacto",
+                        "example": "maria.gomez@example.com"
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "description": "Numero telefonico de contacto",
+                        "example": 3109876543,
+                        "maxLength": 20,
+                        "minLength": 0
+                    },
+                    "passwordActual": {
+                        "type": "string",
+                        "description": "Contrasena actual (requerida solo si se va a modificar la contrasena)",
+                        "example": "PasswordActual123*"
+                    },
+                    "passwordNuevo": {
+                        "type": "string",
+                        "description": "Nueva contrasena (opcional, dejar vacio si no se desea cambiar)",
+                        "example": "PasswordNuevo456*",
+                        "maxLength": 2147483647,
+                        "minLength": 8
+                    }
+                },
+                "required": [
+                    "email",
+                    "nombre"
+                ]
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "ApiResponseUsuarioResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/UsuarioResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "CaracterizacionResponseDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "fechaNacimiento": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "edadCalculada": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "genero": {
+                        "type": "string",
+                        "enum": [
+                            "MASCULINO",
+                            "FEMENINO",
+                            "OTRO"
+                        ]
+                    },
+                    "enGestacionLactancia": {
+                        "type": "boolean"
+                    },
+                    "numeroIntegrantesFamilia": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "tieneMenoresDeEdad": {
+                        "type": "boolean"
+                    },
+                    "cantidadMenores": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "tieneMiembroDiscapacidad": {
+                        "type": "boolean"
+                    },
+                    "especificacionDiscapacidad": {
+                        "type": "string"
+                    },
+                    "perteneceGrupoEtnico": {
+                        "type": "boolean"
+                    },
+                    "especificacionGrupoEtnico": {
+                        "type": "string"
+                    },
+                    "fechaEncuesta": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "DocumentoResponseDto": {
+                "type": "object",
+                "properties": {
+                    "numero": {
+                        "type": "string"
+                    },
+                    "tipo": {
+                        "type": "string",
+                        "enum": [
+                            "CEDULA",
+                            "PASAPORTE",
+                            "TARJETA_EXTRANJERIA"
+                        ]
+                    }
+                }
+            },
+            "UbicacionResponseDto": {
+                "type": "object",
+                "properties": {
+                    "departamento": {
+                        "type": "string"
+                    },
+                    "municipio": {
+                        "type": "string"
+                    },
+                    "direccionResidencia": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UsuarioResponseDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "documento": {
+                        "$ref": "#/components/schemas/DocumentoResponseDto"
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionResponseDto"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "telefono": {
+                        "type": "string"
+                    },
+                    "rol": {
+                        "type": "string",
+                        "enum": [
+                            "ROLE_CIUDADANO",
+                            "ROLE_LIDER",
+                            "ROLE_ORGANIZACION",
+                            "ROLE_ADMIN"
+                        ]
+                    },
+                    "activo": {
+                        "type": "boolean"
+                    },
+                    "fechaRegistro": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "caracterizacion": {
+                        "$ref": "#/components/schemas/CaracterizacionResponseDto"
+                    }
+                }
+            },
+            "ModificarAlertaRequestDto": {
+                "type": "object",
+                "description": "Solicitud para la modificacion de una alerta comunitaria existente",
+                "properties": {
+                    "descripcion": {
+                        "type": "string",
+                        "description": "Detalle actualizado de los hechos o situacion de alerta",
+                        "example": "Se observa inundacion severa en la via principal tras fuertes lluvias impidiendo el paso vehicular.",
+                        "maxLength": 1000,
+                        "minLength": 10
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionAlertaDto",
+                        "description": "Ubicacion territorial actualizada del incidente"
+                    },
+                    "evidenciasUrls": {
+                        "type": "array",
+                        "description": "Lista actualizada de URLs de evidencias fotograficas (maximo 5 imagenes)",
+                        "items": {
+                            "type": "string"
+                        },
+                        "maxItems": 5,
+                        "minItems": 0
+                    },
+                    "esAnonimo": {
+                        "type": "boolean",
+                        "description": "Permite cambiar la visibilidad de la alerta a anonima o publica",
+                        "example": true
+                    }
+                },
+                "required": [
+                    "descripcion",
+                    "ubicacion"
+                ]
+            },
+            "UbicacionAlertaDto": {
+                "type": "object",
+                "description": "Datos geograficos normalizados de la ubicacion del incidente",
+                "properties": {
+                    "departamento": {
+                        "type": "string",
+                        "description": "Departamento normalizado",
+                        "example": "Quindio",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "municipio": {
+                        "type": "string",
+                        "description": "Municipio normalizado",
+                        "example": "Armenia",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "direccionDetallada": {
+                        "type": "string",
+                        "description": "Direccion detallada o indicaciones del lugar",
+                        "example": "Carrera 14 # 12-25, frente a la plaza principal",
+                        "maxLength": 255,
+                        "minLength": 0
+                    }
+                },
+                "required": [
+                    "departamento",
+                    "direccionDetallada",
+                    "municipio"
+                ]
+            },
+            "AlertaResponseDto": {
+                "type": "object",
+                "description": "Datos de la alerta creada",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador unico de la alerta",
+                        "example": 1
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "description": "Descripcion del incidente"
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionAlertaDto",
+                        "description": "Ubicacion territorial del incidente"
+                    },
+                    "autorId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador del ciudadano autor",
+                        "example": 5
+                    },
+                    "autorNombre": {
+                        "type": "string",
+                        "description": "Nombre del ciudadano autor",
+                        "example": "Juan Perez"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "description": "Estado inicial de la alerta",
+                        "enum": [
+                            "PENDIENTE_REVISION",
+                            "EN_GESTION",
+                            "DIRECCIONADA",
+                            "RESUELTA",
+                            "RECHAZADA"
+                        ],
+                        "example": "PENDIENTE_REVISION"
+                    },
+                    "evidencias": {
+                        "type": "array",
+                        "description": "Evidencias fotograficas adjuntas",
+                        "items": {
+                            "$ref": "#/components/schemas/EvidenciaResponseDto"
+                        }
+                    },
+                    "esAnonimo": {
+                        "type": "boolean",
+                        "description": "Indica si la alerta fue publicada de forma anonima",
+                        "example": false
+                    },
+                    "totalEvidencias": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Total de evidencias fotograficas adjuntas a la alerta",
+                        "example": 4
+                    },
+                    "fechaCreacion": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha y hora de creacion de la alerta"
+                    }
+                }
+            },
+            "ApiResponseAlertaResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/AlertaResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "EvidenciaResponseDto": {
+                "type": "object",
+                "description": "Metadatos de la evidencia fotografica asociada",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador de la evidencia",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "URL de acceso a la imagen",
+                        "example": "https://bucket-redalerta.s3.amazonaws.com/alertas/foto.jpg"
+                    },
+                    "tipoMime": {
+                        "type": "string",
+                        "description": "Tipo MIME del contenido",
+                        "example": "image/jpeg"
+                    },
+                    "fechaSubida": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha de subida del archivo"
+                    }
+                }
+            },
+            "CaracterizacionRequestDto": {
+                "type": "object",
+                "properties": {
+                    "fechaNacimiento": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "genero": {
+                        "type": "string",
+                        "enum": [
+                            "MASCULINO",
+                            "FEMENINO",
+                            "OTRO"
+                        ]
+                    },
+                    "enGestacionLactancia": {
+                        "type": "boolean"
+                    },
+                    "numeroIntegrantesFamilia": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                    },
+                    "tieneMenoresDeEdad": {
+                        "type": "boolean"
+                    },
+                    "cantidadMenores": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "tieneMiembroDiscapacidad": {
+                        "type": "boolean"
+                    },
+                    "especificacionDiscapacidad": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 0
+                    },
+                    "perteneceGrupoEtnico": {
+                        "type": "boolean"
+                    },
+                    "especificacionGrupoEtnico": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 0
+                    }
+                },
+                "required": [
+                    "fechaNacimiento",
+                    "genero",
+                    "numeroIntegrantesFamilia"
+                ]
+            },
+            "DocumentoRequestDto": {
+                "type": "object",
+                "properties": {
+                    "numero": {
+                        "type": "string"
+                    },
+                    "tipo": {
+                        "type": "string",
+                        "enum": [
+                            "CEDULA",
+                            "PASAPORTE",
+                            "TARJETA_EXTRANJERIA"
+                        ]
+                    }
+                },
+                "required": [
+                    "numero",
+                    "tipo"
+                ]
+            },
+            "RegistroRequestDto": {
+                "type": "object",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 3
+                    },
+                    "documento": {
+                        "$ref": "#/components/schemas/DocumentoRequestDto"
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionRequestDto"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 6
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "minLength": 0
+                    },
+                    "caracterizacion": {
+                        "$ref": "#/components/schemas/CaracterizacionRequestDto"
+                    }
+                },
+                "required": [
+                    "caracterizacion",
+                    "documento",
+                    "email",
+                    "nombre",
+                    "password",
+                    "ubicacion"
+                ]
+            },
+            "UbicacionRequestDto": {
+                "type": "object",
+                "description": "Datos territoriales y direccion de residencia del usuario",
+                "properties": {
+                    "departamento": {
+                        "type": "string",
+                        "description": "Departamento de residencia",
+                        "example": "Quindio",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "municipio": {
+                        "type": "string",
+                        "description": "Municipio de residencia",
+                        "example": "Armenia",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "direccionResidencia": {
+                        "type": "string",
+                        "description": "Direccion detallada de residencia",
+                        "example": "Calle 10 # 20-30",
+                        "maxLength": 150,
+                        "minLength": 0
+                    }
+                },
+                "required": [
+                    "departamento",
+                    "direccionResidencia",
+                    "municipio"
+                ]
+            },
+            "ApiResponseVoid": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "LoginRequestDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "ApiResponseLoginResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/LoginResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "LoginResponseDto": {
+                "type": "object",
+                "description": "Respuesta del inicio de sesion con token de autenticacion y datos minimos de sesion",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "description": "Token de autenticacion JWT para autorizar peticiones subsecuentes",
+                        "example": "eyJhbGciOiJIUzI1Ni..."
+                    },
+                    "tipo": {
+                        "type": "string",
+                        "description": "Tipo de autorizacion HTTP",
+                        "example": "Bearer"
+                    },
+                    "usuario": {
+                        "$ref": "#/components/schemas/UsuarioSesionDto",
+                        "description": "Datos esenciales de sesion del usuario autenticado"
+                    }
+                }
+            },
+            "UsuarioSesionDto": {
+                "type": "object",
+                "description": "Datos esenciales de identidad y permisos del usuario autenticado para la sesion activa",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador unico del usuario",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "description": "Nombre completo del usuario",
+                        "example": "Daniel Estiv"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Correo electronico del usuario",
+                        "example": "danielestiv@hotmail.com"
+                    },
+                    "rol": {
+                        "type": "string",
+                        "description": "Rol asignado para control de acceso y navegacion",
+                        "enum": [
+                            "ROLE_CIUDADANO",
+                            "ROLE_LIDER",
+                            "ROLE_ORGANIZACION",
+                            "ROLE_ADMIN"
+                        ],
+                        "example": "ROLE_CIUDADANO"
+                    }
+                }
+            },
+            "CrearAlertaRequestDto": {
+                "type": "object",
+                "description": "Solicitud para la creacion de una nueva alerta comunitaria",
+                "properties": {
+                    "descripcion": {
+                        "type": "string",
+                        "description": "Detalle de los hechos o situacion de alerta",
+                        "example": "Se observa inundacion en la via principal tras fuertes lluvias impidiendo el paso.",
+                        "maxLength": 1000,
+                        "minLength": 10
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionAlertaDto",
+                        "description": "Ubicacion territorial del incidente"
+                    },
+                    "evidenciasUrls": {
+                        "type": "array",
+                        "description": "Lista opcional de URLs de evidencias previamente cargadas (maximo 5 imagenes)",
+                        "items": {
+                            "type": "string"
+                        },
+                        "maxItems": 5,
+                        "minItems": 0
+                    },
+                    "esAnonimo": {
+                        "type": "boolean",
+                        "description": "Indica si la alerta debe publicarse de forma anonima en el feed",
+                        "example": false
+                    }
+                },
+                "required": [
+                    "descripcion",
+                    "ubicacion"
+                ]
+            },
+            "ApiResponseUploadEvidenciaResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/UploadEvidenciaResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "UploadEvidenciaResponseDto": {
+                "type": "object",
+                "description": "Resultado de la carga y compresion de una evidencia fotografica en AWS S3",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "URL publica o de acceso directo a la imagen en S3",
+                        "example": "https://redalerta-evidencias.s3.us-east-1.amazonaws.com/alertas/550e8400-e29b-41d4-a716-446655440000.jpg"
+                    },
+                    "key": {
+                        "type": "string",
+                        "description": "Clave o ruta unica del objeto dentro del bucket",
+                        "example": "alertas/550e8400-e29b-41d4-a716-446655440000.jpg"
+                    },
+                    "nombreOriginal": {
+                        "type": "string",
+                        "description": "Nombre original del archivo suministrado por el usuario",
+                        "example": "foto_inundacion.jpg"
+                    },
+                    "pesoOriginalBytes": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Tamano original del archivo antes de la compresion en bytes",
+                        "example": 8388608
+                    },
+                    "pesoComprimidoBytes": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Tamano final optimizado y almacenado en S3 en bytes",
+                        "example": 358400
+                    },
+                    "tipoMime": {
+                        "type": "string",
+                        "description": "Tipo de contenido MIME de la imagen",
+                        "example": "image/jpeg"
+                    }
+                }
+            },
+            "Pageable": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                    },
+                    "sort": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "ApiResponsePageAlertaResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/PageAlertaResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "PageAlertaResponseDto": {
+                "type": "object",
+                "properties": {
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AlertaResponseDto"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/PageableObject"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/SortObject"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageableObject": {
+                "type": "object",
+                "properties": {
+                    "offset": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "paged": {
+                        "type": "boolean"
+                    },
+                    "pageNumber": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageSize": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/SortObject"
+                    },
+                    "unpaged": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "SortObject": {
+                "type": "object",
+                "properties": {
+                    "empty": {
+                        "type": "boolean"
+                    },
+                    "sorted": {
+                        "type": "boolean"
+                    },
+                    "unsorted": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "description": "Ingrese el token JWT recibido en /auth/login para autorizar las solicitudes.",
+                "name": "BearerAuth",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

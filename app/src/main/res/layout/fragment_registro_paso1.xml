@@ -15,158 +15,133 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:letterSpacing="0.05"
             android:text="@string/reg_paso1_titulo"
             android:textColor="@color/ra_light_text"
             android:textSize="14sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.05" />
+            android:textStyle="bold" />
 
-        <!-- Fila 1: Tipo doc + Número doc -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- TIPO DE DOCUMENTO (Fila independiente a ancho completo) -->
+        <TextView
+            style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:labelFor="@+id/etTipoDoc"
+            android:text="@string/reg_label_tipo_doc" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView style="@style/Widget.RedAlerta.Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/reg_label_tipo_doc" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilTipoDoc"
-                    style="@style/Widget.RedAlerta.InputLight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    app:endIconMode="dropdown_menu">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/etTipoDoc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:textSize="14sp"
-                        android:textColor="@color/ra_light_text" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-            <Space
-                android:layout_width="12dp"
-                android:layout_height="1dp" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView style="@style/Widget.RedAlerta.Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/reg_label_num_doc" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.RedAlerta.InputLight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:hint="@string/reg_hint_doc">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etNumDoc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:maxLines="1"
-                        android:textColor="@color/ra_light_text"
-                        android:textSize="14sp" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Fila 2: Nombre + Apellido -->
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTipoDoc"
+            style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="6dp"
+            android:hint="@string/reg_label_tipo_doc"
+            app:endIconMode="dropdown_menu">
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/etTipoDoc"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:inputType="none"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView style="@style/Widget.RedAlerta.Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/reg_label_nombre" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.RedAlerta.InputLight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:hint="@string/reg_hint_nombre">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etNombre"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
-                        android:maxLines="1"
-                        android:textColor="@color/ra_light_text"
-                        android:textSize="14sp" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-            <Space android:layout_width="12dp" android:layout_height="1dp" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView style="@style/Widget.RedAlerta.Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/reg_label_apellido" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.RedAlerta.InputLight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:hint="@string/reg_hint_apellido">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etApellido"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
-                        android:maxLines="1"
-                        android:textColor="@color/ra_light_text"
-                        android:textSize="14sp" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Correo -->
-        <TextView style="@style/Widget.RedAlerta.Label"
+        <!-- NÚMERO DE DOCUMENTO (Fila independiente a ancho completo) -->
+        <TextView
+            style="@style/Widget.RedAlerta.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:labelFor="@+id/etNumDoc"
+            android:text="@string/reg_label_num_doc" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNumDoc"
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/reg_hint_doc">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNumDoc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- NOMBRE -->
+        <TextView
+            style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@+id/etNombre"
+            android:text="@string/reg_label_nombre" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNombre"
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/reg_hint_nombre">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- APELLIDO -->
+        <TextView
+            style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@+id/etApellido"
+            android:text="@string/reg_label_apellido" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilApellido"
+            style="@style/Widget.RedAlerta.InputLight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/reg_hint_apellido">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etApellido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- CORREO ELECTRÓNICO -->
+        <TextView
+            style="@style/Widget.RedAlerta.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@+id/etCorreo"
             android:text="@string/reg_label_correo" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCorreo"
             style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -183,14 +158,17 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Teléfono -->
-        <TextView style="@style/Widget.RedAlerta.Label"
+        <!-- TELÉFONO MÓVIL -->
+        <TextView
+            style="@style/Widget.RedAlerta.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:labelFor="@+id/etTelefono"
             android:text="@string/reg_label_telefono" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTelefono"
             style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -207,7 +185,7 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Divisor + botón Siguiente alineado a la derecha -->
+        <!-- Divisor + botón Siguiente -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

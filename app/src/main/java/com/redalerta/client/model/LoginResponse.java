@@ -1,10 +1,19 @@
 package com.redalerta.client.model;
 
-public class LoginResponse {
-    private String token;
-    private Usuario usuario;
-    // getters
+import java.io.Serializable;
 
+/**
+ * Corresponde a LoginResponseDto en OpenAPI.
+ */
+public class LoginResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String token;
+    private String tipo = "Bearer";
+    private Usuario usuario;
+
+    public LoginResponse() {
+    }
 
     public String getToken() {
         return token;
@@ -12,6 +21,14 @@ public class LoginResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public Usuario getUsuario() {

@@ -1,10 +1,12 @@
 package com.redalerta.client.model;
 
-public enum EstadoAlerta {
-    REGISTRADA,
-    VERIFICADA,
-    DIRECCIONADA,
-    EN_ATENCION,
-    RESUELTA,
-    CERRADA
+/**
+ * Estados permitidos en OpenAPI.
+ */
+public class EstadoAlerta {
+    public static final String PENDIENTE_REVISION = "PENDIENTE_REVISION";
+    public static final String EN_GESTION = "EN_GESTION";
+    public static final String DIRECCIONADA = "DIRECCIONADA";
+    public static final String RESUELTA = "RESUELTA";
+    public static final String RECHAZADA = "RECHAZADA";
 }

@@ -40,17 +40,38 @@
 
     <!-- ═══ Paso 2 ═══ -->
     <string name="reg_paso2_titulo">INFORMACIÓN DE UBICACIÓN</string>
+    <string name="reg_label_departamento">DEPARTAMENTO</string>
+    <string name="reg_label_municipio">MUNICIPIO / CIUDAD</string>
     <string name="reg_label_localidad">LOCALIDAD</string>
-    <string name="reg_label_barrio">BARRIO</string>
+    <string name="reg_label_barrio">BARRIO / SECTOR</string>
     <string name="reg_label_direccion">DIRECCIÓN DE RESIDENCIA</string>
     <string name="reg_label_rol">ROL EN EL SISTEMA</string>
+    <string name="reg_hint_departamento">Seleccionar departamento…</string>
+    <string name="reg_hint_municipio">Seleccionar municipio…</string>
     <string name="reg_hint_localidad">Seleccionar localidad…</string>
-    <string name="reg_hint_barrio">Nombre del barrio</string>
-    <string name="reg_hint_direccion">Cra / Cll #</string>
+    <string name="reg_hint_barrio">Nombre del barrio o sector</string>
+    <string name="reg_hint_direccion">Calle / Carrera #</string>
     <string name="reg_rol_ciudadano">Ciudadano</string>
 
     <!-- ═══ Paso 3 ═══ -->
-    <string name="reg_paso3_titulo">SEGURIDAD Y CONFIRMACIÓN</string>
+    <string name="reg_paso3_titulo">CARACTERIZACIÓN SOCIAL</string>
+    <string name="reg_paso3_caracterizacion_titulo">ENCUESTA DE CARACTERIZACIÓN</string>
+    <string name="reg_label_fecha_nacimiento">FECHA DE NACIMIENTO *</string>
+    <string name="reg_label_genero">GÉNERO *</string>
+    <string name="reg_label_integrantes">INTEGRANTES DEL HOGAR *</string>
+    <string name="reg_hint_fecha_nacimiento">AAAA-MM-DD</string>
+    <string name="reg_hint_genero">Seleccionar género…</string>
+    <string name="reg_hint_integrantes">1</string>
+    <string name="reg_sw_gestacion">¿En estado de gestación o lactancia?</string>
+    <string name="reg_sw_menores">¿Convive con menores de edad?</string>
+    <string name="reg_label_cant_menores">CANTIDAD DE MENORES</string>
+    <string name="reg_sw_discapacidad">¿Algún integrante con discapacidad?</string>
+    <string name="reg_label_espec_discapacidad">ESPECIFIQUE LA DISCAPACIDAD</string>
+    <string name="reg_sw_etnico">¿Pertenece a un grupo étnico?</string>
+    <string name="reg_label_espec_etnico">ESPECIFIQUE EL GRUPO ÉTNICO</string>
+
+    <!-- ═══ Paso 4 ═══ -->
+    <string name="reg_paso4_titulo">SEGURIDAD Y CONFIRMACIÓN</string>
     <string name="reg_resumen_titulo">Resumen del registro</string>
     <string name="reg_label_contrasena">CONTRASEÑA</string>
     <string name="reg_label_confirmar">CONFIRMAR CONTRASEÑA</string>

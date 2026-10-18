@@ -79,7 +79,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="@string/hint_correo"
             app:hintEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -112,7 +111,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="@string/hint_contrasena"
             app:endIconMode="password_toggle"
             app:endIconTint="@color/ra_gray"
             app:hintEnabled="true">
@@ -140,14 +138,14 @@
             android:text="@string/btn_login" />
 
         <!-- ═══════════ Indicador de carga ═══════════ -->
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
-            android:indeterminateTint="@color/ra_red"
+            android:indeterminate="true"
+            app:indicatorColor="@color/ra_red"
             android:visibility="gone"
             tools:visibility="visible" />
 

@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.redalerta.client.R;
-import com.redalerta.client.model.Alerta;
+import com.redalerta.client.model.*;
 
 import java.util.List;
 

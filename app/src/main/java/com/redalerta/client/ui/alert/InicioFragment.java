@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.redalerta.client.databinding.FragmentInicioBinding;
+import com.redalerta.client.model.*;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 import java.util.ArrayList;
 

@@ -14,8 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentRegistroAlertaBinding;
-import com.redalerta.client.model.Alerta;
-import com.redalerta.client.model.CrearAlertaRequest;
+import com.redalerta.client.model.*;
 import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
@@ -209,24 +208,24 @@ public class RegistroAlertaFragment extends Fragment {
     // Helpers de mapeo
     // ══════════════════════════════════════════════════════
     private String mapearCategoria(String tipo) {
-        if (tipo == null) return "OTRO";
+        if (tipo == null) return CategoriaAlerta.OTRO;
         switch (tipo) {
-            case "Incendio":          return "INCENDIO";
-            case "Inundación":        return "INUNDACION";
-            case "Accidente":         return "ACCIDENTE";
-            case "Robo / Hurto":      return "ROBO_HURTO";
-            case "Emergencia Médica": return "EMERGENCIA_MEDICA";
-            case "Desastre Natural":  return "DESASTRE_NATURAL";
-            default:                  return "OTRO";
+            case "Incendio":          return CategoriaAlerta.INCENDIO;
+            case "Inundación":        return CategoriaAlerta.INUNDACION;
+            case "Accidente":         return CategoriaAlerta.ACCIDENTE;
+            case "Robo / Hurto":      return CategoriaAlerta.ROBO_HURTO;
+            case "Emergencia Médica": return CategoriaAlerta.EMERGENCIA_MEDICA;
+            case "Desastre Natural":  return CategoriaAlerta.DESASTRE_NATURAL;
+            default:                  return CategoriaAlerta.OTRO;
         }
     }
 
     private String mapearPrioridad(String prioridad) {
-        if (prioridad == null) return "BAJA";
+        if (prioridad == null) return PrioridadAlerta.BAJA;
         switch (prioridad) {
-            case "Alta":  return "ALTA";
-            case "Media": return "MEDIA";
-            default:      return "BAJA";
+            case "Alta":  return PrioridadAlerta.ALTA;
+            case "Media": return PrioridadAlerta.MEDIA;
+            default:      return PrioridadAlerta.BAJA;
         }
     }
 

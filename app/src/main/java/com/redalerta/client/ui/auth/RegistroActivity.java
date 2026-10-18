@@ -5,11 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityRegistroBinding;
+import com.redalerta.client.model.RegistroRequest;
 
 public class RegistroActivity extends AppCompatActivity {
 
     private ActivityRegistroBinding binding;
-    private int pasoActual = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +25,11 @@ public class RegistroActivity extends AppCompatActivity {
     }
 
     public void mostrarPaso(int paso) {
-        pasoActual = paso;
         Fragment fragment;
         switch (paso) {
             case 2:  fragment = new RegistroPaso2Fragment();  break;
             case 3:  fragment = new RegistroPaso3Fragment();  break;
+            case 4:  fragment = new RegistroPaso4Fragment();  break;
             default: fragment = new RegistroPaso1Fragment();  break;
         }
         getSupportFragmentManager()
@@ -48,6 +48,9 @@ public class RegistroActivity extends AppCompatActivity {
         aplicarEstadoLinea(binding.stepLine2, paso, 2);
         // Paso 3
         aplicarEstadoCirculo(binding.stepCircle3, paso, 3);
+        aplicarEstadoLinea(binding.stepLine3, paso, 3);
+        // Paso 4
+        aplicarEstadoCirculo(binding.stepCircle4, paso, 4);
     }
 
     private void aplicarEstadoCirculo(android.widget.TextView circle, int pasoActual, int numero) {
@@ -76,10 +79,9 @@ public class RegistroActivity extends AppCompatActivity {
         line.setBackgroundColor(color);
     }
 
-    private final com.redalerta.client.model.RegistroRequest registroRequest =
-            new com.redalerta.client.model.RegistroRequest();
+    private final RegistroRequest registroRequest = new RegistroRequest();
 
-    public com.redalerta.client.model.RegistroRequest getRegistroRequest() {
+    public RegistroRequest getRegistroRequest() {
         return registroRequest;
     }
 }

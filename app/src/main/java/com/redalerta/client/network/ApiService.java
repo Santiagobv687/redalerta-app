@@ -1,19 +1,60 @@
 package com.redalerta.client.network;
 
 import com.redalerta.client.model.*;
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
 public interface ApiService {
 
-    // ═══ Auth ═══
-    @POST("api/auth/login")
+    // ═══ Autenticación ═══
+    @POST("auth/login")
     Call<ApiResponse<LoginResponse>> login(@Body LoginRequest request);
 
-    @POST("api/auth/register")
+    @POST("auth/registro")
     Call<ApiResponse<Usuario>> registrar(@Body RegistroRequest request);
 
+    @POST("auth/logout")
+    Call<ApiResponse<Void>> logout();
+
+    // ═══ Usuarios / Perfil ═══
+    @GET("usuarios/perfil")
+    Call<ApiResponse<Usuario>> obtenerPerfil();
+
+    @PUT("usuarios/perfil")
+    Call<ApiResponse<Usuario>> actualizarPerfil(@Body ActualizarPerfilRequest request);
+
     // ═══ Alertas ═══
-    @POST("api/alertas")
+    @GET("alertas")
+    Call<ApiResponse<PageAlertaResponse>> listarAlertas(
+            @Query("departamento") String departamento,
+            @Query("municipio") String municipio,
+            @Query("estado") String estado,
+            @Query("fechaInicio") String fechaInicio,
+            @Query("fechaFin") String fechaFin,
+            @Query("page") int page,
+            @Query("size") int size
+    );
+
+    @GET("alertas/mis-alertas")
+    Call<ApiResponse<PageAlertaResponse>> listarMisAlertas(
+            @Query("page") int page,
+            @Query("size") int size
+    );
+
+    @GET("alertas/{id}")
+    Call<ApiResponse<Alerta>> obtenerAlertaPorId(@Path("id") long id);
+
+    @POST("alertas")
     Call<ApiResponse<Alerta>> crearAlerta(@Body CrearAlertaRequest request);
+
+    @PUT("alertas/{id}")
+    Call<ApiResponse<Alerta>> modificarAlerta(@Path("id") long id, @Body ModificarAlertaRequest request);
+
+    @DELETE("alertas/{id}")
+    Call<ApiResponse<Void>> eliminarAlerta(@Path("id") long id);
+
+    @Multipart
+    @POST("alertas/evidencias/upload")
+    Call<ApiResponse<UploadEvidenciaResponse>> subirEvidencia(@Part MultipartBody.Part archivo);
 }
