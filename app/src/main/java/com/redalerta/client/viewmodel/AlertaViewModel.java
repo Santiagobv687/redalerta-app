@@ -161,7 +161,7 @@ public class AlertaViewModel extends AndroidViewModel {
         }
 
         ApiClient.getApiService(getApplication())
-                .listarMisAlertas(0, 20)
+                .listarMisAlertas(0, 20, "fechaCreacion,desc")
                 .enqueue(new Callback<ApiResponse<PageAlertaResponse>>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse<PageAlertaResponse>> call,
@@ -302,7 +302,7 @@ public class AlertaViewModel extends AndroidViewModel {
 
         // Llamada REAL al endpoint GET /api/v1/alertas (Departamento es fijo en el backend por el token del usuario)
         ApiClient.getApiService(getApplication())
-                .listarAlertas(mun, estado, null, null, 0, 20)
+                .listarAlertas(mun, estado, null, null, 0, 20, "fechaCreacion,desc")
                 .enqueue(new Callback<ApiResponse<PageAlertaResponse>>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse<PageAlertaResponse>> call,

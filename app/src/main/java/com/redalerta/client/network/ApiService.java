@@ -34,14 +34,16 @@ public interface ApiService {
             @Query("estado") String estado,
             @Query("fechaInicio") String fechaInicio,
             @Query("fechaFin") String fechaFin,
-            @Query("page") int page,
-            @Query("size") int size
+            @Query("page") Integer page,
+            @Query("size") Integer size,
+            @Query("sort") String sort
     );
 
     @GET("alertas/mis-alertas")
     Call<ApiResponse<PageAlertaResponse>> listarMisAlertas(
-            @Query("page") int page,
-            @Query("size") int size
+            @Query("page") Integer page,
+            @Query("size") Integer size,
+            @Query("sort") String sort
     );
 
     @GET("alertas/{id}")
