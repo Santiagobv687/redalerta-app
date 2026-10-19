@@ -69,10 +69,11 @@ public class InicioFragment extends Fragment {
 
     private void setupRecyclerView() {
         adapter = new AlertaAdapter(new ArrayList<>(), alerta -> {
-            // Acción al tocar una tarjeta de alerta
-            Toast.makeText(requireContext(),
-                    "Alerta: " + alerta.getTitulo() + "\nUbicación: " + alerta.getDireccion(),
-                    Toast.LENGTH_SHORT).show();
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
+                    .addToBackStack(null)
+                    .commit();
         });
 
         binding.rvFeedAlertas.setLayoutManager(new LinearLayoutManager(requireContext()));

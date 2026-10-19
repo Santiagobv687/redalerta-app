@@ -388,6 +388,94 @@
                 ]
             }
         },
+        "/alertas/{id}/direccionamiento": {
+            "put": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Modificar direccionamiento de alerta",
+                "description": "Permite al lider comunitario autor rectificar categoria, prioridad, observacion o cambiar la organizacion receptora mientras la alerta continue en DIRECCIONADA.",
+                "operationId": "modificarDireccionamiento",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DireccionarAlertaRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Direccionamiento modificado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Datos invalidos o la alerta no se encuentra en estado DIRECCIONADA",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (no es el lider autor del direccionamiento o rol no autorizado)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta u organizacion no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/auth/registro": {
             "post": {
                 "tags": [
@@ -685,6 +773,182 @@
                     },
                     "403": {
                         "description": "Acceso denegado (requiere rol CIUDADANO)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/{id}/direccionar": {
+            "post": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Direccionar alerta",
+                "description": "Permite a un lider comunitario realizar el triaje de una alerta en PENDIENTE_REVISION, clasificarla y canalizarla hacia una entidad idonea.",
+                "operationId": "direccionarAlerta",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DireccionarAlertaRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Alerta direccionada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Datos de entrada invalidos o estado no permite direccionamiento",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (alerta fuera de la jurisdiccion del lider o rol no autorizado)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta u organizacion no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/{id}/cancelar-direccionamiento": {
+            "post": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Cancelar direccionamiento de alerta",
+                "description": "Permite al lider comunitario autor revertir el direccionamiento de una alerta en estado DIRECCIONADA, retornandola a revision comunitaria.",
+                "operationId": "cancelarDireccionamiento",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CancelarDireccionamientoRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Direccionamiento cancelado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Motivo invalido o la alerta no se encuentra en estado DIRECCIONADA",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (no es el lider autor del direccionamiento o rol no autorizado)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta no encontrada",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -1040,6 +1304,110 @@
                 }
             }
         },
+        "/alertas/organizaciones-elegibles": {
+            "get": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Listar organizaciones elegibles",
+                "description": "Retorna las entidades de socorro o gubernamentales activas con competencia en la jurisdiccion del lider comunitario autenticado.",
+                "operationId": "listarOrganizacionesElegibles",
+                "responses": {
+                    "200": {
+                        "description": "Listado de organizaciones recuperado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListOrganizacionResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol LIDER o ADMIN)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/organizacion/bandeja": {
+            "get": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Bandeja de alertas para organizacion",
+                "description": "Obtiene las alertas comunitarias canalizadas hacia la entidad u organizacion de socorro autenticada.",
+                "operationId": "listarBandejaOrganizacion",
+                "parameters": [
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bandeja de alertas recuperada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponsePageAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol ORGANIZACION o ADMIN)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/alertas/mis-alertas": {
             "get": {
                 "tags": [
@@ -1081,6 +1449,63 @@
                     },
                     "403": {
                         "description": "Acceso denegado (requiere rol CIUDADANO)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/lider/direccionadas": {
+            "get": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Listar alertas direccionadas por el lider",
+                "description": "Obtiene las alertas comunitarias evaluadas y direccionadas por el lider comunitario autenticado.",
+                "operationId": "listarAlertasDireccionadas",
+                "parameters": [
+                    {
+                        "name": "pageable",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Pageable"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de alertas direccionadas recuperado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponsePageAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (requiere rol LIDER o ADMIN)",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -1663,6 +2088,33 @@
                         "description": "Total de evidencias fotograficas adjuntas a la alerta",
                         "example": 4
                     },
+                    "liderId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador del lider comunitario responsable del triaje",
+                        "example": 10
+                    },
+                    "liderNombre": {
+                        "type": "string",
+                        "description": "Nombre del lider comunitario responsable",
+                        "example": "Carlos Ramirez"
+                    },
+                    "organizacionId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador de la organizacion o entidad asignada",
+                        "example": 15
+                    },
+                    "organizacionNombre": {
+                        "type": "string",
+                        "description": "Nombre de la entidad u organizacion asignada",
+                        "example": "Cuerpo Oficial de Bomberos de Armenia"
+                    },
+                    "observacionTecnica": {
+                        "type": "string",
+                        "description": "Observacion o dictamen tecnico del lider comunitario",
+                        "example": "Incendio forestal activo con amenaza a zona residencial."
+                    },
                     "fechaCreacion": {
                         "type": "string",
                         "format": "date-time",
@@ -1758,6 +2210,55 @@
                         "example": "ROLE_CIUDADANO"
                     }
                 }
+            },
+            "DireccionarAlertaRequestDto": {
+                "type": "object",
+                "description": "Solicitud de triaje y direccionamiento de una alerta hacia una organizacion",
+                "properties": {
+                    "categoria": {
+                        "type": "string",
+                        "description": "Tipologia o clasificacion tecnica de la alerta",
+                        "enum": [
+                            "DESASTRE_NATURAL",
+                            "INCENDIO",
+                            "SEGURIDAD_CIUDADANA",
+                            "INFRAESTRUCTURA_Y_SERVICIOS",
+                            "SALUD_Y_EMERGENCIA_MEDICA",
+                            "AMBIENTAL",
+                            "OTRO"
+                        ],
+                        "example": "INCENDIO"
+                    },
+                    "prioridad": {
+                        "type": "string",
+                        "description": "Nivel de urgencia asignado a la alerta",
+                        "enum": [
+                            "ALTA",
+                            "MEDIA",
+                            "BAJA"
+                        ],
+                        "example": "ALTA"
+                    },
+                    "organizacionId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador unico de la entidad u organizacion competente",
+                        "example": 15
+                    },
+                    "observacionTecnica": {
+                        "type": "string",
+                        "description": "Dictamen o notas tecnicas del lider para la intervencion de la entidad",
+                        "example": "Se evidencia conflagracion activa en sector forestal con riesgo de propagacion a viviendas.",
+                        "maxLength": 1000,
+                        "minLength": 10
+                    }
+                },
+                "required": [
+                    "categoria",
+                    "observacionTecnica",
+                    "organizacionId",
+                    "prioridad"
+                ]
             },
             "CaracterizacionRequestDto": {
                 "type": "object",
@@ -2009,6 +2510,22 @@
                 "required": [
                     "descripcion",
                     "ubicacion"
+                ]
+            },
+            "CancelarDireccionamientoRequestDto": {
+                "type": "object",
+                "description": "Peticion para cancelar o revertir el direccionamiento de una alerta hacia una entidad",
+                "properties": {
+                    "motivo": {
+                        "type": "string",
+                        "description": "Justificacion fundamentada del motivo por el cual se revoca el direccionamiento",
+                        "example": "Se direcciono inicialmente a Bomberos por error de digitacion, corresponde atencion de Policia Nacional",
+                        "maxLength": 500,
+                        "minLength": 10
+                    }
+                },
+                "required": [
+                    "motivo"
                 ]
             },
             "ApiResponseUploadEvidenciaResponseDto": {
@@ -2407,15 +2924,15 @@
                     "sort": {
                         "$ref": "#/components/schemas/SortObject"
                     },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
                     "first": {
                         "type": "boolean"
                     },
                     "last": {
                         "type": "boolean"
-                    },
-                    "numberOfElements": {
-                        "type": "integer",
-                        "format": "int32"
                     },
                     "empty": {
                         "type": "boolean"
@@ -2459,6 +2976,64 @@
                     },
                     "unsorted": {
                         "type": "boolean"
+                    }
+                }
+            },
+            "ApiResponseListOrganizacionResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrganizacionResponseDto"
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "OrganizacionResponseDto": {
+                "type": "object",
+                "description": "Datos de contacto de una organizacion elegible para atencion de alertas",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador unico de la entidad u organizacion",
+                        "example": 5
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "description": "Nombre oficial o razon social de la entidad",
+                        "example": "Cuerpo Oficial de Bomberos de Armenia"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Correo electronico institucional",
+                        "example": "bomberos.armenia@redalerta.gov.co"
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "description": "Telefono o linea de emergencias",
+                        "example": 3101234567
+                    },
+                    "departamento": {
+                        "type": "string",
+                        "description": "Departamento territorial de operacion",
+                        "example": "Quindío"
+                    },
+                    "municipio": {
+                        "type": "string",
+                        "description": "Municipio territorial de operacion",
+                        "example": "Armenia"
                     }
                 }
             },
@@ -2511,15 +3086,15 @@
                     "sort": {
                         "$ref": "#/components/schemas/SortObject"
                     },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
                     "first": {
                         "type": "boolean"
                     },
                     "last": {
                         "type": "boolean"
-                    },
-                    "numberOfElements": {
-                        "type": "integer",
-                        "format": "int32"
                     },
                     "empty": {
                         "type": "boolean"

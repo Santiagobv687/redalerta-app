@@ -75,9 +75,11 @@ public class MisPublicacionesFragment extends Fragment {
         return new MisPublicacionesAdapter(alertas, new MisPublicacionesAdapter.OnAccionesAlertaListener() {
             @Override
             public void onAlertaClick(Alerta alerta) {
-                Toast.makeText(requireContext(),
-                        "Detalle / Seguimiento de Alerta: ALR-" + alerta.getId(),
-                        Toast.LENGTH_SHORT).show();
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
+                        .addToBackStack(null)
+                        .commit();
             }
 
             @Override

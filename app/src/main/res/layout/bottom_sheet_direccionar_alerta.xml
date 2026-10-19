@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
+
+    <!-- Handle drag -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@color/ra_light_border" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Evaluar y Direccionar Alerta"
+        android:textColor="@color/ra_light_text"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="Clasifica el incidente y asígnalo a la organización competente según la jurisdicción."
+        android:textColor="@color/ra_light_text_secondary"
+        android:textSize="13sp" />
+
+    <!-- 1. CATEGORÍA -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="CATEGORÍA DEL INCIDENTE *"
+        android:textColor="@color/ra_light_text"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilCategoria"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        app:endIconMode="dropdown_menu">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/etCategoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 2. PRIORIDAD -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="NIVEL DE PRIORIDAD *"
+        android:textColor="@color/ra_light_text"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgPrioridad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbAlta"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/ra_red"
+            android:text="Alta"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/rbMedia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/ra_red"
+            android:text="Media"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp" />
+
+        <RadioButton
+            android:id="@+id/rbBaja"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/ra_red"
+            android:text="Baja"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp" />
+    </RadioGroup>
+
+    <!-- 3. ORGANIZACIÓN -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="ORGANIZACIÓN DESTINO *"
+        android:textColor="@color/ra_light_text"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilOrganizacion"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        app:endIconMode="dropdown_menu">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/etOrganizacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 4. OBSERVACIÓN TÉCNICA -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="OBSERVACIÓN TÉCNICA *"
+        android:textColor="@color/ra_light_text"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilObservacion"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:hint="Comentarios o indicaciones (mín. 10 chars)"
+        app:counterEnabled="true"
+        app:counterMaxLength="1000"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etObservacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLength="1000"
+            android:minLines="3"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEjecutarDireccionamiento"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:enabled="false"
+        android:minHeight="48dp"
+        android:text="Confirmar Direccionamiento"
+        android:textColor="@color/ra_btn_primary_text"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/ra_btn_primary_bg"
+        app:cornerRadius="26dp" />
+
+</LinearLayout>
