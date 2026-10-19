@@ -25,14 +25,16 @@ import java.util.List;
 
 public class MisPublicacionesAdapter extends RecyclerView.Adapter<MisPublicacionesAdapter.ViewHolder> {
 
-    public interface OnAlertaClickListener {
+    public interface OnAccionesAlertaListener {
         void onAlertaClick(Alerta alerta);
+        void onModificarClick(Alerta alerta);
+        void onEliminarClick(Alerta alerta);
     }
 
     private final List<Alerta> alertas;
-    private final OnAlertaClickListener listener;
+    private final OnAccionesAlertaListener listener;
 
-    public MisPublicacionesAdapter(List<Alerta> alertas, OnAlertaClickListener listener) {
+    public MisPublicacionesAdapter(List<Alerta> alertas, OnAccionesAlertaListener listener) {
         this.alertas = alertas;
         this.listener = listener;
     }
@@ -65,7 +67,7 @@ public class MisPublicacionesAdapter extends RecyclerView.Adapter<MisPublicacion
             this.binding = binding;
         }
 
-        public void bind(Alerta alerta, OnAlertaClickListener listener) {
+        public void bind(Alerta alerta, OnAccionesAlertaListener listener) {
             Context context = itemView.getContext();
 
             // 1. Fecha legible
@@ -125,6 +127,21 @@ public class MisPublicacionesAdapter extends RecyclerView.Adapter<MisPublicacion
 
             // 6. Pie: Código de la alerta
             binding.tvCodigoAlerta.setText(alerta.getId() != null ? "ALR-" + alerta.getId() : "ALR-000");
+
+            // 7. Visibilidad de Botones Modificar / Eliminar (Solo cuando está en PENDIENTE DE REVISIÓN)
+            String estadoNorm = alerta.getEstado() != null ? alerta.getEstado().toUpperCase() : "PENDIENTE_REVISION";
+            boolean esPendiente = estadoNorm.contains("PENDIENTE") || estadoNorm.contains("REVISION");
+            if (esPendiente) {
+                binding.layoutAccionesModificar.setVisibility(View.VISIBLE);
+                binding.btnModificarAlerta.setOnClickListener(v -> {
+                    if (listener != null) listener.onModificarClick(alerta);
+                });
+                binding.btnEliminarAlerta.setOnClickListener(v -> {
+                    if (listener != null) listener.onEliminarClick(alerta);
+                });
+            } else {
+                binding.layoutAccionesModificar.setVisibility(View.GONE);
+            }
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onAlertaClick(alerta);

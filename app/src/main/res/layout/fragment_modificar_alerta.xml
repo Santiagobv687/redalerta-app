@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayoutModificarAlerta"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ra_light_bg"
+    tools:context=".ui.alert.ModificarAlertaFragment">
+
+    <!-- BARRA SUPERIOR -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayoutModificarAlerta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarModificarAlerta"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/ra_topbar"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/ra_white"
+            app:title="Modificar Alerta Comunitaria"
+            app:titleTextColor="@color/ra_white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- FORMULARIO CON SCROLL -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="96dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Modifica la descripción, ubicación o evidencias fotográficas de tu reporte antes de que sea verificado por el líder comunitario."
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="13sp"
+                android:lineSpacingMultiplier="1.2" />
+
+            <!-- 1. DESCRIPCIÓN DEL INCIDENTE -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="6dp"
+                android:text="DESCRIPCIÓN DEL INCIDENTE *"
+                android:textColor="@color/ra_light_text"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDescripcion"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Detalle lo sucedido (mínimo 10 caracteres) *"
+                app:counterEnabled="true"
+                app:counterMaxLength="1000"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="1000"
+                    android:minLines="4"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- 2. UBICACIÓN TERRITORIAL -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="UBICACIÓN Y TERRITORIO *"
+                android:textColor="@color/ra_light_text"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <!-- Selector Departamento -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDepartamento"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="DEPARTAMENTO *"
+                app:endIconMode="dropdown_menu"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/etDepartamento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Selector Municipio -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilMunicipio"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="MUNICIPIO / CIUDAD *"
+                app:endIconMode="dropdown_menu"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/etMunicipio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Dirección Detallada / Punto de Referencia -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDireccionDetallada"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="DIRECCIÓN DETALLADA O PUNTO DE REFERENCIA *"
+                app:counterEnabled="true"
+                app:counterMaxLength="200"
+                app:errorEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDireccionDetallada"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPostalAddress|textCapSentences"
+                    android:maxLength="200"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- 3. EVIDENCIAS FOTOGRÁFICAS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="EVIDENCIAS FOTOGRÁFICAS (Máx. 5)"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAgregarFoto"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="40dp"
+                    android:text="+ Adjuntar Foto"
+                    android:textColor="@color/ra_red"
+                    android:textSize="13sp"
+                    app:cornerRadius="20dp"
+                    app:strokeColor="@color/ra_red" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvEstadoSubidaFotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Puedes agregar o quitar imágenes en formato JPEG, PNG o WebP."
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="12sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEvidencias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_evidencia_seleccionada" />
+
+            <!-- 4. CHECKBOX DE ANONIMATO -->
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbAnonimo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:buttonTint="@color/ra_red"
+                android:text="¿Publicar de forma anónima?"
+                android:textColor="@color/ra_light_text"
+                android:textSize="15sp"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/ra_white" />
+
+            <!-- 5. BOTONES DE ACCIÓN -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuardarModificacion"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="24dp"
+                android:enabled="false"
+                android:minHeight="48dp"
+                android:text="Guardar Cambios"
+                android:textColor="@color/ra_btn_primary_text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/ra_btn_primary_bg"
+                app:cornerRadius="26dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelarModificacion"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:minHeight="48dp"
+                android:text="Cancelar"
+                android:textColor="@color/ra_light_text"
+                android:textSize="15sp"
+                app:cornerRadius="26dp"
+                app:strokeColor="@color/ra_light_border" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
