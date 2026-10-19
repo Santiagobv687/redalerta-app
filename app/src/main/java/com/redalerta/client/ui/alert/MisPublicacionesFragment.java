@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentMisPublicacionesBinding;
 import com.redalerta.client.model.alerta.Alerta;
@@ -65,14 +66,46 @@ public class MisPublicacionesFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new MisPublicacionesAdapter(new ArrayList<>(), alerta -> {
-            Toast.makeText(requireContext(),
-                    "Detalle / Seguimiento de Alerta: ALR-" + alerta.getId(),
-                    Toast.LENGTH_SHORT).show();
-        });
-
+        adapter = crearAdapter(new ArrayList<>());
         binding.rvMisPublicaciones.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvMisPublicaciones.setAdapter(adapter);
+    }
+
+    private MisPublicacionesAdapter crearAdapter(List<Alerta> alertas) {
+        return new MisPublicacionesAdapter(alertas, new MisPublicacionesAdapter.OnAccionesAlertaListener() {
+            @Override
+            public void onAlertaClick(Alerta alerta) {
+                Toast.makeText(requireContext(),
+                        "Detalle / Seguimiento de Alerta: ALR-" + alerta.getId(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onModificarClick(Alerta alerta) {
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, ModificarAlertaFragment.newInstance(alerta))
+                        .addToBackStack(null)
+                        .commit();
+            }
+
+            @Override
+            public void onEliminarClick(Alerta alerta) {
+                confirmarYEliminarAlerta(alerta);
+            }
+        });
+    }
+
+    private void confirmarYEliminarAlerta(Alerta alerta) {
+        if (alerta == null) return;
+        String codigo = alerta.getId() != null ? "ALR-" + alerta.getId() : "alerta";
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Eliminar alerta")
+                .setMessage("¿Estás seguro de que deseas eliminar el reporte '" + codigo + "'? Esta acción retirará el reporte permanentemente del sistema.")
+                .setPositiveButton("Eliminar", (dialog, which) -> viewModel.eliminarAlerta(alerta))
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void setupSwipeRefresh() {
@@ -149,11 +182,7 @@ public class MisPublicacionesFragment extends Fragment {
             binding.layoutError.setVisibility(View.GONE);
             binding.swipeRefreshMisPublicaciones.setVisibility(View.VISIBLE);
 
-            adapter = new MisPublicacionesAdapter(filtradas, alerta -> {
-                Toast.makeText(requireContext(),
-                        "Detalle / Seguimiento: ALR-" + alerta.getId(),
-                        Toast.LENGTH_SHORT).show();
-            });
+            adapter = crearAdapter(filtradas);
             binding.rvMisPublicaciones.setAdapter(adapter);
         }
     }
@@ -194,6 +223,13 @@ public class MisPublicacionesFragment extends Fragment {
                 binding.layoutEmpty.setVisibility(View.GONE);
             } else {
                 binding.layoutError.setVisibility(View.GONE);
+            }
+        });
+
+        // Observar confirmación de eliminación exitosa
+        viewModel.getAlertaEliminadaExito().observe(getViewLifecycleOwner(), exito -> {
+            if (exito != null && exito) {
+                Toast.makeText(requireContext(), "Alerta eliminada exitosamente", Toast.LENGTH_SHORT).show();
             }
         });
 

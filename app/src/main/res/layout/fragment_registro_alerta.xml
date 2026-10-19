@@ -1,307 +1,246 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayoutReportarAlerta"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ra_light_bg"
-    android:padding="20dp">
+    tools:context=".ui.alert.RegistroAlertaFragment">
 
-    <LinearLayout
+    <!-- BARRA SUPERIOR -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayoutReportarAlerta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="40dp">
+        android:elevation="4dp">
 
-        <!-- Título y Subtítulo -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/alerta_titulo"
-            android:textColor="@color/ra_light_text"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarReportarAlerta"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/ra_topbar"
+            app:title="Reportar Alerta Comunitaria"
+            app:titleTextColor="@color/ra_white" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
+    <!-- FORMULARIO CON SCROLL, ESPACIO INFERIOR PARA BOTTOM NAV Y ADAPTACIÓN AL TECLADO -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="96dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/alerta_subtitulo"
-            android:textColor="@color/ra_text_muted"
-            android:textSize="13sp" />
+            android:orientation="vertical"
+            android:padding="20dp">
 
-        <!-- ═══════════ TIPO DE EMERGENCIA ═══════════ -->
-        <TextView
-            style="@style/Widget.RedAlerta.Label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/alerta_tipo_label" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Describe los hechos del incidente. Tu reporte será revisado y clasificado por el líder o comité comunitario."
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="13sp"
+                android:lineSpacingMultiplier="1.2" />
 
-        <GridLayout
-            android:id="@+id/gridEmergencias"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:columnCount="2"
-            android:alignmentMode="alignMargins"
-            android:columnOrderPreserved="true">
+            <TextView
+                android:id="@+id/tvReportadoPor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/ra_summary_text"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="Reportado por: María Gómez — 18/10/2026, 5:00 p.m." />
 
-            <!-- Incendio -->
-            <LinearLayout android:id="@+id/cardIncendio" style="@style/EmergencyCard">
-                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_fire" />
-                <TextView style="@style/EmergencyText" android:text="@string/tipo_incendio" />
-            </LinearLayout>
-
-            <!-- Inundación -->
-            <LinearLayout android:id="@+id/cardInundacion" style="@style/EmergencyCard">
-                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_flood" />
-                <TextView style="@style/EmergencyText" android:text="@string/tipo_inundacion" />
-            </LinearLayout>
-
-            <!-- Accidente -->
-            <LinearLayout android:id="@+id/cardAccidente" style="@style/EmergencyCard">
-                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_car_crash" />
-                <TextView style="@style/EmergencyText" android:text="@string/tipo_accidente" />
-            </LinearLayout>
-
-            <!-- Robo -->
-            <LinearLayout android:id="@+id/cardRobo" style="@style/EmergencyCard">
-                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_robbery" />
-                <TextView style="@style/EmergencyText" android:text="@string/tipo_robo" />
-            </LinearLayout>
-
-            <!-- Emergencia Médica -->
-            <LinearLayout android:id="@+id/cardMedica" style="@style/EmergencyCard">
-                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_medical" />
-                <TextView style="@style/EmergencyText" android:text="@string/tipo_medica" />
-            </LinearLayout>
-
-            <!-- Desastre Natural -->
-            <LinearLayout android:id="@+id/cardDesastre" style="@style/EmergencyCard">
-                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_disaster" />
-                <TextView style="@style/EmergencyText" android:text="@string/tipo_desastre" />
-            </LinearLayout>
-
-            <!-- Otro -->
-            <LinearLayout android:id="@+id/cardOtro" style="@style/EmergencyCard">
-                <ImageView style="@style/EmergencyIcon" android:src="@drawable/ic_warning" app:tint="@color/ra_priority_media" />
-                <TextView style="@style/EmergencyText" android:text="@string/tipo_otro" />
-            </LinearLayout>
-
-        </GridLayout>
-
-        <!-- ═══════════ DESCRIPCIÓN ═══════════ -->
-        <TextView style="@style/Widget.RedAlerta.Label"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginTop="24dp" android:text="@string/alerta_desc_label" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDescripcion"
-            style="@style/Widget.RedAlerta.InputLight"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            app:counterEnabled="true"
-            app:counterMaxLength="500"
-            android:hint="@string/alerta_desc_hint">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDescripcion"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="4"
-                android:gravity="top|start"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- ═══════════ UBICACIÓN TERRITORIAL (CATÁLOGO) ═══════════ -->
-        <TextView style="@style/Widget.RedAlerta.Label"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginTop="24dp" android:text="UBICACIÓN Y TERRITORIO *" />
-
-        <!-- DEPARTAMENTO -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDepartamento"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="6dp" android:hint="DEPARTAMENTO *"
-            app:endIconMode="dropdown_menu"
-            app:errorEnabled="true">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/etDepartamento"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:inputType="none"
+            <!-- 1. DESCRIPCIÓN DEL INCIDENTE -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="6dp"
+                android:text="DESCRIPCIÓN DEL INCIDENTE *"
                 android:textColor="@color/ra_light_text"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
-        <!-- MUNICIPIO -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilMunicipio"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" android:hint="MUNICIPIO / CIUDAD *"
-            app:endIconMode="dropdown_menu"
-            app:errorEnabled="true">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDescripcion"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Detalle lo sucedido (mínimo 10 caracteres) *"
+                app:counterEnabled="true"
+                app:counterMaxLength="1000"
+                app:errorEnabled="true">
 
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/etMunicipio"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:inputType="none"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="1000"
+                    android:minLines="4"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- 2. UBICACIÓN TERRITORIAL (CATÁLOGO Dpto y Municipio + Dirección) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="UBICACIÓN Y TERRITORIO *"
                 android:textColor="@color/ra_light_text"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
-        <!-- ═══════════ DIRECCIÓN ═══════════ -->
-        <TextView style="@style/Widget.RedAlerta.Label"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" android:text="@string/alerta_dir_label" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.RedAlerta.InputLight"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="6dp" android:hint="@string/alerta_dir_hint">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDireccion"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:inputType="textPostalAddress"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- ═══════════ BARRIO ═══════════ -->
-        <TextView style="@style/Widget.RedAlerta.Label"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" android:text="@string/alerta_barrio_label" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.RedAlerta.InputLight"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="6dp" android:hint="@string/alerta_barrio_hint">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etBarrio"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- ═══════════ PRIORIDAD ═══════════ -->
-        <TextView style="@style/Widget.RedAlerta.Label"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginTop="24dp" android:text="@string/alerta_prioridad_label" />
-
-        <RadioGroup
-            android:id="@+id/rgPrioridad"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
-
-            <RadioButton
-                android:id="@+id/rbAlta"
+            <!-- Selector Departamento -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDepartamento"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/alerta_prioridad_alta"
-                android:buttonTint="@color/ra_priority_alta"
-                android:textSize="14sp" />
+                android:hint="DEPARTAMENTO *"
+                app:endIconMode="dropdown_menu"
+                app:errorEnabled="true">
 
-            <RadioButton
-                android:id="@+id/rbMedia"
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/etDepartamento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Selector Municipio -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilMunicipio"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/alerta_prioridad_media"
-                android:buttonTint="@color/ra_priority_media"
-                android:textSize="14sp" />
+                android:layout_marginTop="8dp"
+                android:hint="MUNICIPIO / CIUDAD *"
+                app:endIconMode="dropdown_menu"
+                app:errorEnabled="true">
 
-            <RadioButton
-                android:id="@+id/rbBaja"
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/etMunicipio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Dirección Detallada / Punto de Referencia -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDireccionDetallada"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/alerta_prioridad_baja"
-                android:buttonTint="@color/ra_priority_baja"
-                android:textSize="14sp" />
-        </RadioGroup>
+                android:layout_marginTop="8dp"
+                android:hint="DIRECCIÓN DETALLADA O PUNTO DE REFERENCIA *"
+                app:counterEnabled="true"
+                app:counterMaxLength="200"
+                app:errorEnabled="true">
 
-        <!-- ═══════════ HERIDOS ═══════════ -->
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/cbHeridos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/alerta_heridos"
-            android:textSize="14sp" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDireccionDetallada"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPostalAddress|textCapSentences"
+                    android:maxLength="200"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- ═══════════ ANÓNIMO ═══════════ -->
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/cbAnonimo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/alerta_anonimo"
-            android:textSize="14sp" />
-
-        <!-- ═══════════ EVIDENCIA ═══════════ -->
-        <TextView style="@style/Widget.RedAlerta.Label"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginTop="24dp" android:text="@string/alerta_evidencia_label" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.RedAlerta.InputLight"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="6dp" android:hint="@string/alerta_evidencia_hint">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEvidencia"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:inputType="textUri"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- ═══════════ REPORTADO POR ═══════════ -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardBackgroundColor="@color/ra_summary_bg"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/ra_summary_border"
-            app:strokeWidth="1dp">
-
+            <!-- 3. EVIDENCIAS FOTOGRÁFICAS (Carga S3, máx 5 fotos) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
                 android:gravity="center_vertical"
-                android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_person"
-                    app:tint="@color/ra_summary_text" />
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tvReportadoPor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="EVIDENCIAS FOTOGRÁFICAS (Máx. 5)"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAgregarFoto"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:textColor="@color/ra_summary_text"
-                    android:textSize="12sp"
-                    tools:text="Reportado por: Carlos Ruiz — 17/10/2026, 8:44:07 a.m." />
+                    android:minHeight="40dp"
+                    android:text="+ Adjuntar Foto"
+                    android:textColor="@color/ra_red"
+                    android:textSize="13sp"
+                    app:cornerRadius="20dp"
+                    app:strokeColor="@color/ra_red" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <!-- ═══════════ BOTÓN REGISTRAR ═══════════ -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRegistrarAlerta"
-            style="@style/Widget.RedAlerta.Button.Next"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/alerta_btn_registrar" />
+            <TextView
+                android:id="@+id/tvEstadoSubidaFotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Puedes adjuntar imágenes en formato JPEG, PNG o WebP."
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="12sp" />
 
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+            <!-- Lista Horizontal de Miniaturas seleccionadas -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEvidencias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_evidencia_seleccionada" />
+
+            <!-- 4. CHECKBOX DE ANONIMATO -->
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbAnonimo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:buttonTint="@color/ra_red"
+                android:text="¿Publicar de forma anónima?"
+                android:textColor="@color/ra_light_text"
+                android:textSize="15sp"
+                app:checkedIconVisible="true"
+                app:checkedIconTint="@color/ra_white" />
+
+            <!-- 5. BOTÓN PRINCIPAL PUBLICAR ALERTA -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRegistrarAlerta"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:enabled="false"
+                android:minHeight="48dp"
+                android:text="Publicar Alerta"
+                android:textColor="@color/ra_btn_primary_text"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/ra_btn_primary_bg"
+                app:cornerRadius="26dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

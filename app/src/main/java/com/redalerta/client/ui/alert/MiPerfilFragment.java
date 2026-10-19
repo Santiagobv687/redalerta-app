@@ -17,9 +17,15 @@ import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentMiPerfilBinding;
 import com.redalerta.client.model.usuario.DocumentoRequest;
 import com.redalerta.client.model.usuario.UbicacionRequest;
+import com.redalerta.client.network.ApiClient;
+import com.redalerta.client.network.ApiResponse;
 import com.redalerta.client.ui.auth.LoginActivity;
 import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.viewmodel.PerfilViewModel;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MiPerfilFragment extends Fragment {
 
@@ -74,6 +80,14 @@ public class MiPerfilFragment extends Fragment {
                     .setTitle("Cerrar sesión")
                     .setMessage("¿Estás seguro de que deseas salir de tu cuenta RedAlerta en este dispositivo?")
                     .setPositiveButton("Cerrar sesión", (dialog, which) -> {
+                        // Notificar al backend POST /api/v1/auth/logout
+                        ApiClient.getApiService(requireContext()).logout().enqueue(new Callback<ApiResponse<Void>>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ApiResponse<Void>> call, @NonNull Response<ApiResponse<Void>> response) {}
+                            @Override
+                            public void onFailure(@NonNull Call<ApiResponse<Void>> call, @NonNull Throwable t) {}
+                        });
+
                         sessionManager.cerrarSesion();
                         Intent intent = new Intent(requireActivity(), LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

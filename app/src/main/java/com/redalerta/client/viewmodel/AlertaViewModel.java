@@ -15,12 +15,23 @@ import com.redalerta.client.network.ApiResponse;
 import com.redalerta.client.util.ManejadorErrores;
 import com.redalerta.client.util.ManejadorErrores.ContextoOperacion;
 
+import android.content.ContentResolver;
+import android.net.Uri;
+import android.util.Log;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +45,8 @@ public class AlertaViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> cargando = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<Alerta> alertaCreada = new MutableLiveData<>();
+    private final MutableLiveData<Alerta> alertaModificada = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> alertaEliminadaExito = new MutableLiveData<>();
     private final MutableLiveData<List<Alerta>> misAlertas = new MutableLiveData<>();
     private final MutableLiveData<List<Alerta>> todasLasAlertas = new MutableLiveData<>();
 
@@ -49,6 +62,8 @@ public class AlertaViewModel extends AndroidViewModel {
     public LiveData<Boolean> getCargando() { return cargando; }
     public LiveData<String> getError() { return error; }
     public LiveData<Alerta> getAlertaCreada() { return alertaCreada; }
+    public LiveData<Alerta> getAlertaModificada() { return alertaModificada; }
+    public LiveData<Boolean> getAlertaEliminadaExito() { return alertaEliminadaExito; }
     public LiveData<List<Alerta>> getMisAlertas() { return misAlertas; }
     public LiveData<List<Alerta>> getTodasLasAlertas() { return todasLasAlertas; }
 
@@ -69,6 +84,60 @@ public class AlertaViewModel extends AndroidViewModel {
     public void setEstadoFiltro(String estado) {
         estadoFiltro.setValue(estado);
         cargarTodasLasAlertas();
+    }
+
+    public interface OnEvidenciaSubidaListener {
+        void onExito(String urlSubida);
+        void onError(String mensajeError);
+    }
+
+    public void subirEvidencia(Uri uri, OnEvidenciaSubidaListener listener) {
+        if (uri == null) return;
+        try {
+            ContentResolver resolver = getApplication().getContentResolver();
+            String mimeType = resolver.getType(uri);
+            if (mimeType == null) mimeType = "image/jpeg";
+
+            InputStream inputStream = resolver.openInputStream(uri);
+            byte[] bytes = readAllBytes(inputStream);
+
+            RequestBody requestFile = RequestBody.create(MediaType.parse(mimeType), bytes);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("archivo", "evidencia.jpg", requestFile);
+
+            ApiClient.getApiService(getApplication())
+                    .subirEvidencia(body)
+                    .enqueue(new Callback<ApiResponse<UploadEvidenciaResponse>>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ApiResponse<UploadEvidenciaResponse>> call,
+                                               @NonNull Response<ApiResponse<UploadEvidenciaResponse>> response) {
+                            if (response.isSuccessful() && response.body() != null && response.body().isSuccess() && response.body().getData() != null) {
+                                String url = response.body().getData().getUrl();
+                                if (listener != null) listener.onExito(url);
+                            } else {
+                                if (listener != null) listener.onError("No fue posible subir la imagen seleccionada");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<ApiResponse<UploadEvidenciaResponse>> call, @NonNull Throwable t) {
+                            if (listener != null) listener.onError(ManejadorErrores.obtenerMensajeFalloRed(t));
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e("AlertaViewModel", "Error al procesar la imagen para subir", e);
+            if (listener != null) listener.onError("Error al procesar el archivo de imagen");
+        }
+    }
+
+    private byte[] readAllBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
 
     // ══════════════════════════════════════════════════
@@ -187,13 +256,58 @@ public class AlertaViewModel extends AndroidViewModel {
                 });
     }
 
+    // ══════════════════════════════════════════════════
+    // MODIFICAR ALERTA (PUT /api/v1/alertas/{id})
+    // ══════════════════════════════════════════════════
+    public void modificarAlerta(long id, ModificarAlertaRequest request) {
+        cargando.setValue(true);
+        error.setValue(null);
+
+        ApiClient.getApiService(getApplication())
+                .modificarAlerta(id, request)
+                .enqueue(new Callback<ApiResponse<Alerta>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse<Alerta>> call,
+                                           @NonNull Response<ApiResponse<Alerta>> response) {
+                        cargando.setValue(false);
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<Alerta> body = response.body();
+                            if (body.isSuccess() && body.getData() != null) {
+                                alertaModificada.setValue(body.getData());
+                                cargarMisAlertas();
+                                cargarTodasLasAlertas();
+                            } else {
+                                error.setValue(body.getMessage() != null ? body.getMessage() : "Error al modificar la alerta");
+                            }
+                        } else {
+                            error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ContextoOperacion.ALERTAS));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Throwable t) {
+                        cargando.setValue(false);
+                        error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
+                    }
+                });
+    }
+
+    // ══════════════════════════════════════════════════
+    // ELIMINAR ALERTA (DELETE /api/v1/alertas/{id})
+    // ══════════════════════════════════════════════════
     public void eliminarAlerta(Alerta alerta) {
+        if (alerta == null || alerta.getId() == null) return;
+        cargando.setValue(true);
+        error.setValue(null);
+
         if (MODO_MOCK) {
             List<Alerta> actuales = misAlertas.getValue();
             if (actuales != null) {
                 actuales.remove(alerta);
                 misAlertas.setValue(actuales);
             }
+            cargando.setValue(false);
+            alertaEliminadaExito.setValue(true);
             return;
         }
 
@@ -205,8 +319,11 @@ public class AlertaViewModel extends AndroidViewModel {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse<Void>> call,
                                                @NonNull Response<ApiResponse<Void>> response) {
+                            cargando.setValue(false);
                             if (response.isSuccessful()) {
+                                alertaEliminadaExito.setValue(true);
                                 cargarMisAlertas();
+                                cargarTodasLasAlertas();
                             } else {
                                 error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ContextoOperacion.ALERTAS));
                             }
@@ -214,10 +331,12 @@ public class AlertaViewModel extends AndroidViewModel {
 
                         @Override
                         public void onFailure(@NonNull Call<ApiResponse<Void>> call, @NonNull Throwable t) {
+                            cargando.setValue(false);
                             error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                         }
                     });
         } catch (NumberFormatException e) {
+            cargando.setValue(false);
             error.setValue("El identificador de la alerta no es válido");
         }
     }

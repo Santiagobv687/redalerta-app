@@ -1,36 +1,47 @@
 package com.redalerta.client.ui.alert;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.redalerta.client.R;
+import com.google.android.material.snackbar.Snackbar;
 import com.redalerta.client.databinding.FragmentRegistroAlertaBinding;
-import com.redalerta.client.model.alerta.*;
-import com.redalerta.client.model.auth.*;
-import com.redalerta.client.model.usuario.*;
+import com.redalerta.client.model.alerta.Alerta;
+import com.redalerta.client.model.alerta.CrearAlertaRequest;
+import com.redalerta.client.model.alerta.UbicacionAlertaDto;
 import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.util.UbicacionCatalogoHelper;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class RegistroAlertaFragment extends Fragment {
 
     private FragmentRegistroAlertaBinding binding;
-    private String tipoSeleccionado = null;
     private SessionManager session;
     private AlertaViewModel viewModel;
+
+    // Gestión de evidencias fotográficas seleccionadas
+    private final List<EvidenciasSeleccionadasAdapter.EvidenciaItem> listaEvidencias = new ArrayList<>();
+    private EvidenciasSeleccionadasAdapter evidenciasAdapter;
+    private ActivityResultLauncher<String> pickerLauncher;
 
     @Nullable
     @Override
@@ -43,245 +54,228 @@ public class RegistroAlertaFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        session = new SessionManager(requireContext());
-        viewModel = new ViewModelProvider(this).get(AlertaViewModel.class);
+        super.onViewCreated(view, savedInstanceState);
 
-        // 0. Configurar selectores encadenados de ubicación
+        session = new SessionManager(requireContext());
+        viewModel = new ViewModelProvider(requireActivity()).get(AlertaViewModel.class);
+
+        setupToolbar();
+        setupUbicacionSelectores();
+        setupEvidencias();
+        setupTextWatchers();
+        observarViewModel();
+
+        actualizarReportadoPor();
+        validarEstadoBotonPublicar();
+    }
+
+    private void setupToolbar() {
+        binding.toolbarReportarAlerta.setNavigationOnClickListener(v ->
+                requireActivity().getSupportFragmentManager().popBackStack()
+        );
+    }
+
+    private void setupUbicacionSelectores() {
         UbicacionCatalogoHelper.configurarSelectoresEncadenados(
                 requireContext(),
                 binding.tilDepartamento,
                 binding.etDepartamento,
                 binding.tilMunicipio,
                 binding.etMunicipio,
-                null
+                this::validarEstadoBotonPublicar
         );
 
-        // Precargar "Quindío" y "Armenia" por defecto
-        binding.etDepartamento.setText("Quindío", false);
-        binding.etMunicipio.setText("Armenia", false);
+        // Precargar departamento y municipio predeterminados si no tienen texto
+        if (binding.etDepartamento.getText().toString().isEmpty()) {
+            binding.etDepartamento.setText("Quindío", false);
+        }
+        if (binding.etMunicipio.getText().toString().isEmpty()) {
+            binding.etMunicipio.setText("Armenia", false);
+        }
+    }
 
-        // 1. Mostrar fecha y nombre del reportante
-        actualizarReportadoPor();
-
-        // 2. Listeners de las tarjetas de emergencia
-        configurarTarjetasEmergencia();
-
-        // 3. Listener del checkbox anónimo
-        binding.cbAnonimo.setOnCheckedChangeListener((btn, checked) -> {
-            if (checked) {
-                binding.tvReportadoPor.setText(
-                        "Reportado por: Anónimo — " + obtenerFechaActual());
-            } else {
-                actualizarReportadoPor();
+    private void setupEvidencias() {
+        evidenciasAdapter = new EvidenciasSeleccionadasAdapter(listaEvidencias, position -> {
+            if (position >= 0 && position < listaEvidencias.size()) {
+                listaEvidencias.remove(position);
+                evidenciasAdapter.notifyDataSetChanged();
+                validarEstadoBotonPublicar();
             }
         });
 
-        // 4. Botón registrar
-        binding.btnRegistrarAlerta.setOnClickListener(v -> validarYRegistrar());
+        binding.rvEvidencias.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvEvidencias.setAdapter(evidenciasAdapter);
 
-        // 5. Observers del ViewModel
-        observarViewModel();
+        // Launcher de galería de imágenes
+        pickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (uri != null) {
+                adjuntarYSubirEvidencia(uri);
+            }
+        });
+
+        binding.btnAgregarFoto.setOnClickListener(v -> {
+            if (listaEvidencias.size() >= 5) {
+                Toast.makeText(requireContext(), "Máximo 5 evidencias fotográficas permitidas", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            pickerLauncher.launch("image/*");
+        });
     }
 
-    // ══════════════════════════════════════════════════════
-    // Observers
-    // ══════════════════════════════════════════════════════
+    private void adjuntarYSubirEvidencia(Uri uri) {
+        EvidenciasSeleccionadasAdapter.EvidenciaItem item = new EvidenciasSeleccionadasAdapter.EvidenciaItem(uri);
+        item.setSubiendo(true);
+        listaEvidencias.add(item);
+        int pos = listaEvidencias.size() - 1;
+        evidenciasAdapter.notifyItemInserted(pos);
+        validarEstadoBotonPublicar();
+
+        binding.tvEstadoSubidaFotos.setText("Subiendo evidencia fotográfica...");
+
+        viewModel.subirEvidencia(uri, new AlertaViewModel.OnEvidenciaSubidaListener() {
+            @Override
+            public void onExito(String urlSubida) {
+                item.setSubiendo(false);
+                item.setUrlSubida(urlSubida);
+                evidenciasAdapter.notifyItemChanged(pos);
+                binding.tvEstadoSubidaFotos.setText("Foto subida exitosamente.");
+                validarEstadoBotonPublicar();
+            }
+
+            @Override
+            public void onError(String mensajeError) {
+                item.setSubiendo(false);
+                listaEvidencias.remove(item);
+                evidenciasAdapter.notifyDataSetChanged();
+                binding.tvEstadoSubidaFotos.setText("No fue posible subir la imagen. Intente nuevamente.");
+                Toast.makeText(requireContext(), mensajeError, Toast.LENGTH_SHORT).show();
+                validarEstadoBotonPublicar();
+            }
+        });
+    }
+
+    private void setupTextWatchers() {
+        TextWatcher watcher = new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                validarEstadoBotonPublicar();
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        };
+
+        binding.etDescripcion.addTextChangedListener(watcher);
+        binding.etDireccionDetallada.addTextChangedListener(watcher);
+        binding.cbAnonimo.setOnCheckedChangeListener((btn, checked) -> {
+            actualizarReportadoPor();
+            validarEstadoBotonPublicar();
+        });
+
+        binding.btnRegistrarAlerta.setOnClickListener(v -> procesarPublicarAlerta());
+    }
+
+    private void actualizarReportadoPor() {
+        boolean esAnonimo = binding.cbAnonimo.isChecked();
+        String fecha = new SimpleDateFormat("dd/MM/yyyy, h:mm a", Locale.getDefault()).format(new Date());
+        if (esAnonimo) {
+            binding.tvReportadoPor.setText("Reportado por: Anónimo — " + fecha);
+        } else {
+            String nombre = session.getNombre() != null ? session.getNombre() : "Usuario Ciudadano";
+            binding.tvReportadoPor.setText("Reportado por: " + nombre + " — " + fecha);
+        }
+    }
+
+    private void validarEstadoBotonPublicar() {
+        if (binding == null) return;
+
+        String desc = binding.etDescripcion.getText() != null ? binding.etDescripcion.getText().toString().trim() : "";
+        String depto = binding.etDepartamento.getText() != null ? binding.etDepartamento.getText().toString().trim() : "";
+        String mun = binding.etMunicipio.getText() != null ? binding.etMunicipio.getText().toString().trim() : "";
+        String dir = binding.etDireccionDetallada.getText() != null ? binding.etDireccionDetallada.getText().toString().trim() : "";
+
+        boolean descValida = desc.length() >= 10 && desc.length() <= 1000;
+        boolean ubicacionValida = !depto.isEmpty() && !mun.isEmpty() && !dir.isEmpty();
+
+        boolean subiendoFoto = false;
+        for (EvidenciasSeleccionadasAdapter.EvidenciaItem item : listaEvidencias) {
+            if (item.isSubiendo()) {
+                subiendoFoto = true;
+                break;
+            }
+        }
+
+        binding.btnRegistrarAlerta.setEnabled(descValida && ubicacionValida && !subiendoFoto);
+    }
+
+    private void procesarPublicarAlerta() {
+        String desc = binding.etDescripcion.getText().toString().trim();
+        String depto = binding.etDepartamento.getText().toString().trim();
+        String mun = binding.etMunicipio.getText().toString().trim();
+        String dir = binding.etDireccionDetallada.getText().toString().trim();
+
+        if (desc.length() < 10) {
+            binding.tilDescripcion.setError("La descripción debe tener mínimo 10 caracteres");
+            return;
+        }
+        binding.tilDescripcion.setError(null);
+
+        if (depto.isEmpty()) {
+            binding.tilDepartamento.setError("Seleccione departamento");
+            return;
+        }
+
+        if (mun.isEmpty()) {
+            binding.tilMunicipio.setError("Seleccione municipio");
+            return;
+        }
+
+        if (dir.isEmpty()) {
+            binding.tilDireccionDetallada.setError("Ingrese la dirección detallada o punto de referencia");
+            return;
+        }
+
+        // Recopilar URLs de evidencias subidas
+        List<String> evidenciasUrls = new ArrayList<>();
+        for (EvidenciasSeleccionadasAdapter.EvidenciaItem item : listaEvidencias) {
+            if (item.getUrlSubida() != null && !item.getUrlSubida().isEmpty()) {
+                evidenciasUrls.add(item.getUrlSubida());
+            }
+        }
+
+        // Construir DTO de ubicación conforme a OpenAPI
+        UbicacionAlertaDto ubicacionDto = new UbicacionAlertaDto(depto, mun, dir);
+
+        CrearAlertaRequest request = new CrearAlertaRequest();
+        request.setDescripcion(desc);
+        request.setUbicacion(ubicacionDto);
+        request.setEvidenciasUrls(evidenciasUrls);
+        request.setEsAnonimo(binding.cbAnonimo.isChecked());
+
+        // Deshabilitar botón y procesar envío
+        binding.btnRegistrarAlerta.setEnabled(false);
+        viewModel.crearAlerta(request);
+    }
+
     private void observarViewModel() {
         viewModel.getCargando().observe(getViewLifecycleOwner(), cargando -> {
-            binding.btnRegistrarAlerta.setEnabled(!cargando);
-            binding.btnRegistrarAlerta.setText(
-                    cargando
-                            ? "Enviando..."
-                            : getString(R.string.alerta_btn_registrar)
-            );
+            if (cargando != null) {
+                binding.btnRegistrarAlerta.setEnabled(!cargando);
+                binding.btnRegistrarAlerta.setText(cargando ? "Publicando alerta..." : "Publicar Alerta");
+            }
         });
 
         viewModel.getError().observe(getViewLifecycleOwner(), msg -> {
-            if (msg != null) {
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+            binding.btnRegistrarAlerta.setEnabled(true);
+            if (msg != null && !msg.trim().isEmpty()) {
+                Snackbar.make(binding.getRoot(), msg, Snackbar.LENGTH_LONG).show();
             }
         });
 
         viewModel.getAlertaCreada().observe(getViewLifecycleOwner(), alerta -> {
             if (alerta != null) {
-                navegarAExito(alerta);
+                Toast.makeText(requireContext(), "Alerta publicada exitosamente", Toast.LENGTH_SHORT).show();
+                requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
-    }
-
-    // ══════════════════════════════════════════════════════
-    // Reportado por
-    // ══════════════════════════════════════════════════════
-    private void actualizarReportadoPor() {
-        String nombre = session.getNombre() != null ? session.getNombre() : "Usuario";
-        String fecha = obtenerFechaActual();
-        binding.tvReportadoPor.setText("Reportado por: " + nombre + " — " + fecha);
-    }
-
-    private String obtenerFechaActual() {
-        SimpleDateFormat sdf = new SimpleDateFormat(
-                "dd/MM/yyyy, h:mm:ss a", new Locale("es", "CO"));
-        return sdf.format(new Date());
-    }
-
-    // ══════════════════════════════════════════════════════
-    // Tarjetas de emergencia
-    // ══════════════════════════════════════════════════════
-    private void configurarTarjetasEmergencia() {
-        binding.cardIncendio.setOnClickListener(v ->
-                seleccionarTipo(binding.cardIncendio, "Incendio"));
-        binding.cardInundacion.setOnClickListener(v ->
-                seleccionarTipo(binding.cardInundacion, "Inundación"));
-        binding.cardAccidente.setOnClickListener(v ->
-                seleccionarTipo(binding.cardAccidente, "Accidente"));
-        binding.cardRobo.setOnClickListener(v ->
-                seleccionarTipo(binding.cardRobo, "Robo / Hurto"));
-        binding.cardMedica.setOnClickListener(v ->
-                seleccionarTipo(binding.cardMedica, "Emergencia Médica"));
-        binding.cardDesastre.setOnClickListener(v ->
-                seleccionarTipo(binding.cardDesastre, "Desastre Natural"));
-        binding.cardOtro.setOnClickListener(v ->
-                seleccionarTipo(binding.cardOtro, "Otro"));
-    }
-
-    private void seleccionarTipo(LinearLayout cardSeleccionada, String tipo) {
-        LinearLayout[] todas = {
-                binding.cardIncendio, binding.cardInundacion, binding.cardAccidente,
-                binding.cardRobo, binding.cardMedica, binding.cardDesastre, binding.cardOtro
-        };
-        for (LinearLayout c : todas) {
-            c.setSelected(false);
-        }
-        cardSeleccionada.setSelected(true);
-        tipoSeleccionado = tipo;
-    }
-
-    // ══════════════════════════════════════════════════════
-    // Validación y envío
-    // ══════════════════════════════════════════════════════
-    private void validarYRegistrar() {
-        if (tipoSeleccionado == null) {
-            Toast.makeText(requireContext(),
-                    "Seleccione el tipo de emergencia", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String descripcion = binding.etDescripcion.getText().toString().trim();
-        if (descripcion.isEmpty() || descripcion.length() > 500) {
-            binding.tilDescripcion.setError(
-                    "Descripción requerida (máx. 500 caracteres)");
-            return;
-        }
-        binding.tilDescripcion.setError(null);
-
-        String departamento = binding.etDepartamento.getText().toString().trim();
-        if (departamento.isEmpty()) {
-            binding.tilDepartamento.setError("Seleccione departamento");
-            return;
-        }
-        binding.tilDepartamento.setError(null);
-
-        String municipio = binding.etMunicipio.getText().toString().trim();
-        if (municipio.isEmpty()) {
-            binding.tilMunicipio.setError("Seleccione municipio");
-            return;
-        }
-        binding.tilMunicipio.setError(null);
-
-        String direccion = binding.etDireccion.getText().toString().trim();
-        if (direccion.isEmpty()) {
-            binding.etDireccion.setError("Requerido");
-            return;
-        }
-
-        String barrio = binding.etBarrio.getText().toString().trim();
-
-        int idPrioridad = binding.rgPrioridad.getCheckedRadioButtonId();
-        if (idPrioridad == -1) {
-            Toast.makeText(requireContext(),
-                    "Seleccione un nivel de prioridad", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String prioridad = idPrioridad == R.id.rbAlta ? "Alta" :
-                idPrioridad == R.id.rbMedia ? "Media" : "Baja";
-
-        boolean heridos  = binding.cbHeridos.isChecked();
-        boolean anonimo  = binding.cbAnonimo.isChecked();
-        String evidencia = binding.etEvidencia.getText().toString().trim();
-
-        // ══════════════════════════════════════════════════
-        // Construir el request
-        // ══════════════════════════════════════════════════
-        UbicacionAlertaDto ubAlerta = new UbicacionAlertaDto();
-        ubAlerta.setDepartamento(departamento);
-        ubAlerta.setMunicipio(municipio);
-        String dirDetallada = direccion + (!barrio.isEmpty() ? " - Barrio " + barrio : "");
-        ubAlerta.setDireccionDetallada(dirDetallada);
-
-        CrearAlertaRequest req = new CrearAlertaRequest();
-        req.setTitulo(tipoSeleccionado);
-        req.setDescripcion(descripcion);
-        req.setCategoria(mapearCategoria(tipoSeleccionado));
-        req.setPrioridad(mapearPrioridad(prioridad));
-        req.setUbicacion(ubAlerta);
-        req.setDireccion(dirDetallada);
-        req.setBarrio(barrio.isEmpty() ? municipio : barrio);
-        req.setHayHeridos(heridos);
-        req.setEsAnonima(anonimo);
-        req.setEvidenciaUrl(evidencia.isEmpty() ? null : evidencia);
-        req.setUsuarioId(anonimo ? null : session.getUsuarioId());
-
-        // ══════════════════════════════════════════════════
-        // Enviar al ViewModel (mock o backend)
-        // ══════════════════════════════════════════════════
-        viewModel.crearAlerta(req);
-    }
-
-    // ══════════════════════════════════════════════════════
-    // Helpers de mapeo
-    // ══════════════════════════════════════════════════════
-    private String mapearCategoria(String tipo) {
-        if (tipo == null) return CategoriaAlerta.OTRO;
-        switch (tipo) {
-            case "Incendio":          return CategoriaAlerta.INCENDIO;
-            case "Inundación":        return CategoriaAlerta.INUNDACION;
-            case "Accidente":         return CategoriaAlerta.ACCIDENTE;
-            case "Robo / Hurto":      return CategoriaAlerta.ROBO_HURTO;
-            case "Emergencia Médica": return CategoriaAlerta.EMERGENCIA_MEDICA;
-            case "Desastre Natural":  return CategoriaAlerta.DESASTRE_NATURAL;
-            default:                  return CategoriaAlerta.OTRO;
-        }
-    }
-
-    private String mapearPrioridad(String prioridad) {
-        if (prioridad == null) return PrioridadAlerta.BAJA;
-        switch (prioridad) {
-            case "Alta":  return PrioridadAlerta.ALTA;
-            case "Media": return PrioridadAlerta.MEDIA;
-            default:      return PrioridadAlerta.BAJA;
-        }
-    }
-
-    // ══════════════════════════════════════════════════════
-    // Navegación al éxito (solo tras confirmación del backend)
-    // ══════════════════════════════════════════════════════
-    private void navegarAExito(Alerta alerta) {
-        AlertaRegistradaFragment exitoso = new AlertaRegistradaFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(AlertaRegistradaFragment.ARG_TIPO,
-                alerta.getCategoria());
-        bundle.putString(AlertaRegistradaFragment.ARG_PRIORIDAD,
-                alerta.getPrioridad());
-        bundle.putString(AlertaRegistradaFragment.ARG_UBICACION,
-                alerta.getDireccion() + ", " + alerta.getBarrio());
-        exitoso.setArguments(bundle);
-
-        getParentFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, exitoso)
-                // .addToBackStack(null)  ← no lo usamos: el formulario ya se envió
-                .commit();
     }
 
     @Override

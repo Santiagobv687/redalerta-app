@@ -138,7 +138,7 @@
     <string name="alerta_registrada_btn">Registrar otra alerta</string>
 
     <!-- Mis Publicaciones / Mis Alertas -->
-    <string name="mis_pub_titulo">MIS ALERTAS</string>
+    <string name="mis_pub_titulo">Mis Alertas</string>
     <string name="mis_pub_subtitulo">Consulta el historial y seguimiento de tus alertas comunitarias reportadas.</string>
     <string name="mis_pub_editar">Editar publicación</string>
     <string name="mis_pub_eliminar">Eliminar publicación</string>

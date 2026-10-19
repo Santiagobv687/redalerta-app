@@ -31,6 +31,7 @@ public class AuthViewModel extends AndroidViewModel {
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<LoginResponse> loginExitoso = new MutableLiveData<>();
     private final MutableLiveData<Boolean> registroExitoso = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> logoutExitoso = new MutableLiveData<>();
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
@@ -40,6 +41,7 @@ public class AuthViewModel extends AndroidViewModel {
     public LiveData<String> getError() { return error; }
     public LiveData<LoginResponse> getLoginExitoso() { return loginExitoso; }
     public LiveData<Boolean> getRegistroExitoso() { return registroExitoso; }
+    public LiveData<Boolean> getLogoutExitoso() { return logoutExitoso; }
 
     // ══════════════════════════════════════════════════
     // LOGIN
@@ -135,6 +137,31 @@ public class AuthViewModel extends AndroidViewModel {
                     public void onFailure(@NonNull Call<ApiResponse<Usuario>> call, @NonNull Throwable t) {
                         cargando.setValue(false);
                         error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
+                    }
+                });
+    }
+
+    // ══════════════════════════════════════════════════
+    // LOGOUT (POST /api/v1/auth/logout)
+    // ══════════════════════════════════════════════════
+    public void logout() {
+        cargando.setValue(true);
+        error.setValue(null);
+
+        ApiClient.getApiService(getApplication())
+                .logout()
+                .enqueue(new Callback<ApiResponse<Void>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse<Void>> call,
+                                           @NonNull Response<ApiResponse<Void>> response) {
+                        cargando.setValue(false);
+                        logoutExitoso.setValue(true);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse<Void>> call, @NonNull Throwable t) {
+                        cargando.setValue(false);
+                        logoutExitoso.setValue(true);
                     }
                 });
     }

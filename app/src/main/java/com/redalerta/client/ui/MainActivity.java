@@ -2,31 +2,29 @@ package com.redalerta.client.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityMainBinding;
-import com.redalerta.client.ui.admin.GestionSeguimientoFragment;
-import com.redalerta.client.ui.admin.VerificacionFragment;
+import com.redalerta.client.network.ApiClient;
+import com.redalerta.client.network.ApiResponse;
 import com.redalerta.client.ui.alert.InicioFragment;
 import com.redalerta.client.ui.alert.MiPerfilFragment;
 import com.redalerta.client.ui.alert.MisPublicacionesFragment;
-import com.redalerta.client.ui.alert.RegistroAlertaFragment;
 import com.redalerta.client.ui.auth.LoginActivity;
 import com.redalerta.client.util.SessionManager;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private SessionManager session;
@@ -40,28 +38,12 @@ public class MainActivity extends AppCompatActivity
         session = new SessionManager(this);
 
         // ══════════════════════════════════════════════════
-        // Configurar Toolbar
+        // Configurar Toolbar Superior
         // ══════════════════════════════════════════════════
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-
-        // ══════════════════════════════════════════════════
-        // Configurar Drawer
-        // ══════════════════════════════════════════════════
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, binding.drawerLayout, binding.toolbar,
-                R.string.app_name, R.string.app_name);
-        binding.drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        binding.navigationView.setNavigationItemSelectedListener(this);
-
-        // ══════════════════════════════════════════════════
-        // Control de visibilidad del menú según el ROL
-        // ══════════════════════════════════════════════════
-        configurarMenuSegunRol();
 
         // ══════════════════════════════════════════════════
         // Configurar la Barra de Navegación Inferior Única (M3)
@@ -70,15 +52,12 @@ public class MainActivity extends AppCompatActivity
             int id = item.getItemId();
             if (id == R.id.nav_inicio) {
                 mostrarFragmentInternal(new InicioFragment());
-                binding.navigationView.setCheckedItem(R.id.nav_inicio);
                 return true;
             } else if (id == R.id.nav_mis_alertas) {
                 mostrarFragmentInternal(new MisPublicacionesFragment());
-                binding.navigationView.setCheckedItem(R.id.nav_mis_alertas);
                 return true;
             } else if (id == R.id.nav_perfil) {
                 mostrarFragmentInternal(new MiPerfilFragment());
-                binding.navigationView.setCheckedItem(R.id.nav_mi_perfil);
                 return true;
             }
             return false;
@@ -89,19 +68,12 @@ public class MainActivity extends AppCompatActivity
         // ══════════════════════════════════════════════════
         if (savedInstanceState == null) {
             mostrarFragment(new InicioFragment());
-            binding.navigationView.setCheckedItem(R.id.nav_inicio);
         }
 
         // ══════════════════════════════════════════════════
-        // Botón Salir
+        // Botón Superior "Cerrar sesión" con confirmación
         // ══════════════════════════════════════════════════
-        binding.btnSalir.setOnClickListener(v -> {
-            session.cerrarSesion();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
+        binding.btnSalir.setOnClickListener(v -> confirmarYCerrarSesion());
 
         // ══════════════════════════════════════════════════
         // Manejo del botón "atrás" físico
@@ -110,58 +82,39 @@ public class MainActivity extends AppCompatActivity
                 new OnBackPressedCallback(true) {
                     @Override
                     public void handleOnBackPressed() {
-                        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                            binding.drawerLayout.closeDrawer(GravityCompat.START);
+                        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                            getSupportFragmentManager().popBackStack();
                         } else {
-                            setEnabled(false);
-                            getOnBackPressedDispatcher().onBackPressed();
+                            finish();
                         }
                     }
                 });
     }
 
-    // ══════════════════════════════════════════════════════
-    // Mostrar/ocultar opciones del menú según el rol
-    // ══════════════════════════════════════════════════════
-    private void configurarMenuSegunRol() {
-        String rol = session.getRol();
-        boolean esAdmin = "ADMINISTRADOR".equalsIgnoreCase(rol);
-
-        // Habilitar/deshabilitar las opciones de admin
-        MenuItem itemVerificacion = binding.navigationView.getMenu().findItem(R.id.nav_verificacion);
-        MenuItem itemGestion = binding.navigationView.getMenu().findItem(R.id.nav_gestion);
-
-        if (itemVerificacion != null) itemVerificacion.setVisible(esAdmin);
-        if (itemGestion != null) itemGestion.setVisible(esAdmin);
+    private void confirmarYCerrarSesion() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Cerrar sesión")
+                .setMessage("¿Estás seguro de que deseas salir de tu cuenta RedAlerta en este dispositivo?")
+                .setPositiveButton("Cerrar sesión", (dialog, which) -> ejecutarLogoutBackendYSalir())
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
-    // ══════════════════════════════════════════════════════
-    // Navegación del menú lateral
-    // ══════════════════════════════════════════════════════
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
+    private void ejecutarLogoutBackendYSalir() {
+        // Notificar al backend POST /api/v1/auth/logout
+        ApiClient.getApiService(this).logout().enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Void>> call, @NonNull Response<ApiResponse<Void>> response) {}
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Void>> call, @NonNull Throwable t) {}
+        });
 
-        // --- Opciones de Ciudadano ---
-        if (id == R.id.nav_inicio) {
-            mostrarFragment(new InicioFragment());
-        } else if (id == R.id.nav_registro_alerta) {
-            mostrarFragment(new RegistroAlertaFragment());
-        } else if (id == R.id.nav_mi_perfil) {
-            mostrarFragment(new MiPerfilFragment());
-        } else if (id == R.id.nav_mis_alertas) {
-            mostrarFragment(new MisPublicacionesFragment());
-        }
-
-        // --- Opciones de Administrador ---
-        else if (id == R.id.nav_verificacion) {
-            mostrarFragment(new VerificacionFragment());
-        } else if (id == R.id.nav_gestion) {
-            mostrarFragment(new GestionSeguimientoFragment());
-        }
-
-        binding.drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
+        // Limpiar sesión local y redirigir a Login
+        session.cerrarSesion();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     // ══════════════════════════════════════════════════════

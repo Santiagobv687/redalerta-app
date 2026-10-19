@@ -187,5 +187,51 @@
                 app:tint="@color/ra_summary_text"
                 android:contentDescription="@null" />
         </LinearLayout>
+
+        <!-- ACCIONES DE EDICIÓN Y ELIMINACIÓN (VISIBLES EN PENDIENTE DE REVISIÓN) -->
+        <LinearLayout
+            android:id="@+id/layoutAccionesModificar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModificarAlerta"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:paddingHorizontal="12dp"
+                android:text="Modificar"
+                android:textColor="@color/ra_light_text"
+                android:textSize="12sp"
+                app:cornerRadius="18dp"
+                app:icon="@drawable/ic_edit"
+                app:iconSize="16dp"
+                app:iconTint="@color/ra_light_text"
+                app:strokeColor="@color/ra_light_border" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEliminarAlerta"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:paddingHorizontal="12dp"
+                android:text="Eliminar"
+                android:textColor="@color/ra_red"
+                android:textSize="12sp"
+                app:cornerRadius="18dp"
+                app:icon="@drawable/ic_delete"
+                app:iconSize="16dp"
+                app:iconTint="@color/ra_red"
+                app:strokeColor="@color/ra_red" />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
