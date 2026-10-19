@@ -66,4 +66,32 @@ public interface ApiService {
     @Multipart
     @POST("alertas/evidencias/upload")
     Call<ApiResponse<UploadEvidenciaResponse>> subirEvidencia(@Part MultipartBody.Part archivo);
+
+    // ═══ Flujo del Líder Comunitario ═══
+    @GET("alertas/organizaciones-elegibles")
+    Call<ApiResponse<List<OrganizacionResponse>>> obtenerOrganizacionesElegibles();
+
+    @GET("alertas/lider/direccionadas")
+    Call<ApiResponse<PageAlertaResponse>> listarAlertasDireccionadasLider(
+            @Query("page") int page,
+            @Query("size") int size
+    );
+
+    @POST("alertas/{id}/direccionar")
+    Call<ApiResponse<Alerta>> direccionarAlerta(
+            @Path("id") long id,
+            @Body DireccionarAlertaRequest request
+    );
+
+    @PUT("alertas/{id}/direccionamiento")
+    Call<ApiResponse<Alerta>> modificarDireccionamiento(
+            @Path("id") long id,
+            @Body DireccionarAlertaRequest request
+    );
+
+    @POST("alertas/{id}/cancelar-direccionamiento")
+    Call<ApiResponse<Alerta>> cancelarDireccionamiento(
+            @Path("id") long id,
+            @Body CancelarDireccionamientoRequest request
+    );
 }
