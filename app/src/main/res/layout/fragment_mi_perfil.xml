@@ -234,7 +234,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Para cambios en tu documento de identidad registrado, comunícate con soporte o tu líder comunitario."
+                        android:text="Para cambios en tu documento de identidad registrado, comunícate con soporte."
                         android:textColor="@color/ra_light_text_secondary"
                         android:textSize="12sp"
                         android:textStyle="italic" />

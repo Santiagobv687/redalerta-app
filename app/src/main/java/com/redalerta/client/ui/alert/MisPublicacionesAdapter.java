@@ -165,19 +165,26 @@ public class MisPublicacionesAdapter extends RecyclerView.Adapter<MisPublicacion
             String estadoNormalizado = estado != null ? estado.toUpperCase() : "PENDIENTE_REVISION";
 
             switch (estadoNormalizado) {
+                case "DIRECCIONADA" -> {
+                    binding.tvEstadoBadge.setText("DIRECCIONADA");
+                    binding.tvEstadoBadge.setBackgroundResource(R.drawable.bg_status_verificada);
+                    binding.tvEstadoBadge.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_verificada_text));
+                    binding.tvEstadoBadge.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(ctx, R.drawable.ic_check_success), null, null, null);
+                }
+                case "EN_GESTION", "EN_ATENCION" -> {
+                    binding.tvEstadoBadge.setText("EN GESTIÓN");
+                    binding.tvEstadoBadge.setBackgroundResource(R.drawable.bg_status_atencion);
+                    binding.tvEstadoBadge.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_atencion_text));
+                    binding.tvEstadoBadge.setCompoundDrawablesWithIntrinsicBounds(
+                            ContextCompat.getDrawable(ctx, R.drawable.ic_refresh), null, null, null);
+                }
                 case "RESUELTA" -> {
                     binding.tvEstadoBadge.setText("RESUELTA");
                     binding.tvEstadoBadge.setBackgroundResource(R.drawable.bg_status_resuelta);
                     binding.tvEstadoBadge.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_resuelta_text));
                     binding.tvEstadoBadge.setCompoundDrawablesWithIntrinsicBounds(
                             ContextCompat.getDrawable(ctx, R.drawable.ic_check_success), null, null, null);
-                }
-                case "DIRECCIONADA", "EN_GESTION", "EN_ATENCION" -> {
-                    binding.tvEstadoBadge.setText("EN GESTIÓN");
-                    binding.tvEstadoBadge.setBackgroundResource(R.drawable.bg_status_atencion);
-                    binding.tvEstadoBadge.setTextColor(ContextCompat.getColor(ctx, R.color.ra_status_atencion_text));
-                    binding.tvEstadoBadge.setCompoundDrawablesWithIntrinsicBounds(
-                            ContextCompat.getDrawable(ctx, R.drawable.ic_refresh), null, null, null);
                 }
                 case "RECHAZADA" -> {
                     binding.tvEstadoBadge.setText("RECHAZADA");

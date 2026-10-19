@@ -21,6 +21,7 @@ import com.redalerta.client.model.alerta.Alerta;
 import com.redalerta.client.model.alerta.EvidenciaResponse;
 import com.redalerta.client.util.TimeUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AlertaAdapter extends RecyclerView.Adapter<AlertaAdapter.AlertaViewHolder> {
@@ -33,8 +34,16 @@ public class AlertaAdapter extends RecyclerView.Adapter<AlertaAdapter.AlertaView
     private final OnAlertaClickListener clickListener;
 
     public AlertaAdapter(List<Alerta> listaAlertas, OnAlertaClickListener clickListener) {
-        this.listaAlertas = listaAlertas;
+        this.listaAlertas = listaAlertas != null ? listaAlertas : new ArrayList<>();
         this.clickListener = clickListener;
+    }
+
+    public void actualizarLista(List<Alerta> nuevasAlertas) {
+        this.listaAlertas.clear();
+        if (nuevasAlertas != null) {
+            this.listaAlertas.addAll(nuevasAlertas);
+        }
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -109,12 +118,15 @@ public class AlertaAdapter extends RecyclerView.Adapter<AlertaAdapter.AlertaView
             if (esUrlImagenValida(urlEvidencia)) {
                 binding.layoutEvidenciaContainer.setVisibility(View.VISIBLE);
 
-                int extrasCount = 0;
-                if (evidencias != null && evidencias.size() > 1) {
-                    extrasCount = evidencias.size() - 1;
-                } else if (totalEvidencias > 1) {
-                    extrasCount = totalEvidencias - 1;
+                int cantidadTotalEvidencias = 0;
+                if (evidencias != null && !evidencias.isEmpty()) {
+                    cantidadTotalEvidencias = evidencias.size();
                 }
+                if (totalEvidencias > cantidadTotalEvidencias) {
+                    cantidadTotalEvidencias = totalEvidencias;
+                }
+
+                int extrasCount = Math.max(0, cantidadTotalEvidencias - 1);
 
                 if (extrasCount > 0) {
                     binding.tvBadgeFotosExtra.setVisibility(View.VISIBLE);
@@ -126,24 +138,10 @@ public class AlertaAdapter extends RecyclerView.Adapter<AlertaAdapter.AlertaView
                 Glide.with(context)
                         .load(urlEvidencia.trim())
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .override(600, 338)
+                        .fitCenter()
                         .placeholder(R.drawable.ic_photo_library)
                         .error(R.drawable.ic_photo_library)
-                        .listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model,
-                                                        Target<Drawable> target, boolean isFirstResource) {
-                                binding.layoutEvidenciaContainer.setVisibility(View.GONE);
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model,
-                                                          Target<Drawable> target, DataSource dataSource,
-                                                          boolean isFirstResource) {
-                                binding.layoutEvidenciaContainer.setVisibility(View.VISIBLE);
-                                return false;
-                            }
-                        })
                         .into(binding.imgEvidenciaPreview);
             } else {
                 binding.layoutEvidenciaContainer.setVisibility(View.GONE);

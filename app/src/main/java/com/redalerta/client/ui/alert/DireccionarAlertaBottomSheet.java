@@ -66,6 +66,10 @@ public class DireccionarAlertaBottomSheet extends BottomSheetDialogFragment {
         setupTextWatchers();
         observeViewModel();
 
+        if (isModificacion) {
+            precargarDatosOriginales();
+        }
+
         viewModel.cargarOrganizacionesElegibles();
     }
 
@@ -78,8 +82,57 @@ public class DireccionarAlertaBottomSheet extends BottomSheetDialogFragment {
         binding.etCategoria.setAdapter(adapter);
 
         if (isModificacion && alerta != null && alerta.getCategoria() != null) {
-            binding.etCategoria.setText(alerta.getCategoria().replace("_", " "), false);
+            binding.etCategoria.setText(alerta.getCategoria().replace("_", " ").toUpperCase(), false);
         }
+    }
+
+    private void precargarDatosOriginales() {
+        if (alerta == null) return;
+
+        // 1. Categoría
+        if (alerta.getCategoria() != null) {
+            String catNorm = alerta.getCategoria().replace("_", " ").toUpperCase();
+            binding.etCategoria.setText(catNorm, false);
+        }
+
+        // 2. Prioridad
+        if (alerta.getPrioridad() != null) {
+            String prio = alerta.getPrioridad().toUpperCase();
+            if (prio.contains("ALTA")) {
+                binding.rgPrioridad.check(R.id.rbAlta);
+            } else if (prio.contains("BAJA")) {
+                binding.rgPrioridad.check(R.id.rbBaja);
+            } else {
+                binding.rgPrioridad.check(R.id.rbMedia);
+            }
+        }
+
+        // 3. Observación Técnica
+        if (alerta.getObservacionTecnica() != null) {
+            binding.etObservacion.setText(alerta.getObservacionTecnica());
+        }
+
+        // 4. Intentar seleccionar organización previa
+        seleccionarOrganizacionPrevia();
+    }
+
+    private void seleccionarOrganizacionPrevia() {
+        if (alerta == null || listaOrganizaciones == null || listaOrganizaciones.isEmpty()) return;
+
+        Long targetId = alerta.getOrganizacionId();
+        String targetNombre = alerta.getOrganizacionNombre();
+
+        for (OrganizacionResponse o : listaOrganizaciones) {
+            boolean coincideId = targetId != null && targetId.equals(o.getId());
+            boolean coincideNombre = targetNombre != null && o.getNombre() != null && o.getNombre().equalsIgnoreCase(targetNombre.trim());
+
+            if (coincideId || coincideNombre) {
+                organizacionIdSeleccionada = o.getId();
+                binding.etOrganizacion.setText(o.getNombre(), false);
+                break;
+            }
+        }
+        validarFormulario();
     }
 
     private void setupTextWatchers() {
@@ -153,6 +206,10 @@ public class DireccionarAlertaBottomSheet extends BottomSheetDialogFragment {
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, nombres);
                 binding.etOrganizacion.setAdapter(adapter);
+
+                if (isModificacion) {
+                    seleccionarOrganizacionPrevia();
+                }
             }
         });
     }
