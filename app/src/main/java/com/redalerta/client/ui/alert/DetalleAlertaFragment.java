@@ -67,6 +67,14 @@ public class DetalleAlertaFragment extends Fragment {
         poblarDatos();
         configurarAccionesPorRol();
         observeViewModel();
+
+        // Consultar el detalle fresco desde el servidor mediante GET /api/v1/alertas/{id}
+        if (alerta != null && alerta.getId() != null) {
+            try {
+                long id = Long.parseLong(alerta.getId());
+                viewModel.cargarDetalleAlerta(id);
+            } catch (Exception ignored) {}
+        }
     }
 
     private void poblarDatos() {
@@ -159,6 +167,8 @@ public class DetalleAlertaFragment extends Fragment {
         String rol = sessionManager.getRol();
         String estado = alerta.getEstado() != null ? alerta.getEstado().toUpperCase() : "";
 
+        android.util.Log.d("DetalleAlerta", "Rol del usuario: " + rol + " | Estado de la alerta: " + estado);
+
         if ("ROLE_LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol)) {
             binding.layoutAccionesLider.setVisibility(View.VISIBLE);
 
@@ -176,9 +186,11 @@ public class DetalleAlertaFragment extends Fragment {
                 binding.btnModificarDireccionamiento.setOnClickListener(v -> mostrarBottomSheet(true));
                 binding.btnCancelarDireccionamiento.setOnClickListener(v -> solicitarMotivoCancelacion());
             } else {
+                android.util.Log.d("DetalleAlerta", "Estado no manejado para acciones del líder. Ocultando botones.");
                 binding.layoutAccionesLider.setVisibility(View.GONE);
             }
         } else {
+            android.util.Log.d("DetalleAlerta", "Usuario no es líder. Ocultando layoutAccionesLider.");
             binding.layoutAccionesLider.setVisibility(View.GONE);
         }
     }
@@ -218,6 +230,14 @@ public class DetalleAlertaFragment extends Fragment {
                 // Show loading indicator if needed
             } else if (state == AlertaLiderViewModel.UiState.SUCCESS) {
                 // Done
+            }
+        });
+
+        viewModel.getAlertaDetalle().observe(getViewLifecycleOwner(), al -> {
+            if (al != null) {
+                this.alerta = al;
+                poblarDatos();
+                configurarAccionesPorRol();
             }
         });
 

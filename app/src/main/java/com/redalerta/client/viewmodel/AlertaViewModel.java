@@ -52,7 +52,7 @@ public class AlertaViewModel extends AndroidViewModel {
 
     // Filtros de búsqueda para el endpoint /alertas
     private final MutableLiveData<String> departamentoFiltro = new MutableLiveData<>("Quindío");
-    private final MutableLiveData<String> municipioFiltro = new MutableLiveData<>("Armenia");
+    private final MutableLiveData<String> municipioFiltro = new MutableLiveData<>("TODO"); // Por defecto Todo el Departamento
     private final MutableLiveData<String> estadoFiltro = new MutableLiveData<>(null);
 
     public AlertaViewModel(@NonNull Application application) {

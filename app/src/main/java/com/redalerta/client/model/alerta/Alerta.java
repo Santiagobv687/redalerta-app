@@ -22,6 +22,12 @@ public class Alerta implements Serializable {
     private String fechaCreacion;
     private String fechaActualizacion;
 
+    private Long liderId;
+    private String liderNombre;
+    private Long organizacionId;
+    private String organizacionNombre;
+    private String observacionTecnica;
+
     // Campos de conveniencia para la UI / Adapters
     private String titulo;
     private String categoria;
@@ -68,6 +74,21 @@ public class Alerta implements Serializable {
 
     public String getFechaActualizacion() { return fechaActualizacion; }
     public void setFechaActualizacion(String fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }
+
+    public Long getLiderId() { return liderId; }
+    public void setLiderId(Long liderId) { this.liderId = liderId; }
+
+    public String getLiderNombre() { return liderNombre; }
+    public void setLiderNombre(String liderNombre) { this.liderNombre = liderNombre; }
+
+    public Long getOrganizacionId() { return organizacionId; }
+    public void setOrganizacionId(Long organizacionId) { this.organizacionId = organizacionId; }
+
+    public String getOrganizacionNombre() { return organizacionNombre; }
+    public void setOrganizacionNombre(String organizacionNombre) { this.organizacionNombre = organizacionNombre; }
+
+    public String getObservacionTecnica() { return observacionTecnica; }
+    public void setObservacionTecnica(String observacionTecnica) { this.observacionTecnica = observacionTecnica; }
 
     // Helpers UI
     public String getTitulo() {

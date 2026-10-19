@@ -46,6 +46,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // ══════════════════════════════════════════════════
+        // Modificar Bottom Navigation según el rol
+        // ══════════════════════════════════════════════════
+        String rol = session.getRol();
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+        
+        if (esLider) {
+            binding.bottomNavigation.getMenu().findItem(R.id.nav_inicio).setTitle("Por Evaluar");
+            binding.bottomNavigation.getMenu().findItem(R.id.nav_mis_alertas).setTitle("Mi Gestión");
+        }
+
+        // ══════════════════════════════════════════════════
         // Configurar la Barra de Navegación Inferior Única (M3)
         // ══════════════════════════════════════════════════
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
@@ -54,7 +65,11 @@ public class MainActivity extends AppCompatActivity {
                 mostrarFragmentInternal(new InicioFragment());
                 return true;
             } else if (id == R.id.nav_mis_alertas) {
-                mostrarFragmentInternal(new MisPublicacionesFragment());
+                if (esLider) {
+                    mostrarFragmentInternal(new com.redalerta.client.ui.admin.BandejaLiderFragment());
+                } else {
+                    mostrarFragmentInternal(new MisPublicacionesFragment());
+                }
                 return true;
             } else if (id == R.id.nav_perfil) {
                 mostrarFragmentInternal(new MiPerfilFragment());
