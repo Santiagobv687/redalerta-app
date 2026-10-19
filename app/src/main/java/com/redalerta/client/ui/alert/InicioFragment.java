@@ -100,12 +100,14 @@ public class InicioFragment extends Fragment {
 
     private void setupFabScrollBehavior() {
         String rol = new com.redalerta.client.util.SessionManager(requireContext()).getRol();
-        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+        boolean esCiudadano = "ROLE_CIUDADANO".equalsIgnoreCase(rol) || "CIUDADANO".equalsIgnoreCase(rol) || rol == null;
 
-        if (esLider) {
+        if (!esCiudadano) {
             binding.fabReportarAlerta.setVisibility(View.GONE);
             return;
         }
+
+        binding.fabReportarAlerta.setVisibility(View.VISIBLE);
 
         binding.rvFeedAlertas.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -268,14 +270,18 @@ public class InicioFragment extends Fragment {
                 binding.layoutError.setVisibility(View.GONE);
                 binding.swipeRefresh.setVisibility(View.VISIBLE);
 
-                adapter = new AlertaAdapter(alertas, alerta -> {
-                    requireActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
-                            .addToBackStack(null)
-                            .commit();
-                });
-                binding.rvFeedAlertas.setAdapter(adapter);
+                if (adapter == null) {
+                    adapter = new AlertaAdapter(alertas, alerta -> {
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
+                                .addToBackStack(null)
+                                .commit();
+                    });
+                    binding.rvFeedAlertas.setAdapter(adapter);
+                } else {
+                    adapter.actualizarLista(alertas);
+                }
             }
         });
 

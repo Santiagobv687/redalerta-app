@@ -17,6 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import android.graphics.drawable.Drawable;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.redalerta.client.R;
@@ -119,6 +124,37 @@ public class DetalleAlertaFragment extends Fragment {
             binding.tvEvidenciasLabel.setVisibility(View.GONE);
             binding.scrollEvidencias.setVisibility(View.GONE);
         }
+
+        // Evaluación del Líder Comunitario (Si existe)
+        String lider = alerta.getLiderNombre() != null ? alerta.getLiderNombre() : null;
+        String obsTech = alerta.getObservacionTecnica() != null ? alerta.getObservacionTecnica() : null;
+        String orgNombre = alerta.getOrganizacionNombre() != null ? alerta.getOrganizacionNombre() : null;
+
+        if (lider != null || obsTech != null || orgNombre != null) {
+            binding.cardEvaluacionLider.setVisibility(View.VISIBLE);
+            if (lider != null) {
+                binding.tvLiderRemitente.setText("Remitido por: " + lider);
+            } else {
+                binding.tvLiderRemitente.setText("Evaluado por Líder Comunitario");
+            }
+
+            String cat = alerta.getCategoria() != null ? alerta.getCategoria().replace("_", " ").toUpperCase() : "GENERAL";
+            String prio = alerta.getPrioridad() != null ? alerta.getPrioridad().toUpperCase() : "NO DEFINIDA";
+            String catPrioText = "Categoría: " + cat + " • Prioridad: " + prio;
+            if (orgNombre != null) {
+                catPrioText += "\nAsignado a: " + orgNombre;
+            }
+            binding.tvLiderCategoriaPrioridad.setText(catPrioText);
+
+            if (obsTech != null && !obsTech.trim().isEmpty()) {
+                binding.tvLiderObservacionTecnica.setVisibility(View.VISIBLE);
+                binding.tvLiderObservacionTecnica.setText("Observación técnica: " + obsTech);
+            } else {
+                binding.tvLiderObservacionTecnica.setVisibility(View.GONE);
+            }
+        } else {
+            binding.cardEvaluacionLider.setVisibility(View.GONE);
+        }
     }
 
     private void agregarFoto(String url) {
@@ -133,21 +169,78 @@ public class DetalleAlertaFragment extends Fragment {
         img.setBackgroundResource(R.drawable.bg_status_revision);
 
         Glide.with(this).load(url).into(img);
+
+        // Al presionar la miniatura, se muestra la foto en grande a pantalla completa
+        img.setOnClickListener(v -> mostrarImagenEnGrande(url));
+
         binding.layoutEvidencias.addView(img);
+    }
+
+    private void mostrarImagenEnGrande(String urlImagen) {
+        if (urlImagen == null || urlImagen.trim().isEmpty()) return;
+
+        android.app.Dialog dialog = new android.app.Dialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_visualizador_imagen, null);
+        dialog.setContentView(dialogView);
+
+        ImageView imgGrande = dialogView.findViewById(R.id.imgFotoGrande);
+        View pbCarga = dialogView.findViewById(R.id.pbCargaImagen);
+        View btnCerrar = dialogView.findViewById(R.id.btnCerrarVisor);
+        View container = dialogView.findViewById(R.id.containerVisorImagen);
+
+        if (pbCarga != null) pbCarga.setVisibility(View.VISIBLE);
+
+        Glide.with(requireContext())
+                .load(urlImagen.trim())
+                .fitCenter()
+                .placeholder(R.drawable.ic_photo_library)
+                .error(R.drawable.ic_photo_library)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                Target<Drawable> target, boolean isFirstResource) {
+                        if (pbCarga != null) pbCarga.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model,
+                                                  Target<Drawable> target, DataSource dataSource,
+                                                  boolean isFirstResource) {
+                        if (pbCarga != null) pbCarga.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(imgGrande);
+
+        if (btnCerrar != null) {
+            btnCerrar.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        if (container != null) {
+            container.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        dialog.show();
     }
 
     private void configurarEstadoAccesible(String estado) {
         String estadoNorm = estado != null ? estado.toUpperCase() : "PENDIENTE_REVISION";
         switch (estadoNorm) {
+            case "DIRECCIONADA" -> {
+                binding.tvEstadoBadgeDetalle.setText("DIRECCIONADA");
+                binding.tvEstadoBadgeDetalle.setBackgroundResource(R.drawable.bg_status_verificada);
+                binding.tvEstadoBadgeDetalle.setTextColor(ContextCompat.getColor(requireContext(), R.color.ra_status_verificada_text));
+            }
+            case "EN_GESTION", "EN_ATENCION" -> {
+                binding.tvEstadoBadgeDetalle.setText("EN GESTIÓN");
+                binding.tvEstadoBadgeDetalle.setBackgroundResource(R.drawable.bg_status_atencion);
+                binding.tvEstadoBadgeDetalle.setTextColor(ContextCompat.getColor(requireContext(), R.color.ra_status_atencion_text));
+            }
             case "RESUELTA" -> {
                 binding.tvEstadoBadgeDetalle.setText("RESUELTA");
                 binding.tvEstadoBadgeDetalle.setBackgroundResource(R.drawable.bg_status_resuelta);
                 binding.tvEstadoBadgeDetalle.setTextColor(ContextCompat.getColor(requireContext(), R.color.ra_status_resuelta_text));
-            }
-            case "DIRECCIONADA", "EN_GESTION", "EN_ATENCION" -> {
-                binding.tvEstadoBadgeDetalle.setText("EN GESTIÓN");
-                binding.tvEstadoBadgeDetalle.setBackgroundResource(R.drawable.bg_status_atencion);
-                binding.tvEstadoBadgeDetalle.setTextColor(ContextCompat.getColor(requireContext(), R.color.ra_status_atencion_text));
             }
             case "RECHAZADA" -> {
                 binding.tvEstadoBadgeDetalle.setText("RECHAZADA");
@@ -167,9 +260,11 @@ public class DetalleAlertaFragment extends Fragment {
         String rol = sessionManager.getRol();
         String estado = alerta.getEstado() != null ? alerta.getEstado().toUpperCase() : "";
 
-        android.util.Log.d("DetalleAlerta", "Rol del usuario: " + rol + " | Estado de la alerta: " + estado);
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+        boolean esOrganizacion = "ROLE_ORGANIZACION".equalsIgnoreCase(rol) || "ORGANIZACION".equalsIgnoreCase(rol);
 
-        if ("ROLE_LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol)) {
+        if (esLider) {
+            binding.layoutBannerOrganizacion.setVisibility(View.GONE);
             binding.layoutAccionesLider.setVisibility(View.VISIBLE);
 
             if (estado.equals("PENDIENTE_REVISION") || estado.equals("RECHAZADA")) {
@@ -186,12 +281,14 @@ public class DetalleAlertaFragment extends Fragment {
                 binding.btnModificarDireccionamiento.setOnClickListener(v -> mostrarBottomSheet(true));
                 binding.btnCancelarDireccionamiento.setOnClickListener(v -> solicitarMotivoCancelacion());
             } else {
-                android.util.Log.d("DetalleAlerta", "Estado no manejado para acciones del líder. Ocultando botones.");
                 binding.layoutAccionesLider.setVisibility(View.GONE);
             }
-        } else {
-            android.util.Log.d("DetalleAlerta", "Usuario no es líder. Ocultando layoutAccionesLider.");
+        } else if (esOrganizacion) {
             binding.layoutAccionesLider.setVisibility(View.GONE);
+            binding.layoutBannerOrganizacion.setVisibility(View.VISIBLE);
+        } else {
+            binding.layoutAccionesLider.setVisibility(View.GONE);
+            binding.layoutBannerOrganizacion.setVisibility(View.GONE);
         }
     }
 

@@ -31,7 +31,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingBottom="88dp"
+        android:paddingBottom="240dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -44,8 +44,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tvFechaAlerta"
@@ -97,6 +97,66 @@
                 android:lineSpacingMultiplier="1.3"
                 tools:text="Descripción larga del incidente..." />
 
+            <!-- SECCIÓN DESTACADA: EVALUACIÓN DEL LÍDER COMUNITARIO -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardEvaluacionLider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/ra_summary_bg"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/ra_summary_border"
+                app:strokeWidth="1dp"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EVALUACIÓN DEL LÍDER COMUNITARIO"
+                        android:textColor="@color/ra_summary_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvLiderRemitente"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/ra_light_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="Remitido por: Carlos Ramírez (Líder)" />
+
+                    <TextView
+                        android:id="@+id/tvLiderCategoriaPrioridad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/ra_red"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        tools:text="Categoría: INCENDIO • Prioridad: ALTA" />
+
+                    <TextView
+                        android:id="@+id/tvLiderObservacionTecnica"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/ra_light_text_secondary"
+                        android:textSize="13sp"
+                        android:lineSpacingMultiplier="1.2"
+                        tools:text="Observación técnica: Se requiere desplazamiento urgente de máquina extintora por cercanía a viviendas." />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -108,15 +168,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@null"
                     android:src="@drawable/ic_location_on"
-                    app:tint="@color/ra_red"
-                    android:contentDescription="@null" />
+                    app:tint="@color/ra_red" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -154,15 +214,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@null"
                     android:src="@drawable/ic_person"
-                    app:tint="@color/ra_gray"
-                    android:contentDescription="@null" />
+                    app:tint="@color/ra_gray" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -224,7 +284,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- ACCIONES INFERIORES CONDICIONALES (ROLE-BASED) -->
+    <!-- ACCIONES INFERIORES CONDICIONALES PARA LÍDER -->
     <LinearLayout
         android:id="@+id/layoutAccionesLider"
         android:layout_width="match_parent"
@@ -273,6 +333,38 @@
             android:textColor="@color/ra_red"
             android:visibility="gone" />
 
+    </LinearLayout>
+
+    <!-- BANNER INFORMATIVO PARA ORGANIZACIÓN -->
+    <LinearLayout
+        android:id="@+id/layoutBannerOrganizacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="80dp"
+        android:background="@color/ra_summary_bg"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_check_success"
+            app:tint="@color/ra_summary_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Caso asignado a su entidad para atención operativa"
+            android:textColor="@color/ra_summary_text"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
