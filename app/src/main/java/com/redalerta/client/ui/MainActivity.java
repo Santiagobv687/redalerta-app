@@ -14,10 +14,12 @@ import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityMainBinding;
 import com.redalerta.client.network.ApiClient;
 import com.redalerta.client.network.ApiResponse;
+import com.redalerta.client.ui.admin.BandejaLiderFragment;
 import com.redalerta.client.ui.alert.InicioFragment;
 import com.redalerta.client.ui.alert.MiPerfilFragment;
 import com.redalerta.client.ui.alert.MisPublicacionesFragment;
 import com.redalerta.client.ui.auth.LoginActivity;
+import com.redalerta.client.ui.org.BandejaOrganizacionFragment;
 import com.redalerta.client.util.SessionManager;
 
 import retrofit2.Call;
@@ -46,18 +48,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // ══════════════════════════════════════════════════
-        // Modificar Bottom Navigation según el rol
+        // Evaluación Reactiva del Rol de Usuario
         // ══════════════════════════════════════════════════
         String rol = session.getRol();
+        boolean esOrganizacion = "ROLE_ORGANIZACION".equalsIgnoreCase(rol) || "ORGANIZACION".equalsIgnoreCase(rol);
         boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
-        
-        if (esLider) {
-            binding.bottomNavigation.getMenu().findItem(R.id.nav_inicio).setTitle("Por Evaluar");
-            binding.bottomNavigation.getMenu().findItem(R.id.nav_mis_alertas).setTitle("Mi Gestión");
+
+        // Inflar el menú inferior diferenciado según el rol
+        binding.bottomNavigation.getMenu().clear();
+        if (esOrganizacion) {
+            binding.bottomNavigation.inflateMenu(R.menu.menu_bottom_organizacion);
+        } else if (esLider) {
+            binding.bottomNavigation.inflateMenu(R.menu.menu_bottom_lider);
+        } else {
+            binding.bottomNavigation.inflateMenu(R.menu.menu_bottom_ciudadano);
         }
 
         // ══════════════════════════════════════════════════
-        // Configurar la Barra de Navegación Inferior Única (M3)
+        // Escuchador de Selección de la Barra Inferior (M3)
         // ══════════════════════════════════════════════════
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -65,11 +73,13 @@ public class MainActivity extends AppCompatActivity {
                 mostrarFragmentInternal(new InicioFragment());
                 return true;
             } else if (id == R.id.nav_mis_alertas) {
-                if (esLider) {
-                    mostrarFragmentInternal(new com.redalerta.client.ui.admin.BandejaLiderFragment());
-                } else {
-                    mostrarFragmentInternal(new MisPublicacionesFragment());
-                }
+                mostrarFragmentInternal(new MisPublicacionesFragment());
+                return true;
+            } else if (id == R.id.nav_gestion_lider) {
+                mostrarFragmentInternal(new BandejaLiderFragment());
+                return true;
+            } else if (id == R.id.nav_bandeja_org) {
+                mostrarFragmentInternal(new BandejaOrganizacionFragment());
                 return true;
             } else if (id == R.id.nav_perfil) {
                 mostrarFragmentInternal(new MiPerfilFragment());
@@ -79,10 +89,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // ══════════════════════════════════════════════════
-        // Fragmento por defecto (Feed Principal de Inicio)
+        // Carga del Fragmento Inicial Reactivo al Rol
         // ══════════════════════════════════════════════════
         if (savedInstanceState == null) {
-            mostrarFragment(new InicioFragment());
+            if (esOrganizacion) {
+                mostrarFragmentInternal(new BandejaOrganizacionFragment());
+                binding.bottomNavigation.setSelectedItemId(R.id.nav_bandeja_org);
+            } else {
+                mostrarFragmentInternal(new InicioFragment());
+                binding.bottomNavigation.setSelectedItemId(R.id.nav_inicio);
+            }
         }
 
         // ══════════════════════════════════════════════════
@@ -130,21 +146,6 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-    }
-
-    // ══════════════════════════════════════════════════════
-    // Reemplazar fragmento actual
-    // ══════════════════════════════════════════════════════
-    private void mostrarFragment(Fragment fragment) {
-        if (fragment instanceof InicioFragment) {
-            binding.bottomNavigation.setSelectedItemId(R.id.nav_inicio);
-        } else if (fragment instanceof MisPublicacionesFragment) {
-            binding.bottomNavigation.setSelectedItemId(R.id.nav_mis_alertas);
-        } else if (fragment instanceof MiPerfilFragment) {
-            binding.bottomNavigation.setSelectedItemId(R.id.nav_perfil);
-        } else {
-            mostrarFragmentInternal(fragment);
-        }
     }
 
     private void mostrarFragmentInternal(Fragment fragment) {
