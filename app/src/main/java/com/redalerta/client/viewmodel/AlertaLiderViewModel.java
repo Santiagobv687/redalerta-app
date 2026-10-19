@@ -32,6 +32,7 @@ public class AlertaLiderViewModel extends AndroidViewModel {
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<List<OrganizacionResponse>> organizacionesElegibles = new MutableLiveData<>();
     private final MutableLiveData<Alerta> alertaDireccionada = new MutableLiveData<>();
+    private final MutableLiveData<Alerta> alertaDetalle = new MutableLiveData<>();
     private final MutableLiveData<List<Alerta>> bandejaDireccionadas = new MutableLiveData<>();
 
     public AlertaLiderViewModel(@NonNull Application application) {
@@ -42,6 +43,7 @@ public class AlertaLiderViewModel extends AndroidViewModel {
     public LiveData<String> getError() { return error; }
     public LiveData<List<OrganizacionResponse>> getOrganizacionesElegibles() { return organizacionesElegibles; }
     public LiveData<Alerta> getAlertaDireccionada() { return alertaDireccionada; }
+    public LiveData<Alerta> getAlertaDetalle() { return alertaDetalle; }
     public LiveData<List<Alerta>> getBandejaDireccionadas() { return bandejaDireccionadas; }
 
     public void cargarOrganizacionesElegibles() {
@@ -60,6 +62,28 @@ public class AlertaLiderViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<List<OrganizacionResponse>>> call, @NonNull Throwable t) {
+                error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
+                uiState.setValue(UiState.ERROR);
+            }
+        });
+    }
+
+    public void cargarDetalleAlerta(long alertaId) {
+        uiState.setValue(UiState.LOADING);
+        ApiClient.getApiService(getApplication()).obtenerAlertaPorId(alertaId).enqueue(new Callback<ApiResponse<Alerta>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Response<ApiResponse<Alerta>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    alertaDetalle.setValue(response.body().getData());
+                    uiState.setValue(UiState.SUCCESS);
+                } else {
+                    error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ManejadorErrores.ContextoOperacion.GENERAL));
+                    uiState.setValue(UiState.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Throwable t) {
                 error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                 uiState.setValue(UiState.ERROR);
             }
