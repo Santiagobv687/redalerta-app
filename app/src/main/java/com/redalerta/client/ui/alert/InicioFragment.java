@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentInicioFeedBinding;
 import com.redalerta.client.model.alerta.Alerta;
+import com.redalerta.client.model.common.DepartamentoResponse;
+import com.redalerta.client.util.UbicacionCatalogoHelper;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 import java.util.ArrayList;
@@ -112,57 +114,63 @@ public class InicioFragment extends Fragment {
 
     private void setupTerritorioFilter() {
         binding.btnFiltroTerritorio.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(requireContext(), binding.btnFiltroTerritorio);
-            popup.setForceShowIcon(true);
+            UbicacionCatalogoHelper.cargarCatalogo(requireContext(), catalogo -> {
+                if (binding == null) return;
 
-            String filtroActual = viewModel.getMunicipioFiltro().getValue();
-            if (filtroActual == null) filtroActual = "Armenia";
+                PopupMenu popup = new PopupMenu(requireContext(), binding.btnFiltroTerritorio);
+                popup.setForceShowIcon(true);
 
-            MenuItem m1 = popup.getMenu().add(0, 1, 0, "Armenia");
-            if (filtroActual.equalsIgnoreCase("Armenia")) {
-                m1.setIcon(R.drawable.ic_check);
-            }
+                String filtroActual = viewModel.getMunicipioFiltro().getValue();
+                if (filtroActual == null || filtroActual.trim().isEmpty()) {
+                    filtroActual = "TODO";
+                }
 
-            MenuItem m2 = popup.getMenu().add(0, 2, 1, "Calarcá");
-            if (filtroActual.equalsIgnoreCase("Calarcá")) {
-                m2.setIcon(R.drawable.ic_check);
-            }
+                // Opción 1: Todo el departamento
+                MenuItem itemTodo = popup.getMenu().add(0, 0, 0, "Todo el departamento");
+                if (filtroActual.equalsIgnoreCase("TODO")) {
+                    itemTodo.setIcon(R.drawable.ic_check);
+                }
 
-            MenuItem m3 = popup.getMenu().add(0, 3, 2, "Montenegro");
-            if (filtroActual.equalsIgnoreCase("Montenegro")) {
-                m3.setIcon(R.drawable.ic_check);
-            }
-
-            MenuItem m4 = popup.getMenu().add(0, 4, 3, "Todo el departamento");
-            if (filtroActual.equalsIgnoreCase("TODO")) {
-                m4.setIcon(R.drawable.ic_check);
-            }
-
-            popup.setOnMenuItemClickListener(item -> {
-                CharSequence title = item.getTitle();
-                if (title != null) {
-                    String seleccion = title.toString().trim();
-                    if (seleccion.equalsIgnoreCase("Armenia")) {
-                        binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, "Armenia"));
-                        binding.btnFiltroTerritorio.setText("Armenia");
-                        viewModel.setMunicipioFiltro("Armenia");
-                    } else if (seleccion.equalsIgnoreCase("Calarcá")) {
-                        binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, "Calarcá"));
-                        binding.btnFiltroTerritorio.setText("Calarcá");
-                        viewModel.setMunicipioFiltro("Calarcá");
-                    } else if (seleccion.equalsIgnoreCase("Montenegro")) {
-                        binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, "Montenegro"));
-                        binding.btnFiltroTerritorio.setText("Montenegro");
-                        viewModel.setMunicipioFiltro("Montenegro");
-                    } else {
-                        binding.tvMunicipio.setText(getString(R.string.filtro_todos_municipios));
-                        binding.btnFiltroTerritorio.setText("Todo el Dpto");
-                        viewModel.setMunicipioFiltro("TODO");
+                // Obtener municipios de Quindío (o primer departamento del catálogo)
+                List<String> municipios = new ArrayList<>();
+                for (DepartamentoResponse d : catalogo) {
+                    if (d.getDepartamento() != null && d.getDepartamento().equalsIgnoreCase("Quindío")) {
+                        if (d.getMunicipios() != null) municipios.addAll(d.getMunicipios());
+                        break;
                     }
                 }
-                return true;
+                if (municipios.isEmpty() && !catalogo.isEmpty() && catalogo.get(0).getMunicipios() != null) {
+                    municipios.addAll(catalogo.get(0).getMunicipios());
+                }
+
+                // Agregar todos los municipios del catálogo
+                int order = 1;
+                for (String munNombre : municipios) {
+                    MenuItem mItem = popup.getMenu().add(0, order, order, munNombre);
+                    if (filtroActual.equalsIgnoreCase(munNombre.trim())) {
+                        mItem.setIcon(R.drawable.ic_check);
+                    }
+                    order++;
+                }
+
+                popup.setOnMenuItemClickListener(item -> {
+                    CharSequence title = item.getTitle();
+                    if (title != null) {
+                        String seleccion = title.toString().trim();
+                        if (seleccion.equalsIgnoreCase("Todo el departamento")) {
+                            binding.tvMunicipio.setText(getString(R.string.filtro_todos_municipios));
+                            binding.btnFiltroTerritorio.setText("Todo el Dpto");
+                            viewModel.setMunicipioFiltro("TODO");
+                        } else {
+                            binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, seleccion));
+                            binding.btnFiltroTerritorio.setText(seleccion);
+                            viewModel.setMunicipioFiltro(seleccion);
+                        }
+                    }
+                    return true;
+                });
+                popup.show();
             });
-            popup.show();
         });
     }
 
