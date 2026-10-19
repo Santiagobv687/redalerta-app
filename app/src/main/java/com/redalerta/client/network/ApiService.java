@@ -94,4 +94,12 @@ public interface ApiService {
             @Path("id") long id,
             @Body CancelarDireccionamientoRequest request
     );
+
+    // ═══ Flujo de la Organización / Entidad de Socorro ═══
+    @GET("alertas/organizacion/bandeja")
+    Call<ApiResponse<PageAlertaResponse>> listarBandejaOrganizacion(
+            @Query("page") Integer page,
+            @Query("size") Integer size,
+            @Query("sort") String sort
+    );
 }
