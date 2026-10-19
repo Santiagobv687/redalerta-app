@@ -1,46 +1,38 @@
 package com.redalerta.client.viewmodel;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
+import android.content.ContentResolver;
+import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.redalerta.client.model.alerta.*;
+import com.redalerta.client.model.alerta.Alerta;
+import com.redalerta.client.model.alerta.CrearAlertaRequest;
+import com.redalerta.client.model.alerta.ModificarAlertaRequest;
+import com.redalerta.client.model.alerta.PageAlertaResponse;
+import com.redalerta.client.model.alerta.UploadEvidenciaResponse;
 import com.redalerta.client.network.ApiClient;
 import com.redalerta.client.network.ApiResponse;
 import com.redalerta.client.util.ManejadorErrores;
 import com.redalerta.client.util.ManejadorErrores.ContextoOperacion;
 
-import android.content.ContentResolver;
-import android.net.Uri;
-import android.util.Log;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AlertaViewModel extends AndroidViewModel {
-
-    // Se conecta directamente al backend real de Spring Boot en /api/v1/alertas
-    private static final boolean MODO_MOCK = false;
 
     private final MutableLiveData<Boolean> cargando = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
@@ -91,6 +83,9 @@ public class AlertaViewModel extends AndroidViewModel {
         void onError(String mensajeError);
     }
 
+    // ══════════════════════════════════════════════════
+    // SUBIR EVIDENCIA MULTIPART (POST /api/v1/alertas/evidencias/upload)
+    // ══════════════════════════════════════════════════
     public void subirEvidencia(Uri uri, OnEvidenciaSubidaListener listener) {
         if (uri == null) return;
         try {
@@ -141,38 +136,11 @@ public class AlertaViewModel extends AndroidViewModel {
     }
 
     // ══════════════════════════════════════════════════
-    // CREAR ALERTA
+    // CREAR ALERTA (POST /api/v1/alertas)
     // ══════════════════════════════════════════════════
     public void crearAlerta(CrearAlertaRequest request) {
         cargando.setValue(true);
         error.setValue(null);
-
-        if (MODO_MOCK) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                cargando.setValue(false);
-
-                Alerta alerta = new Alerta();
-                alerta.setId(UUID.randomUUID().toString());
-                alerta.setTitulo(request.getTitulo());
-                alerta.setDescripcion(request.getDescripcion());
-                alerta.setCategoria(request.getCategoria());
-                alerta.setPrioridad(request.getPrioridad());
-                alerta.setEstado("PENDIENTE_REVISION");
-                alerta.setDireccion(request.getDireccion());
-                alerta.setBarrio(request.getBarrio());
-                alerta.setHayHeridos(request.isHayHeridos());
-                alerta.setEsAnonima(request.isEsAnonima());
-                alerta.setEvidenciaUrl(request.getEvidenciaUrl());
-                alerta.setUsuarioId(request.getUsuarioId());
-                alerta.setUsuarioNombre(request.isEsAnonima() ? null : "Usuario Demo");
-                alerta.setFechaCreacion(
-                        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", new Locale("es", "CO")).format(new Date())
-                );
-
-                alertaCreada.setValue(alerta);
-            }, 1200);
-            return;
-        }
 
         ApiClient.getApiService(getApplication())
                 .crearAlerta(request)
@@ -202,32 +170,11 @@ public class AlertaViewModel extends AndroidViewModel {
     }
 
     // ══════════════════════════════════════════════════
-    // MIS ALERTAS
+    // MIS ALERTAS (GET /api/v1/alertas/mis-alertas)
     // ══════════════════════════════════════════════════
     public void cargarMisAlertas() {
         cargando.setValue(true);
         error.setValue(null);
-
-        if (MODO_MOCK) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                cargando.setValue(false);
-                List<Alerta> mock = new ArrayList<>();
-
-                Alerta a1 = new Alerta();
-                a1.setId("1");
-                a1.setTitulo("Inundación");
-                a1.setDescripcion("Alcantarilla desbordada; el agua está entrando a varias viviendas.");
-                a1.setEstado("PENDIENTE_REVISION");
-                a1.setDireccion("Calle 48 #12-30");
-                a1.setBarrio("San Luis");
-                a1.setUsuarioNombre("Carlos Ruiz");
-                a1.setFechaActualizacion("2024-11-20T10:24:00");
-                mock.add(a1);
-
-                misAlertas.setValue(mock);
-            }, 600);
-            return;
-        }
 
         ApiClient.getApiService(getApplication())
                 .listarMisAlertas(0, 20, "fechaCreacion,desc")
@@ -300,17 +247,6 @@ public class AlertaViewModel extends AndroidViewModel {
         cargando.setValue(true);
         error.setValue(null);
 
-        if (MODO_MOCK) {
-            List<Alerta> actuales = misAlertas.getValue();
-            if (actuales != null) {
-                actuales.remove(alerta);
-                misAlertas.setValue(actuales);
-            }
-            cargando.setValue(false);
-            alertaEliminadaExito.setValue(true);
-            return;
-        }
-
         try {
             long id = Long.parseLong(alerta.getId());
             ApiClient.getApiService(getApplication())
@@ -341,6 +277,13 @@ public class AlertaViewModel extends AndroidViewModel {
         }
     }
 
+    public void actualizarEstadoAlerta(Alerta alerta, String nuevoEstado) {
+        if (alerta != null) {
+            alerta.setEstado(nuevoEstado);
+            cargarTodasLasAlertas();
+        }
+    }
+
     // ══════════════════════════════════════════════════
     // FEED GENERAL COMUNITARIO (GET /api/v1/alertas)
     // ══════════════════════════════════════════════════
@@ -354,69 +297,6 @@ public class AlertaViewModel extends AndroidViewModel {
         // Si municipio es "TODO", no se envía como filtro a la API
         if (mun != null && (mun.equalsIgnoreCase("TODO") || mun.trim().isEmpty())) {
             mun = null;
-        }
-
-        if (MODO_MOCK) {
-            final String finalMun = mun;
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                cargando.setValue(false);
-
-                List<Alerta> mock = new ArrayList<>();
-
-                Alerta a1 = new Alerta();
-                a1.setId("101");
-                a1.setTitulo("Incendio Estructural en Edificio");
-                a1.setDescripcion("Incendio de gran magnitud reportado en el tercer piso. Llamas visibles y humo denso. Bomberos en camino al lugar.");
-                a1.setEstado("EN_GESTION");
-                a1.setPrioridad(PrioridadAlerta.ALTA);
-                a1.setCategoria(CategoriaAlerta.INCENDIO);
-                a1.setBarrio("Armenia");
-                a1.setDireccion("Cra 15 #82-34, Barrio Chapinero");
-                a1.setUsuarioNombre("María González");
-                a1.setFechaActualizacion("2024-11-18T14:32:00");
-                a1.setEvidenciaUrl("https://picsum.photos/600/338");
-                a1.setTotalEvidencias(3);
-                mock.add(a1);
-
-                Alerta a2 = new Alerta();
-                a2.setId("102");
-                a2.setTitulo("Accidente de Tránsito Múltiple");
-                a2.setDescripcion("Colisión entre bus de servicio público y vehículo particular. Personas lesionadas requieren atención médica urgente.");
-                a2.setEstado("DIRECCIONADA");
-                a2.setPrioridad(PrioridadAlerta.ALTA);
-                a2.setCategoria(CategoriaAlerta.ACCIDENTE);
-                a2.setBarrio("Armenia");
-                a2.setDireccion("Av. Bolivar con Calle 10 Norte");
-                a2.setUsuarioNombre("Carlos Ramírez");
-                a2.setFechaActualizacion("2024-11-18T15:10:00");
-                mock.add(a2);
-
-                Alerta a3 = new Alerta();
-                a3.setId("103");
-                a3.setTitulo("Desbordamiento de Quebrada e Inundación");
-                a3.setDescripcion("Fuerte corriente por lluvias torrenciales desbordó el cauce. Varias viviendas afectadas por ingreso de lodo.");
-                a3.setEstado("PENDIENTE_REVISION");
-                a3.setPrioridad(PrioridadAlerta.ALTA);
-                a3.setCategoria(CategoriaAlerta.INUNDACION);
-                a3.setBarrio("Calarcá");
-                a3.setDireccion("Sector La Bella, Calle 38 Sur");
-                a3.setUsuarioNombre("Ana Torres");
-                a3.setFechaActualizacion("2024-11-18T11:45:00");
-                a3.setEvidenciaUrl("https://picsum.photos/600/339");
-                a3.setTotalEvidencias(1);
-                mock.add(a3);
-
-                List<Alerta> filtradas = new ArrayList<>();
-                for (Alerta a : mock) {
-                    boolean coincideMunicipio = (finalMun == null || (a.getBarrio() != null && a.getBarrio().equalsIgnoreCase(finalMun)));
-                    boolean coincideEstado = (estado == null || (a.getEstado() != null && a.getEstado().equalsIgnoreCase(estado)));
-                    if (coincideMunicipio && coincideEstado) {
-                        filtradas.add(a);
-                    }
-                }
-                todasLasAlertas.setValue(filtradas);
-            }, 600);
-            return;
         }
 
         // Llamada REAL al endpoint GET /api/v1/alertas (Departamento es fijo en el backend por el token del usuario)
@@ -445,15 +325,5 @@ public class AlertaViewModel extends AndroidViewModel {
                         error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                     }
                 });
-    }
-
-    public void actualizarEstadoAlerta(Alerta alerta, String nuevoEstado) {
-        if (MODO_MOCK) {
-            alerta.setEstado(nuevoEstado);
-            alerta.setFechaActualizacion(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(new Date()));
-            cargarTodasLasAlertas();
-            return;
-        }
-        // Endpoint futuro para actualización de estado
     }
 }

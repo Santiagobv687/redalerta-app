@@ -1,18 +1,16 @@
 package com.redalerta.client.viewmodel;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.redalerta.client.model.alerta.*;
-import com.redalerta.client.model.auth.*;
-import com.redalerta.client.model.common.*;
-import com.redalerta.client.model.usuario.*;
+import com.redalerta.client.model.auth.LoginRequest;
+import com.redalerta.client.model.auth.LoginResponse;
+import com.redalerta.client.model.auth.RegistroRequest;
+import com.redalerta.client.model.usuario.Usuario;
 import com.redalerta.client.network.ApiClient;
 import com.redalerta.client.network.ApiResponse;
 import com.redalerta.client.util.ManejadorErrores;
@@ -23,9 +21,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AuthViewModel extends AndroidViewModel {
-
-    // Se establece MODO_MOCK a false para consumir la API REST real
-    private static final boolean MODO_MOCK = false;
 
     private final MutableLiveData<Boolean> cargando = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
@@ -44,32 +39,11 @@ public class AuthViewModel extends AndroidViewModel {
     public LiveData<Boolean> getLogoutExitoso() { return logoutExitoso; }
 
     // ══════════════════════════════════════════════════
-    // LOGIN
+    // LOGIN (POST /api/v1/auth/login)
     // ══════════════════════════════════════════════════
     public void login(String correo, String contrasena) {
         cargando.setValue(true);
         error.setValue(null);
-
-        if (MODO_MOCK) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                cargando.setValue(false);
-                if (correo.contains("@") && contrasena.length() >= 6) {
-                    Usuario u = new Usuario();
-                    u.setId("1");
-                    u.setNombre("Usuario Demo");
-                    u.setEmail(correo);
-                    u.setRol("ROLE_CIUDADANO");
-
-                    LoginResponse resp = new LoginResponse();
-                    resp.setToken("mock-jwt-token-12345");
-                    resp.setUsuario(u);
-                    loginExitoso.setValue(resp);
-                } else {
-                    error.setValue("Credenciales incorrectas");
-                }
-            }, 1200);
-            return;
-        }
 
         LoginRequest request = new LoginRequest(correo, contrasena);
         ApiClient.getApiService(getApplication())
@@ -100,19 +74,11 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     // ══════════════════════════════════════════════════
-    // REGISTRO
+    // REGISTRO (POST /api/v1/auth/registro)
     // ══════════════════════════════════════════════════
     public void registrar(RegistroRequest request) {
         cargando.setValue(true);
         error.setValue(null);
-
-        if (MODO_MOCK) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                cargando.setValue(false);
-                registroExitoso.setValue(true);
-            }, 1500);
-            return;
-        }
 
         ApiClient.getApiService(getApplication())
                 .registrar(request)
