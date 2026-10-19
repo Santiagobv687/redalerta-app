@@ -21,6 +21,7 @@ import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentInicioFeedBinding;
 import com.redalerta.client.model.alerta.Alerta;
 import com.redalerta.client.model.common.DepartamentoResponse;
+import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.util.UbicacionCatalogoHelper;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
@@ -32,6 +33,7 @@ public class InicioFragment extends Fragment {
     private FragmentInicioFeedBinding binding;
     private AlertaViewModel viewModel;
     private AlertaAdapter adapter;
+    private SessionManager session;
 
     private final Handler fabHandler = new Handler(Looper.getMainLooper());
     private final Runnable expandFabRunnable = () -> {
@@ -53,7 +55,18 @@ public class InicioFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        session = new SessionManager(requireContext());
         viewModel = new ViewModelProvider(requireActivity()).get(AlertaViewModel.class);
+
+        String rol = session.getRol();
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+
+        if (esLider) {
+            String munLider = session.getMunicipio() != null ? session.getMunicipio() : "Armenia";
+            viewModel.setMunicipioFiltro(munLider);
+        } else {
+            viewModel.setMunicipioFiltro("TODO");
+        }
 
         setupRecyclerView();
         setupSwipeRefresh();
@@ -120,6 +133,22 @@ public class InicioFragment extends Fragment {
     }
 
     private void setupTerritorioFilter() {
+        String rol = session.getRol();
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+
+        if (esLider) {
+            String munLider = session.getMunicipio() != null ? session.getMunicipio() : "Armenia";
+            binding.btnFiltroTerritorio.setText(munLider);
+            binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, munLider));
+
+            binding.btnFiltroTerritorio.setOnClickListener(v -> {
+                Toast.makeText(requireContext(),
+                        "Como Líder Comunitario, tu territorio está asignado fijamente en " + munLider,
+                        Toast.LENGTH_SHORT).show();
+            });
+            return;
+        }
+
         binding.btnFiltroTerritorio.setOnClickListener(v -> {
             UbicacionCatalogoHelper.cargarCatalogo(requireContext(), catalogo -> {
                 if (binding == null) return;
@@ -240,9 +269,11 @@ public class InicioFragment extends Fragment {
                 binding.swipeRefresh.setVisibility(View.VISIBLE);
 
                 adapter = new AlertaAdapter(alertas, alerta -> {
-                    Toast.makeText(requireContext(),
-                            "Alerta: " + alerta.getTitulo() + "\nUbicación: " + alerta.getDireccion(),
-                            Toast.LENGTH_SHORT).show();
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
+                            .addToBackStack(null)
+                            .commit();
                 });
                 binding.rvFeedAlertas.setAdapter(adapter);
             }

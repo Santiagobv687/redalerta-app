@@ -113,6 +113,20 @@ public class MiPerfilFragment extends Fragment {
                 String tel = u.getTelefono() != null && !u.getTelefono().isEmpty() ? u.getTelefono() : "Sin teléfono registrado";
                 binding.tvTelefonoContacto.setText("Teléfono: " + tel);
 
+                // Rol M3 Chip
+                String rol = u.getRol() != null ? u.getRol() : sessionManager.getRol();
+                if (rol == null) rol = "ROLE_CIUDADANO";
+
+                String rolFormateado = "Ciudadano";
+                if ("ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol)) {
+                    rolFormateado = "Líder Comunitario";
+                } else if ("ROLE_ADMIN".equalsIgnoreCase(rol) || "ROLE_ADMINISTRADOR".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol)) {
+                    rolFormateado = "Administrador";
+                } else if ("ROLE_ORGANIZACION".equalsIgnoreCase(rol) || "ORGANIZACION".equalsIgnoreCase(rol)) {
+                    rolFormateado = "Organización";
+                }
+                binding.chipRol.setText(rolFormateado);
+
                 // Documento de Identidad (Solo lectura)
                 DocumentoRequest doc = u.getDocumento();
                 if (doc != null && doc.getNumero() != null) {
