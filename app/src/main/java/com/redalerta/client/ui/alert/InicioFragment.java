@@ -86,8 +86,14 @@ public class InicioFragment extends Fragment {
     }
 
     private void setupFabScrollBehavior() {
-        // Se contrae al desplazarse la lista y espera 500ms (medio segundo) quieto
-        // antes de volver a desplegar la etiqueta "Reportar Alerta".
+        String rol = new com.redalerta.client.util.SessionManager(requireContext()).getRol();
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+
+        if (esLider) {
+            binding.fabReportarAlerta.setVisibility(View.GONE);
+            return;
+        }
+
         binding.rvFeedAlertas.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
