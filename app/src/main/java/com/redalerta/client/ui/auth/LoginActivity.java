@@ -109,6 +109,12 @@ public class LoginActivity extends AppCompatActivity {
                         resp.getUsuario().getRol(),
                         resp.getUsuario().getNombre()
                 );
+                if (resp.getUsuario() != null && resp.getUsuario().getUbicacion() != null) {
+                    session.guardarUbicacion(
+                            resp.getUsuario().getUbicacion().getDepartamento(),
+                            resp.getUsuario().getUbicacion().getMunicipio()
+                    );
+                }
                 irAHomeSegunRol(resp.getUsuario().getRol());
             }
         });

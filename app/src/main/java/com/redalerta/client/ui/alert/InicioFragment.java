@@ -20,6 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentInicioFeedBinding;
 import com.redalerta.client.model.alerta.Alerta;
+import com.redalerta.client.model.common.DepartamentoResponse;
+import com.redalerta.client.util.SessionManager;
+import com.redalerta.client.util.UbicacionCatalogoHelper;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ public class InicioFragment extends Fragment {
     private FragmentInicioFeedBinding binding;
     private AlertaViewModel viewModel;
     private AlertaAdapter adapter;
+    private SessionManager session;
 
     private final Handler fabHandler = new Handler(Looper.getMainLooper());
     private final Runnable expandFabRunnable = () -> {
@@ -51,7 +55,18 @@ public class InicioFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        session = new SessionManager(requireContext());
         viewModel = new ViewModelProvider(requireActivity()).get(AlertaViewModel.class);
+
+        String rol = session.getRol();
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+
+        if (esLider) {
+            String munLider = session.getMunicipio() != null ? session.getMunicipio() : "Armenia";
+            viewModel.setMunicipioFiltro(munLider);
+        } else {
+            viewModel.setMunicipioFiltro("TODO");
+        }
 
         setupRecyclerView();
         setupSwipeRefresh();
@@ -67,10 +82,11 @@ public class InicioFragment extends Fragment {
 
     private void setupRecyclerView() {
         adapter = new AlertaAdapter(new ArrayList<>(), alerta -> {
-            // Acción al tocar una tarjeta de alerta
-            Toast.makeText(requireContext(),
-                    "Alerta: " + alerta.getTitulo() + "\nUbicación: " + alerta.getDireccion(),
-                    Toast.LENGTH_SHORT).show();
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
+                    .addToBackStack(null)
+                    .commit();
         });
 
         binding.rvFeedAlertas.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -83,8 +99,16 @@ public class InicioFragment extends Fragment {
     }
 
     private void setupFabScrollBehavior() {
-        // Se contrae al desplazarse la lista y espera 500ms (medio segundo) quieto
-        // antes de volver a desplegar la etiqueta "Reportar Alerta".
+        String rol = new com.redalerta.client.util.SessionManager(requireContext()).getRol();
+        boolean esCiudadano = "ROLE_CIUDADANO".equalsIgnoreCase(rol) || "CIUDADANO".equalsIgnoreCase(rol) || rol == null;
+
+        if (!esCiudadano) {
+            binding.fabReportarAlerta.setVisibility(View.GONE);
+            return;
+        }
+
+        binding.fabReportarAlerta.setVisibility(View.VISIBLE);
+
         binding.rvFeedAlertas.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -111,58 +135,80 @@ public class InicioFragment extends Fragment {
     }
 
     private void setupTerritorioFilter() {
+        String rol = session.getRol();
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+
+        if (esLider) {
+            String munLider = session.getMunicipio() != null ? session.getMunicipio() : "Armenia";
+            binding.btnFiltroTerritorio.setText(munLider);
+            binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, munLider));
+
+            binding.btnFiltroTerritorio.setOnClickListener(v -> {
+                Toast.makeText(requireContext(),
+                        "Como Líder Comunitario, tu territorio está asignado fijamente en " + munLider,
+                        Toast.LENGTH_SHORT).show();
+            });
+            return;
+        }
+
         binding.btnFiltroTerritorio.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(requireContext(), binding.btnFiltroTerritorio);
-            popup.setForceShowIcon(true);
+            UbicacionCatalogoHelper.cargarCatalogo(requireContext(), catalogo -> {
+                if (binding == null) return;
 
-            String filtroActual = viewModel.getMunicipioFiltro().getValue();
-            if (filtroActual == null) filtroActual = "Armenia";
+                PopupMenu popup = new PopupMenu(requireContext(), binding.btnFiltroTerritorio);
+                popup.setForceShowIcon(true);
 
-            MenuItem m1 = popup.getMenu().add(0, 1, 0, "Armenia");
-            if (filtroActual.equalsIgnoreCase("Armenia")) {
-                m1.setIcon(R.drawable.ic_check);
-            }
+                String filtroActual = viewModel.getMunicipioFiltro().getValue();
+                if (filtroActual == null || filtroActual.trim().isEmpty()) {
+                    filtroActual = "TODO";
+                }
 
-            MenuItem m2 = popup.getMenu().add(0, 2, 1, "Calarcá");
-            if (filtroActual.equalsIgnoreCase("Calarcá")) {
-                m2.setIcon(R.drawable.ic_check);
-            }
+                // Opción 1: Todo el departamento
+                MenuItem itemTodo = popup.getMenu().add(0, 0, 0, "Todo el departamento");
+                if (filtroActual.equalsIgnoreCase("TODO")) {
+                    itemTodo.setIcon(R.drawable.ic_check);
+                }
 
-            MenuItem m3 = popup.getMenu().add(0, 3, 2, "Montenegro");
-            if (filtroActual.equalsIgnoreCase("Montenegro")) {
-                m3.setIcon(R.drawable.ic_check);
-            }
-
-            MenuItem m4 = popup.getMenu().add(0, 4, 3, "Todo el departamento");
-            if (filtroActual.equalsIgnoreCase("TODO")) {
-                m4.setIcon(R.drawable.ic_check);
-            }
-
-            popup.setOnMenuItemClickListener(item -> {
-                CharSequence title = item.getTitle();
-                if (title != null) {
-                    String seleccion = title.toString().trim();
-                    if (seleccion.equalsIgnoreCase("Armenia")) {
-                        binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, "Armenia"));
-                        binding.btnFiltroTerritorio.setText("Armenia");
-                        viewModel.setMunicipioFiltro("Armenia");
-                    } else if (seleccion.equalsIgnoreCase("Calarcá")) {
-                        binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, "Calarcá"));
-                        binding.btnFiltroTerritorio.setText("Calarcá");
-                        viewModel.setMunicipioFiltro("Calarcá");
-                    } else if (seleccion.equalsIgnoreCase("Montenegro")) {
-                        binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, "Montenegro"));
-                        binding.btnFiltroTerritorio.setText("Montenegro");
-                        viewModel.setMunicipioFiltro("Montenegro");
-                    } else {
-                        binding.tvMunicipio.setText(getString(R.string.filtro_todos_municipios));
-                        binding.btnFiltroTerritorio.setText("Todo el Dpto");
-                        viewModel.setMunicipioFiltro("TODO");
+                // Obtener municipios de Quindío (o primer departamento del catálogo)
+                List<String> municipios = new ArrayList<>();
+                for (DepartamentoResponse d : catalogo) {
+                    if (d.getDepartamento() != null && d.getDepartamento().equalsIgnoreCase("Quindío")) {
+                        if (d.getMunicipios() != null) municipios.addAll(d.getMunicipios());
+                        break;
                     }
                 }
-                return true;
+                if (municipios.isEmpty() && !catalogo.isEmpty() && catalogo.get(0).getMunicipios() != null) {
+                    municipios.addAll(catalogo.get(0).getMunicipios());
+                }
+
+                // Agregar todos los municipios del catálogo
+                int order = 1;
+                for (String munNombre : municipios) {
+                    MenuItem mItem = popup.getMenu().add(0, order, order, munNombre);
+                    if (filtroActual.equalsIgnoreCase(munNombre.trim())) {
+                        mItem.setIcon(R.drawable.ic_check);
+                    }
+                    order++;
+                }
+
+                popup.setOnMenuItemClickListener(item -> {
+                    CharSequence title = item.getTitle();
+                    if (title != null) {
+                        String seleccion = title.toString().trim();
+                        if (seleccion.equalsIgnoreCase("Todo el departamento")) {
+                            binding.tvMunicipio.setText(getString(R.string.filtro_todos_municipios));
+                            binding.btnFiltroTerritorio.setText("Todo el Dpto");
+                            viewModel.setMunicipioFiltro("TODO");
+                        } else {
+                            binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, seleccion));
+                            binding.btnFiltroTerritorio.setText(seleccion);
+                            viewModel.setMunicipioFiltro(seleccion);
+                        }
+                    }
+                    return true;
+                });
+                popup.show();
             });
-            popup.show();
         });
     }
 
@@ -224,12 +270,18 @@ public class InicioFragment extends Fragment {
                 binding.layoutError.setVisibility(View.GONE);
                 binding.swipeRefresh.setVisibility(View.VISIBLE);
 
-                adapter = new AlertaAdapter(alertas, alerta -> {
-                    Toast.makeText(requireContext(),
-                            "Alerta: " + alerta.getTitulo() + "\nUbicación: " + alerta.getDireccion(),
-                            Toast.LENGTH_SHORT).show();
-                });
-                binding.rvFeedAlertas.setAdapter(adapter);
+                if (adapter == null) {
+                    adapter = new AlertaAdapter(alertas, alerta -> {
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
+                                .addToBackStack(null)
+                                .commit();
+                    });
+                    binding.rvFeedAlertas.setAdapter(adapter);
+                } else {
+                    adapter.actualizarLista(alertas);
+                }
             }
         });
 

@@ -12,6 +12,8 @@ public class SessionManager {
     private static final String KEY_USUARIO_ID = "usuario_id";
     private static final String KEY_ROL = "usuario_rol";
     private static final String KEY_NOMBRE = "usuario_nombre";
+    private static final String KEY_MUNICIPIO = "usuario_municipio";
+    private static final String KEY_DEPARTAMENTO = "usuario_departamento";
 
     private final SharedPreferences prefs;
 
@@ -37,10 +39,19 @@ public class SessionManager {
                 .apply();
     }
 
+    public void guardarUbicacion(String departamento, String municipio) {
+        prefs.edit()
+                .putString(KEY_DEPARTAMENTO, departamento)
+                .putString(KEY_MUNICIPIO, municipio)
+                .apply();
+    }
+
     public String getToken() { return prefs.getString(KEY_TOKEN, null); }
     public String getUsuarioId() { return prefs.getString(KEY_USUARIO_ID, null); }
     public String getRol() { return prefs.getString(KEY_ROL, null); }
     public String getNombre() { return prefs.getString(KEY_NOMBRE, null); }
+    public String getMunicipio() { return prefs.getString(KEY_MUNICIPIO, "Armenia"); }
+    public String getDepartamento() { return prefs.getString(KEY_DEPARTAMENTO, "Quindío"); }
 
     public boolean estaLogueado() { return getToken() != null; }
     public void cerrarSesion() { prefs.edit().clear().apply(); }

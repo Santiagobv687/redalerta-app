@@ -171,7 +171,7 @@
                     android:id="@+id/imgEvidenciaPreview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitCenter"
                     android:contentDescription="@string/alerta_evidencia_desc"
                     tools:src="@drawable/ic_photo_library" />
 
