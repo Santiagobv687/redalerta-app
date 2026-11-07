@@ -104,34 +104,123 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- SWITCH GESTACIÓN/LACTANCIA (Visibilidad condicional para género FEMENINO) -->
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/swGestacion"
+        <!-- 1. PREGUNTA GESTACIÓN/LACTANCIA (Visibilidad condicional para género FEMENINO) -->
+        <LinearLayout
+            android:id="@+id/containerGestacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/reg_sw_gestacion"
-            android:textColor="@color/ra_light_text"
-            android:textSize="13sp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="visible">
 
-        <!-- SWITCH MENORES -->
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/swMenores"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reg_sw_gestacion"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/rgGestacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:checkedButton="@+id/rbGestacionNo">
+
+                <RadioButton
+                    android:id="@+id/rbGestacionSi"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_radio_si_no"
+                    android:buttonTint="@color/ra_red"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="@string/reg_opcion_si"
+                    android:textColor="@color/selector_radio_si_no_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="1dp" />
+
+                <RadioButton
+                    android:id="@+id/rbGestacionNo"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_radio_si_no"
+                    android:buttonTint="@color/ra_red"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="@string/reg_opcion_no"
+                    android:textColor="@color/selector_radio_si_no_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <!-- 2. PREGUNTA MENORES DE EDAD -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/reg_sw_menores"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgMenores"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/reg_sw_menores"
-            android:textColor="@color/ra_light_text"
-            android:textSize="13sp" />
+            android:orientation="horizontal"
+            android:checkedButton="@+id/rbMenoresNo">
+
+            <RadioButton
+                android:id="@+id/rbMenoresSi"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_radio_si_no"
+                android:buttonTint="@color/ra_red"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/reg_opcion_si"
+                android:textColor="@color/selector_radio_si_no_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="1dp" />
+
+            <RadioButton
+                android:id="@+id/rbMenoresNo"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_radio_si_no"
+                android:buttonTint="@color/ra_red"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/reg_opcion_no"
+                android:textColor="@color/selector_radio_si_no_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </RadioGroup>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilCantidadMenores"
             style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="10dp"
             android:hint="@string/reg_label_cant_menores"
             android:visibility="gone"
             tools:visibility="visible">
@@ -141,27 +230,69 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
+                android:minHeight="48dp"
                 android:text="1"
                 android:textColor="@color/ra_light_text"
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- SWITCH DISCAPACIDAD -->
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/swDiscapacidad"
+        <!-- 3. PREGUNTA DISCAPACIDAD -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/reg_sw_discapacidad"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgDiscapacidad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/reg_sw_discapacidad"
-            android:textColor="@color/ra_light_text"
-            android:textSize="13sp" />
+            android:orientation="horizontal"
+            android:checkedButton="@+id/rbDiscapacidadNo">
+
+            <RadioButton
+                android:id="@+id/rbDiscapacidadSi"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_radio_si_no"
+                android:buttonTint="@color/ra_red"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/reg_opcion_si"
+                android:textColor="@color/selector_radio_si_no_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="1dp" />
+
+            <RadioButton
+                android:id="@+id/rbDiscapacidadNo"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_radio_si_no"
+                android:buttonTint="@color/ra_red"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/reg_opcion_no"
+                android:textColor="@color/selector_radio_si_no_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </RadioGroup>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEspecificacionDiscapacidad"
             style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="10dp"
             android:hint="@string/reg_label_espec_discapacidad"
             android:visibility="gone"
             tools:visibility="visible">
@@ -171,26 +302,68 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
+                android:minHeight="48dp"
                 android:textColor="@color/ra_light_text"
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- SWITCH GRUPO ÉTNICO -->
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/swEtnico"
+        <!-- 4. PREGUNTA GRUPO ÉTNICO -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/reg_sw_etnico"
+            android:textColor="@color/ra_light_text"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgEtnico"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/reg_sw_etnico"
-            android:textColor="@color/ra_light_text"
-            android:textSize="13sp" />
+            android:orientation="horizontal"
+            android:checkedButton="@+id/rbEtnicoNo">
+
+            <RadioButton
+                android:id="@+id/rbEtnicoSi"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_radio_si_no"
+                android:buttonTint="@color/ra_red"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/reg_opcion_si"
+                android:textColor="@color/selector_radio_si_no_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="12dp"
+                android:layout_height="1dp" />
+
+            <RadioButton
+                android:id="@+id/rbEtnicoNo"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/selector_radio_si_no"
+                android:buttonTint="@color/ra_red"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/reg_opcion_no"
+                android:textColor="@color/selector_radio_si_no_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </RadioGroup>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEspecificacionEtnico"
             style="@style/Widget.RedAlerta.InputLight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="10dp"
             android:hint="@string/reg_label_espec_etnico"
             android:visibility="gone"
             tools:visibility="visible">
@@ -200,6 +373,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
+                android:minHeight="48dp"
                 android:textColor="@color/ra_light_text"
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
