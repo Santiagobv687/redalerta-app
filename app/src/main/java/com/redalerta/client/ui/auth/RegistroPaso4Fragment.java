@@ -77,7 +77,8 @@ public class RegistroPaso4Fragment extends Fragment {
                         ((RegistroActivity) requireActivity()).getRegistroRequest();
 
                 Intent intent = new Intent(requireContext(), RegistroExitosoActivity.class);
-                intent.putExtra(RegistroExitosoActivity.EXTRA_NOMBRE,   req.getNombre());
+                String nombreParaExito = req.getNombrePila() != null ? req.getNombrePila() : req.getNombre();
+                intent.putExtra(RegistroExitosoActivity.EXTRA_NOMBRE,   nombreParaExito);
                 intent.putExtra(RegistroExitosoActivity.EXTRA_APELLIDO, req.getApellido());
                 intent.putExtra(RegistroExitosoActivity.EXTRA_CORREO,   req.getCorreo());
                 startActivity(intent);
@@ -96,25 +97,50 @@ public class RegistroPaso4Fragment extends Fragment {
         et.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                til.setError(null);
+                limpiarErrorCampo(til);
             }
             @Override public void afterTextChanged(Editable s) {}
         });
     }
 
+    private void limpiarErrorCampo(TextInputLayout til) {
+        if (til != null) {
+            til.setError(null);
+            til.setErrorEnabled(false);
+        }
+    }
+
     private void pintarResumen() {
         RegistroRequest req = ((RegistroActivity) requireActivity()).getRegistroRequest();
-        String nombre = safe(req.getNombre());
-        String apellido = safe(req.getApellido());
+        String nombreCompleto = req.getNombrePila() != null
+                ? (safe(req.getNombrePila()) + " " + safe(req.getApellido())).trim()
+                : safe(req.getNombre());
         String correo = safe(req.getCorreo());
+        String depto = (req.getUbicacion() != null && req.getUbicacion().getDepartamento() != null)
+                ? req.getUbicacion().getDepartamento().trim() : "";
         String localidad = safe(req.getLocalidad());
         String barrio = safe(req.getBarrio());
         String direccion = safe(req.getDireccion());
 
+        StringBuilder ubicacionTexto = new StringBuilder();
+        if (!localidad.isEmpty()) {
+            ubicacionTexto.append(localidad);
+            if (!depto.isEmpty()) {
+                ubicacionTexto.append(", ").append(depto);
+            }
+        } else if (!depto.isEmpty()) {
+            ubicacionTexto.append(depto);
+        }
+
+        if (!barrio.isEmpty()) {
+            if (ubicacionTexto.length() > 0) ubicacionTexto.append(" — ");
+            ubicacionTexto.append(barrio);
+        }
+
         String resumen =
-                nombre + " " + apellido + "\n" +
+                nombreCompleto + "\n" +
                         correo + "\n" +
-                        localidad + " — " + barrio + "\n" +
+                        ubicacionTexto + "\n" +
                         direccion;
 
         binding.tvResumen.setText(resumen);
@@ -154,13 +180,13 @@ public class RegistroPaso4Fragment extends Fragment {
             binding.tilContrasena.setError("Mínimo 6 caracteres");
             return;
         }
-        binding.tilContrasena.setError(null);
+        limpiarErrorCampo(binding.tilContrasena);
 
         if (!contrasena.equals(confirmar)) {
             binding.tilConfirmar.setError("Las contraseñas no coinciden");
             return;
         }
-        binding.tilConfirmar.setError(null);
+        limpiarErrorCampo(binding.tilConfirmar);
 
         if (!binding.cbTerminos.isChecked()) {
             Toast.makeText(requireContext(),

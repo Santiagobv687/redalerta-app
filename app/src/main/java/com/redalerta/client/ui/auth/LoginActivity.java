@@ -54,8 +54,8 @@ public class LoginActivity extends AppCompatActivity {
         TextWatcher tw = new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                binding.tilCorreo.setError(null);
-                binding.tilContrasena.setError(null);
+                limpiarErrorCampo(binding.tilCorreo);
+                limpiarErrorCampo(binding.tilContrasena);
             }
             @Override public void afterTextChanged(Editable s) {}
         };
@@ -64,9 +64,16 @@ public class LoginActivity extends AppCompatActivity {
         binding.etContrasena.addTextChangedListener(tw);
     }
 
+    private void limpiarErrorCampo(com.google.android.material.textfield.TextInputLayout til) {
+        if (til != null) {
+            til.setError(null);
+            til.setErrorEnabled(false);
+        }
+    }
+
     private void intentarLogin() {
-        binding.tilCorreo.setError(null);
-        binding.tilContrasena.setError(null);
+        limpiarErrorCampo(binding.tilCorreo);
+        limpiarErrorCampo(binding.tilContrasena);
 
         String correo = binding.etCorreo.getText().toString().trim();
         String contrasena = binding.etContrasena.getText().toString();

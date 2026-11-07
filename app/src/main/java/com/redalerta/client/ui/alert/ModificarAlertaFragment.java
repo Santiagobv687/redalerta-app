@@ -196,6 +196,10 @@ public class ModificarAlertaFragment extends Fragment {
         TextWatcher watcher = new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                limpiarErrorCampo(binding.tilDescripcion);
+                limpiarErrorCampo(binding.tilDepartamento);
+                limpiarErrorCampo(binding.tilMunicipio);
+                limpiarErrorCampo(binding.tilDireccionDetallada);
                 validarEstadoBotonGuardar();
             }
             @Override public void afterTextChanged(Editable s) {}
@@ -210,6 +214,13 @@ public class ModificarAlertaFragment extends Fragment {
 
         binding.btnCancelarModificacion.setOnClickListener(v -> cancelarYVolver());
         binding.btnGuardarModificacion.setOnClickListener(v -> procesarGuardarModificacion());
+    }
+
+    private void limpiarErrorCampo(com.google.android.material.textfield.TextInputLayout til) {
+        if (til != null) {
+            til.setError(null);
+            til.setErrorEnabled(false);
+        }
     }
 
     private void validarEstadoBotonGuardar() {

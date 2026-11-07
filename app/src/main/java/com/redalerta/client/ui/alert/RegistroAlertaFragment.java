@@ -158,6 +158,10 @@ public class RegistroAlertaFragment extends Fragment {
         TextWatcher watcher = new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                limpiarErrorCampo(binding.tilDescripcion);
+                limpiarErrorCampo(binding.tilDepartamento);
+                limpiarErrorCampo(binding.tilMunicipio);
+                limpiarErrorCampo(binding.tilDireccionDetallada);
                 validarEstadoBotonPublicar();
             }
             @Override public void afterTextChanged(Editable s) {}
@@ -171,6 +175,13 @@ public class RegistroAlertaFragment extends Fragment {
         });
 
         binding.btnRegistrarAlerta.setOnClickListener(v -> procesarPublicarAlerta());
+    }
+
+    private void limpiarErrorCampo(com.google.android.material.textfield.TextInputLayout til) {
+        if (til != null) {
+            til.setError(null);
+            til.setErrorEnabled(false);
+        }
     }
 
     private void actualizarReportadoPor() {
@@ -216,22 +227,25 @@ public class RegistroAlertaFragment extends Fragment {
             binding.tilDescripcion.setError("La descripción debe tener mínimo 10 caracteres");
             return;
         }
-        binding.tilDescripcion.setError(null);
+        limpiarErrorCampo(binding.tilDescripcion);
 
         if (depto.isEmpty()) {
             binding.tilDepartamento.setError("Seleccione departamento");
             return;
         }
+        limpiarErrorCampo(binding.tilDepartamento);
 
         if (mun.isEmpty()) {
             binding.tilMunicipio.setError("Seleccione municipio");
             return;
         }
+        limpiarErrorCampo(binding.tilMunicipio);
 
         if (dir.isEmpty()) {
             binding.tilDireccionDetallada.setError("Ingrese la dirección detallada o punto de referencia");
             return;
         }
+        limpiarErrorCampo(binding.tilDireccionDetallada);
 
         // Recopilar URLs de evidencias subidas
         List<String> evidenciasUrls = new ArrayList<>();
