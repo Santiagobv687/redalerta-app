@@ -39,12 +39,30 @@ public class LoginActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         observarViewModel();
 
+        // Si viene desde recuperación de contraseña con el correo ya verificado, pre-llenarlo
+        String correoPrellenado = getIntent().getStringExtra(RecuperarPasswordActivity.EXTRA_CORREO_INICIAL);
+        if (correoPrellenado != null && !correoPrellenado.trim().isEmpty()) {
+            binding.etCorreo.setText(correoPrellenado.trim());
+            binding.etContrasena.requestFocus();
+        }
+
         // ══════════════════════════════════════════════════
         // Desmantelamiento dinámico de errores en TextInputLayout
         // ══════════════════════════════════════════════════
         configurarLimpiezaErrores();
 
         binding.btnLogin.setOnClickListener(v -> intentarLogin());
+
+        binding.btnOlvidoContrasena.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RecuperarPasswordActivity.class);
+            String correoEscrito = binding.etCorreo.getText() != null
+                    ? binding.etCorreo.getText().toString().trim()
+                    : "";
+            if (!correoEscrito.isEmpty()) {
+                intent.putExtra(RecuperarPasswordActivity.EXTRA_CORREO_INICIAL, correoEscrito);
+            }
+            startActivity(intent);
+        });
 
         binding.btnIrRegistro.setOnClickListener(v ->
                 startActivity(new Intent(this, RegistroActivity.class)));
