@@ -28,6 +28,7 @@
 
     <!-- FORMULARIO CON SCROLL -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollModificarAlerta"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -44,10 +45,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Modifica la descripción, ubicación o evidencias fotográficas de tu reporte antes de que sea verificado por el líder comunitario."
+                android:lineSpacingMultiplier="1.2"
+                android:text="Modifica la descripción, ubicación en el mapa o evidencias fotográficas de tu reporte antes de que sea verificado por el líder comunitario."
                 android:textColor="@color/ra_light_text_secondary"
-                android:textSize="13sp"
-                android:lineSpacingMultiplier="1.2" />
+                android:textSize="13sp" />
 
             <!-- 1. DESCRIPCIÓN DEL INCIDENTE -->
             <TextView
@@ -81,16 +82,220 @@
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- 2. UBICACIÓN TERRITORIAL -->
+            <!-- 2. UBICACIÓN TERRITORIAL Y MAPA INTERACTIVO GPS -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="6dp"
-                android:text="UBICACIÓN Y TERRITORIO *"
+                android:text="UBICACIÓN Y GEOLOCALIZACIÓN GPS *"
                 android:textColor="@color/ra_light_text"
                 android:textSize="13sp"
                 android:textStyle="bold" />
+
+            <!-- Card del Mapa Interactivo con Puntero Ajustable -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMapaGps"
+                style="@style/Widget.RedAlerta.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <!-- Cabecera del mapa + Botón Mi Ubicación GPS -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:letterSpacing="0.04"
+                                android:text="PUNTO EXACTO DEL INCIDENTE"
+                                android:textColor="@color/ra_light_text"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvEstadoGeocoder"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Ubicación actual registrada en la alerta."
+                                android:textColor="@color/ra_light_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnUsarMiGps"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:minHeight="48dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:text="Mi GPS"
+                            android:textColor="@color/ra_light_text"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:cornerRadius="8dp"
+                            app:icon="@drawable/ic_my_location"
+                            app:iconPadding="6dp"
+                            app:iconSize="16dp"
+                            app:iconTint="@color/ra_red"
+                            app:strokeColor="@color/ra_light_border" />
+                    </LinearLayout>
+
+                    <!-- Contenedor visual del Mapa (220dp) con puntero central -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp"
+                        android:layout_marginTop="10dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/ra_light_border"
+                        app:strokeWidth="1dp">
+
+                        <FrameLayout
+                            android:id="@+id/frameContenedorMapa"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <org.osmdroid.views.MapView
+                                android:id="@+id/mapViewUbicacion"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+                            <!-- Sombra en el punto exacto de la coordenada central -->
+                            <View
+                                android:id="@+id/viewSombraPuntero"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_dot_red" />
+
+                            <!-- Puntero central cuya punta señala el centro exacto del mapa -->
+                            <ImageView
+                                android:id="@+id/ivPunteroMapa"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Puntero de ubicación del incidente"
+                                android:src="@drawable/ic_map_pin"
+                                android:translationY="-18dp" />
+
+                            <!-- Banner flotante de instrucción cuando está activo el modo de edición -->
+                            <TextView
+                                android:id="@+id/tvBannerModoEdicionMapa"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top"
+                                android:layout_margin="10dp"
+                                android:background="@drawable/bg_dropdown_popup"
+                                android:elevation="3dp"
+                                android:gravity="center"
+                                android:paddingStart="12dp"
+                                android:paddingTop="8dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="8dp"
+                                android:text="Mueva el mapa para ubicar el puntero en el lugar exacto y pulse Guardar"
+                                android:textColor="@color/ra_light_text"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:visibility="gone"
+                                tools:visibility="visible" />
+
+                            <!-- Capa de bloqueo en modo vista previa para no interferir con el scroll del formulario -->
+                            <View
+                                android:id="@+id/viewBloqueoMapa"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:clickable="true"
+                                android:focusable="false" />
+
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Lectura de coordenadas WGS84 capturadas -->
+                    <TextView
+                        android:id="@+id/tvCoordenadasGps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:textColor="@color/ra_light_label"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="Lat: 4.533889, Lon: -75.681111 • Alt: 1483 m" />
+
+                    <!-- Botón explícito modo vista previa: "Seleccionar en el mapa" -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSeleccionarEnMapa"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:minHeight="48dp"
+                        android:text="Seleccionar en el mapa"
+                        android:textColor="@color/ra_red"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/ic_location_on"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp"
+                        app:iconTint="@color/ra_red"
+                        app:rippleColor="#1AE53935"
+                        app:strokeColor="@color/ra_red"
+                        app:strokeWidth="1.5dp" />
+
+                    <!-- Botones explícitos modo ajuste manual: "Cancelar" y "Guardar" -->
+                    <LinearLayout
+                        android:id="@+id/layoutBotonesEdicionMapa"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCancelarMapa"
+                            style="@style/Widget.RedAlerta.Button.Prev"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:minHeight="48dp"
+                            android:text="Cancelar" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGuardarMapa"
+                            style="@style/Widget.RedAlerta.Button.Next"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:minHeight="48dp"
+                            android:text="Guardar" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Selector Departamento -->
             <com.google.android.material.textfield.TextInputLayout
@@ -138,14 +343,14 @@
                 android:layout_marginTop="12dp"
                 android:hint="DIRECCIÓN DETALLADA O PUNTO DE REFERENCIA *"
                 app:counterEnabled="true"
-                app:counterMaxLength="200">
+                app:counterMaxLength="255">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDireccionDetallada"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPostalAddress|textCapSentences"
-                    android:maxLength="200"
+                    android:maxLength="255"
                     android:textColor="@color/ra_light_text"
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -172,7 +377,7 @@
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="40dp"
+                    android:minHeight="48dp"
                     android:text="+ Adjuntar Foto"
                     android:textColor="@color/ra_red"
                     android:textSize="13sp"
@@ -210,8 +415,8 @@
                 android:text="¿Publicar de forma anónima?"
                 android:textColor="@color/ra_light_text"
                 android:textSize="15sp"
-                app:checkedIconVisible="true"
-                app:checkedIconTint="@color/ra_white" />
+                app:checkedIconTint="@color/ra_white"
+                app:checkedIconVisible="true" />
 
             <!-- 5. BOTONES DE ACCIÓN -->
             <com.google.android.material.button.MaterialButton

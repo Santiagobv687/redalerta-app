@@ -1,8 +1,16 @@
 package com.redalerta.client.ui.alert;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -21,25 +29,40 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import android.graphics.drawable.Drawable;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentDetalleAlertaBinding;
 import com.redalerta.client.model.alerta.Alerta;
 import com.redalerta.client.model.alerta.EvidenciaResponse;
+import com.redalerta.client.model.alerta.UbicacionAlertaDto;
 import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.util.TimeUtils;
 import com.redalerta.client.viewmodel.AlertaLiderViewModel;
+
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
+import org.osmdroid.views.overlay.Marker;
+
+import java.util.Locale;
 
 public class DetalleAlertaFragment extends Fragment {
 
     public static final String ARG_ALERTA = "arg_alerta";
 
+    private static final double DEFAULT_LATITUD = 4.533889;
+    private static final double DEFAULT_LONGITUD = -75.681111;
+    private static final double DEFAULT_ZOOM = 17.0;
+
     private FragmentDetalleAlertaBinding binding;
     private Alerta alerta;
     private SessionManager sessionManager;
     private AlertaLiderViewModel viewModel;
+
+    private Marker marcadorIncidente;
+    private GeoPoint puntoIncidenteActual = new GeoPoint(DEFAULT_LATITUD, DEFAULT_LONGITUD);
 
     public static DetalleAlertaFragment newInstance(Alerta alerta) {
         DetalleAlertaFragment fragment = new DetalleAlertaFragment();
@@ -52,6 +75,10 @@ public class DetalleAlertaFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Context ctx = requireContext().getApplicationContext();
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        Configuration.getInstance().setUserAgentValue(requireContext().getPackageName());
+
         binding = FragmentDetalleAlertaBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -69,6 +96,7 @@ public class DetalleAlertaFragment extends Fragment {
 
         binding.toolbarDetalle.setNavigationOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
+        configurarMapaVisualizacion();
         poblarDatos();
         configurarAccionesPorRol();
         observeViewModel();
@@ -82,6 +110,87 @@ public class DetalleAlertaFragment extends Fragment {
         }
     }
 
+    /**
+     * Configura el mapa en modo solo visualización:
+     * - No solicita permisos de ubicación del dispositivo.
+     * - El marcador permanece fijo en la coordenada del incidente (no arrastrable).
+     * - Permite desplazarse y hacer zoom libremente para consultar puntos de referencia cercanos.
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    private void configurarMapaVisualizacion() {
+        binding.mapViewDetalle.setTileSource(TileSourceFactory.MAPNIK);
+        binding.mapViewDetalle.setMultiTouchControls(true);
+        binding.mapViewDetalle.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
+        binding.mapViewDetalle.getController().setZoom(DEFAULT_ZOOM);
+
+        // Permitir navegar por el mapa sin que el NestedScrollView intercepte el desplazamiento
+        binding.mapViewDetalle.setOnTouchListener((v, event) -> {
+            int action = event.getActionMasked();
+            if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
+                binding.nestedScrollDetalleAlerta.requestDisallowInterceptTouchEvent(true);
+            } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                binding.nestedScrollDetalleAlerta.requestDisallowInterceptTouchEvent(false);
+            }
+            return false;
+        });
+
+        marcadorIncidente = new Marker(binding.mapViewDetalle);
+        marcadorIncidente.setDraggable(false);
+        marcadorIncidente.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        Drawable iconoPin = obtenerIconoPinEscalado();
+        if (iconoPin != null) {
+            marcadorIncidente.setIcon(iconoPin);
+        }
+        // Al tocar el marcador, centrar suavemente sin abrir burbuja flotante
+        marcadorIncidente.setOnMarkerClickListener((marker, mapView) -> {
+            mapView.getController().animateTo(marker.getPosition());
+            return true;
+        });
+        binding.mapViewDetalle.getOverlays().add(marcadorIncidente);
+
+        binding.btnCentrarMapaDetalle.setOnClickListener(v -> {
+            if (binding != null && puntoIncidenteActual != null) {
+                binding.mapViewDetalle.getController().setZoom(DEFAULT_ZOOM);
+                binding.mapViewDetalle.getController().animateTo(puntoIncidenteActual);
+            }
+        });
+    }
+
+    @Nullable
+    private Drawable obtenerIconoPinEscalado() {
+        Drawable vectorDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_map_pin);
+        if (vectorDrawable == null) return null;
+
+        int sizePx = (int) (40 * getResources().getDisplayMetrics().density);
+        Bitmap bitmap = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, sizePx, sizePx);
+        vectorDrawable.draw(canvas);
+        return new BitmapDrawable(getResources(), bitmap);
+    }
+
+    private void actualizarMapaUbicacionAlerta() {
+        if (binding == null || alerta == null) return;
+
+        UbicacionAlertaDto ub = alerta.getUbicacion();
+        double lat = (ub != null && ub.getLatitud() != null) ? ub.getLatitud() : DEFAULT_LATITUD;
+        double lon = (ub != null && ub.getLongitud() != null) ? ub.getLongitud() : DEFAULT_LONGITUD;
+        Double alt = (ub != null) ? ub.getAltitud() : null;
+
+        puntoIncidenteActual = new GeoPoint(lat, lon);
+        if (marcadorIncidente != null) {
+            marcadorIncidente.setPosition(puntoIncidenteActual);
+        }
+        binding.mapViewDetalle.getController().setCenter(puntoIncidenteActual);
+        binding.mapViewDetalle.invalidate();
+
+        String textoCoord = String.format(Locale.US, "Lat: %.6f, Lon: %.6f", lat, lon);
+        if (alt != null) {
+            textoCoord += String.format(Locale.US, " • Alt: %.0f m", alt);
+        }
+        binding.tvCoordenadasDetalle.setText(textoCoord);
+    }
+
     private void poblarDatos() {
         if (alerta == null) return;
 
@@ -93,9 +202,25 @@ public class DetalleAlertaFragment extends Fragment {
         binding.tvTituloDetalle.setText(alerta.getTitulo());
         binding.tvDescripcionDetalle.setText(alerta.getDescripcion());
 
+        UbicacionAlertaDto ub = alerta.getUbicacion();
+        String depto = (ub != null && ub.getDepartamento() != null && !ub.getDepartamento().isEmpty())
+                ? ub.getDepartamento()
+                : "";
         String mun = alerta.getBarrio() != null ? alerta.getBarrio() : "Armenia";
         String dir = alerta.getDireccion() != null ? alerta.getDireccion() : "";
-        binding.tvUbicacionDetalle.setText(!dir.isEmpty() ? mun + " • " + dir : mun);
+
+        StringBuilder ubicacionTexto = new StringBuilder();
+        if (!depto.isEmpty()) {
+            ubicacionTexto.append(mun).append(", ").append(depto);
+        } else {
+            ubicacionTexto.append(mun);
+        }
+        if (!dir.isEmpty() && !"—".equals(dir)) {
+            ubicacionTexto.append(" • ").append(dir);
+        }
+        binding.tvUbicacionDetalle.setText(ubicacionTexto.toString());
+
+        actualizarMapaUbicacionAlerta();
 
         String autor = alerta.isEsAnonima() ? "Anónimo" : alerta.getUsuarioNombre();
         if (autor == null || autor.isEmpty()) autor = "Ciudadano";
@@ -355,7 +480,26 @@ public class DetalleAlertaFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (binding != null) {
+            binding.mapViewDetalle.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (binding != null) {
+            binding.mapViewDetalle.onPause();
+        }
+        super.onPause();
+    }
+
+    @Override
     public void onDestroyView() {
+        if (binding != null) {
+            binding.mapViewDetalle.onDetach();
+        }
         super.onDestroyView();
         binding = null;
     }

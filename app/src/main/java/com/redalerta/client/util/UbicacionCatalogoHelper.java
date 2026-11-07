@@ -321,8 +321,70 @@ public class UbicacionCatalogoHelper {
 
     private static boolean contieneMunicipioInsensible(List<String> municipios, String buscado) {
         for (String m : municipios) {
-            if (m.equalsIgnoreCase(buscado.trim())) return true;
+            if (m.equalsIgnoreCase(buscado.trim()) || normalizarTexto(m).equals(normalizarTexto(buscado))) {
+                return true;
+            }
         }
         return false;
+    }
+
+    /**
+     * Busca el nombre canónico del departamento en el catálogo a partir del texto devuelto por Geocoder
+     * (ej: "Departamento del Quindío" o "Quindio" -> "Quindío").
+     */
+    public static String buscarDepartamentoCanonico(String rawDepto) {
+        if (rawDepto == null || rawDepto.trim().isEmpty()) {
+            return null;
+        }
+        String limpio = rawDepto.trim()
+                .replaceFirst("(?i)^departamento\\s+del\\s+", "")
+                .replaceFirst("(?i)^departamento\\s+de\\s+la\\s+", "")
+                .replaceFirst("(?i)^departamento\\s+de\\s+", "")
+                .trim();
+
+        String normBuscado = normalizarTexto(limpio);
+        for (DepartamentoResponse d : obtenerCatalogoEnMemoria()) {
+            if (d.getDepartamento() != null) {
+                String normCatalogo = normalizarTexto(d.getDepartamento());
+                if (normCatalogo.equals(normBuscado) || normBuscado.contains(normCatalogo) || normCatalogo.contains(normBuscado)) {
+                    return d.getDepartamento().trim();
+                }
+            }
+        }
+        return limpio;
+    }
+
+    /**
+     * Busca el nombre canónico del municipio dentro del departamento indicado
+     * (ej: "Armenia" o "Calarca" -> "Calarcá").
+     */
+    public static String buscarMunicipioCanonico(String departamento, String rawMunicipio) {
+        if (rawMunicipio == null || rawMunicipio.trim().isEmpty()) {
+            return null;
+        }
+        String limpio = rawMunicipio.trim()
+                .replaceFirst("(?i)^municipio\\s+de\\s+", "")
+                .trim();
+        String normMun = normalizarTexto(limpio);
+
+        for (DepartamentoResponse d : obtenerCatalogoEnMemoria()) {
+            if (departamento == null
+                    || (d.getDepartamento() != null && normalizarTexto(d.getDepartamento()).equals(normalizarTexto(departamento)))) {
+                if (d.getMunicipios() != null) {
+                    for (String m : d.getMunicipios()) {
+                        if (normalizarTexto(m).equals(normMun)) {
+                            return m.trim();
+                        }
+                    }
+                }
+            }
+        }
+        return limpio;
+    }
+
+    private static String normalizarTexto(String input) {
+        if (input == null) return "";
+        String normalized = java.text.Normalizer.normalize(input.trim(), java.text.Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase( java.util.Locale.ROOT);
     }
 }
