@@ -20,12 +20,12 @@ firebaseBom = "33.4.0"
 googleServices = "4.4.2"
 
 [libraries]
-# Testing (los que ya tenías)
+# Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
-# AndroidX base (los que ya tenías)
+# AndroidX base
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 

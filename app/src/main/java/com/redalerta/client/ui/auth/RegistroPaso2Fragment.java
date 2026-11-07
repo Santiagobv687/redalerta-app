@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentRegistroPaso2Binding;
 import com.redalerta.client.model.auth.RegistroRequest;
 import com.redalerta.client.model.usuario.UbicacionRequest;
@@ -35,13 +36,14 @@ public class RegistroPaso2Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RegistroRequest req = ((RegistroActivity) requireActivity()).getRegistroRequest();
 
-        // Configurar selectores encadenados dinámicos con el catálogo oficial
+        // Configurar selectores encadenados dinámicos y feedback visual
         UbicacionCatalogoHelper.configurarSelectoresEncadenados(
                 requireContext(),
                 binding.tilDepartamento,
                 binding.etDepartamento,
                 binding.tilMunicipio,
                 binding.etMunicipio,
+                binding.progressUbicacion,
                 null
         );
 
@@ -75,10 +77,17 @@ public class RegistroPaso2Fragment extends Fragment {
         et.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                til.setError(null);
+                limpiarErrorCampo(til);
             }
             @Override public void afterTextChanged(Editable s) {}
         });
+    }
+
+    private void limpiarErrorCampo(TextInputLayout til) {
+        if (til != null) {
+            til.setError(null);
+            til.setErrorEnabled(false);
+        }
     }
 
     private void cargardatosPrevios(RegistroRequest req) {
@@ -100,10 +109,33 @@ public class RegistroPaso2Fragment extends Fragment {
         String barrio = binding.etBarrio.getText().toString().trim();
         String direccion = binding.etDireccion.getText().toString().trim();
 
-        if (departamento.isEmpty()) { binding.tilDepartamento.setError("Seleccione departamento"); ok = false; } else { binding.tilDepartamento.setError(null); }
-        if (municipio.isEmpty()) { binding.tilMunicipio.setError("Seleccione municipio"); ok = false; } else { binding.tilMunicipio.setError(null); }
-        if (barrio.isEmpty()) { binding.tilBarrio.setError("Barrio requerido"); ok = false; } else { binding.tilBarrio.setError(null); }
-        if (direccion.isEmpty()) { binding.tilDireccion.setError("Dirección requerida"); ok = false; } else { binding.tilDireccion.setError(null); }
+        if (departamento.isEmpty()) {
+            binding.tilDepartamento.setError(getString(R.string.reg_error_depto_requerido));
+            ok = false;
+        } else {
+            limpiarErrorCampo(binding.tilDepartamento);
+        }
+
+        if (municipio.isEmpty()) {
+            binding.tilMunicipio.setError(getString(R.string.reg_error_municipio_requerido));
+            ok = false;
+        } else {
+            limpiarErrorCampo(binding.tilMunicipio);
+        }
+
+        if (barrio.isEmpty()) {
+            binding.tilBarrio.setError("Barrio requerido");
+            ok = false;
+        } else {
+            limpiarErrorCampo(binding.tilBarrio);
+        }
+
+        if (direccion.isEmpty()) {
+            binding.tilDireccion.setError("Dirección requerida");
+            ok = false;
+        } else {
+            limpiarErrorCampo(binding.tilDireccion);
+        }
 
         return ok;
     }

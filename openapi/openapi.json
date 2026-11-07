@@ -25,6 +25,10 @@
     ],
     "tags": [
         {
+            "name": "Notificaciones",
+            "description": "Endpoints para la consulta y administracion de la bandeja de notificaciones"
+        },
+        {
             "name": "Alertas",
             "description": "Endpoints para la gestion de alertas comunitarias"
         },
@@ -33,16 +37,16 @@
             "description": "Endpoints para la auditoria, revision y gestion de postulaciones de registro"
         },
         {
-            "name": "Catálogos",
-            "description": "Endpoints públicos para consulta de catálogos y listas predefinidas"
-        },
-        {
             "name": "Usuarios",
             "description": "Endpoints para consulta y actualizacion del perfil del usuario"
         },
         {
             "name": "Autenticacion",
             "description": "Endpoints para registro de nuevos usuarios e inicio de sesion con tokens JWT"
+        },
+        {
+            "name": "Catalogo de Ubicaciones",
+            "description": "Consulta publica de departamentos y municipios de Colombia (DIVIPOLA)"
         }
     ],
     "paths": {
@@ -67,6 +71,16 @@
                     },
                     "401": {
                         "description": "No autenticado o token invalido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado o token ausente",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -132,6 +146,16 @@
                     },
                     "401": {
                         "description": "No autenticado o cuenta inactiva",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado o token ausente",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -476,6 +500,90 @@
                 ]
             }
         },
+        "/auth/verificar-codigo": {
+            "post": {
+                "tags": [
+                    "Autenticacion"
+                ],
+                "summary": "Verificar codigo de recuperacion OTP",
+                "description": "Valida el codigo de 6 digitos enviado por correo y emite un resetToken temporal de un solo uso.",
+                "operationId": "verificarCodigo",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerificarCodigoRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Codigo valido con emision de resetToken",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVerificarCodigoResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Codigo invalido, expirado o supero intentos maximos",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/restablecer-password": {
+            "post": {
+                "tags": [
+                    "Autenticacion"
+                ],
+                "summary": "Restablecer contrasena con resetToken",
+                "description": "Verifica el token temporal emitido tras validar el codigo OTP y actualiza la contrasena del usuario.",
+                "operationId": "restablecerPassword",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RestablecerPasswordRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contrasena restablecida exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Token invalido, expirado o formato de nueva contrasena no cumple requisitos",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/auth/registro": {
             "post": {
                 "tags": [
@@ -517,6 +625,48 @@
                     },
                     "409": {
                         "description": "Correo electronico ya registrado en la plataforma",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/recuperar-password": {
+            "post": {
+                "tags": [
+                    "Autenticacion"
+                ],
+                "summary": "Solicitar recuperacion de contrasena",
+                "description": "Genera un codigo OTP de 6 digitos y lo envia al correo electronico si este se encuentra registrado.",
+                "operationId": "solicitarRecuperacion",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SolicitarRecuperacionRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Solicitud procesada con exito",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Formato de correo electronico invalido",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -789,13 +939,277 @@
                 ]
             }
         },
+        "/alertas/{id}/resolver": {
+            "post": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Resolver alerta comunitaria",
+                "description": "Cierra formalmente una alerta comunitaria en atencion (EN_GESTION) con un informe final detallado de resolucion.",
+                "operationId": "resolverAlerta",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResolverAlertaRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Alerta resuelta exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Informe invalido o la alerta no se encuentra EN_GESTION",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (no es el comite asignado o no tiene jurisdiccion territorial)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/{id}/rechazar": {
+            "post": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Rechazar o descartar alerta",
+                "description": "Permite desestimar una alerta improcedente o falsa con justificacion obligatoria consignada en el historial.",
+                "operationId": "rechazarAlerta",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RechazarAlertaRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Alerta rechazada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Motivo invalido o la alerta ya se encuentra cerrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (no es el comite asignado o no tiene jurisdiccion territorial)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/{id}/iniciar-gestion": {
+            "post": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Iniciar gestión de alerta",
+                "description": "Transiciona la alerta de DIRECCIONADA a EN_GESTION al asumir la atencion en terreno por el comite comunitario o lider.",
+                "operationId": "iniciarGestion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IniciarGestionRequestDto"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Gestion iniciada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La alerta no se encuentra en estado DIRECCIONADA",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado (no es el comite asignado o no tiene jurisdiccion territorial)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alerta no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/alertas/{id}/direccionar": {
             "post": {
                 "tags": [
                     "Alertas"
                 ],
                 "summary": "Direccionar alerta",
-                "description": "Permite a un lider comunitario realizar el triaje de una alerta en PENDIENTE_REVISION, clasificarla y canalizarla hacia una entidad idonea.",
+                "description": "Permite a un líder comunitario realizar el triaje de una alerta en PENDIENTE_REVISION, clasificarla y canalizarla hacia un comité o brigada idónea.",
                 "operationId": "direccionarAlerta",
                 "parameters": [
                     {
@@ -1226,63 +1640,134 @@
                 ]
             }
         },
-        "/catalogo/ubicaciones": {
-            "get": {
+        "/notificaciones/{id}/leer": {
+            "patch": {
                 "tags": [
-                    "Catálogos"
+                    "Notificaciones"
                 ],
-                "summary": "Obtener catálogo geográfico completo",
-                "description": "Retorna todos los departamentos y sus respectivos municipios disponibles en el sistema",
-                "operationId": "obtenerUbicaciones",
+                "summary": "Marcar notificacion como leida",
+                "description": "Cambia el estado de una notificacion a leida.",
+                "operationId": "marcarComoLeida",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Catálogo recuperado exitosamente",
+                        "description": "Notificacion marcada como leida",
                         "content": {
                             "*/*": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiResponseListDepartamentoResponseDto"
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado o token ausente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Notificacion no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
-        "/catalogo/departamentos": {
-            "get": {
+        "/notificaciones/leer-todas": {
+            "patch": {
                 "tags": [
-                    "Catálogos"
+                    "Notificaciones"
                 ],
-                "summary": "Listar departamentos disponibles",
-                "description": "Retorna la lista de nombres de departamentos soportados en el sistema",
-                "operationId": "obtenerDepartamentos",
+                "summary": "Marcar todas como leidas",
+                "description": "Marca todas las notificaciones pendientes del usuario como leidas.",
+                "operationId": "marcarTodasComoLeidas",
                 "responses": {
                     "200": {
-                        "description": "Departamentos recuperados exitosamente",
+                        "description": "Todas las notificaciones marcadas como leidas",
                         "content": {
                             "*/*": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado o token ausente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
-        "/catalogo/departamentos/{departamento}/municipios": {
+        "/ubicaciones/municipios": {
             "get": {
                 "tags": [
-                    "Catálogos"
+                    "Catalogo de Ubicaciones"
                 ],
                 "summary": "Listar municipios por departamento",
-                "description": "Retorna la lista oficial de municipios para un departamento dado (búsqueda agnóstica a tildes)",
-                "operationId": "obtenerMunicipios",
+                "description": "Retorna los municipios pertenecientes al departamento indicado. La busqueda es insensible a mayusculas y tildes (ej. 'Quindio' o 'Quindío').",
+                "operationId": "listarMunicipiosPorDepartamento",
                 "parameters": [
                     {
                         "name": "departamento",
-                        "in": "path",
-                        "description": "Nombre del departamento",
+                        "in": "query",
+                        "description": "Nombre del departamento a consultar",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1292,7 +1777,27 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Municipios recuperados exitosamente",
+                        "description": "Lista de municipios obtenida exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parametro de departamento vacio o invalido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Departamento no encontrado en el catalogo nacional",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -1304,17 +1809,254 @@
                 }
             }
         },
+        "/ubicaciones/departamentos": {
+            "get": {
+                "tags": [
+                    "Catalogo de Ubicaciones"
+                ],
+                "summary": "Listar departamentos de Colombia",
+                "description": "Retorna la lista alfabetica de los 32 departamentos de Colombia y Bogota, D.C.",
+                "operationId": "listarDepartamentos",
+                "responses": {
+                    "200": {
+                        "description": "Lista de departamentos obtenida exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ubicaciones/catalogo": {
+            "get": {
+                "tags": [
+                    "Catalogo de Ubicaciones"
+                ],
+                "summary": "Obtener catalogo completo de departamentos y municipios",
+                "description": "Retorna el arbol completo de departamentos con sus listas de municipios para almacenamiento en cache local del cliente.",
+                "operationId": "obtenerCatalogoCompleto",
+                "responses": {
+                    "200": {
+                        "description": "Catalogo completo obtenido exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListDepartamentoMunicipiosDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/notificaciones": {
+            "get": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Listar notificaciones",
+                "description": "Obtiene la bandeja de notificaciones del usuario autenticado de forma paginada, con filtro opcional de solo no leidas.",
+                "operationId": "listar",
+                "parameters": [
+                    {
+                        "name": "soloNoLeidas",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 0
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bandeja de notificaciones consultada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponsePageNotificacionResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o token invalido",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado o token ausente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/notificaciones/{id}": {
+            "get": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Consultar detalle de notificacion",
+                "description": "Obtiene los detalles explicativos del cambio de estado y marca la notificacion como leida.",
+                "operationId": "obtenerDetalle",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle de notificacion obtenido exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseNotificacionResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado o token ausente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Notificacion no encontrada",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/notificaciones/no-leidas/conteo": {
+            "get": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Contar no leidas",
+                "description": "Retorna el total de notificaciones no leidas del usuario para mostrar en el indicador/badge de la campana.",
+                "operationId": "contarNoLeidas",
+                "responses": {
+                    "200": {
+                        "description": "Conteo obtenido exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseLong"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado o token ausente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/alertas/organizaciones-elegibles": {
             "get": {
                 "tags": [
                     "Alertas"
                 ],
-                "summary": "Listar organizaciones elegibles",
-                "description": "Retorna las entidades de socorro o gubernamentales activas con competencia en la jurisdiccion del lider comunitario autenticado.",
+                "summary": "Listar organizaciones y comités elegibles",
+                "description": "Retorna los comités y brigadas comunitarias activas con competencia en la jurisdicción del líder comunitario autenticado.",
                 "operationId": "listarOrganizacionesElegibles",
                 "responses": {
                     "200": {
-                        "description": "Listado de organizaciones recuperado exitosamente",
+                        "description": "Listado de comités comunitarios recuperado exitosamente",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -1356,8 +2098,8 @@
                 "tags": [
                     "Alertas"
                 ],
-                "summary": "Bandeja de alertas para organizacion",
-                "description": "Obtiene las alertas comunitarias canalizadas hacia la entidad u organizacion de socorro autenticada.",
+                "summary": "Bandeja de alertas para comité u organización",
+                "description": "Obtiene las alertas comunitarias asignadas al comité o brigada comunitaria autenticada.",
                 "operationId": "listarBandejaOrganizacion",
                 "parameters": [
                     {
@@ -1506,6 +2248,133 @@
                     },
                     "403": {
                         "description": "Acceso denegado (requiere rol LIDER o ADMIN)",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/alertas/feed": {
+            "get": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Feed comunitario con paginacion por cursor (Scroll Infinito)",
+                "description": "Retorna un lote de alertas empleando Keyset Pagination (WHERE id < cursor) sin OFFSET. Ideal para el scroll infinito en la aplicacion movil evitando alertas duplicadas y degradacion de lectura.",
+                "operationId": "listarFeedAlertas",
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Cursor (ID de la ultima alerta recibida en el lote anterior). Omitir en la primera carga",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "example": 120
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Tamano del lote a cargar (entre 1 y 50)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        },
+                        "example": 10
+                    },
+                    {
+                        "name": "municipio",
+                        "in": "query",
+                        "description": "Municipio territorial dentro del departamento del usuario (opcional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "estado",
+                        "in": "query",
+                        "description": "Estado puntual de la alerta (opcional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "PENDIENTE_REVISION",
+                                "EN_GESTION",
+                                "DIRECCIONADA",
+                                "RESUELTA",
+                                "RECHAZADA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "fechaInicio",
+                        "in": "query",
+                        "description": "Fecha inicial del rango de creacion (opcional, formato YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fechaFin",
+                        "in": "query",
+                        "description": "Fecha final del rango de creacion (opcional, formato YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lote del feed recuperado exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseCursorPageResponseDtoAlertaResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cursor o tamano de lote invalido, o rango de fechas incoherente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado",
                         "content": {
                             "*/*": {
                                 "schema": {
@@ -1968,7 +2837,7 @@
             },
             "UbicacionAlertaDto": {
                 "type": "object",
-                "description": "Datos geograficos normalizados de la ubicacion del incidente",
+                "description": "Datos geograficos y coordenadas geodesicas GPS de la ubicacion del incidente",
                 "properties": {
                     "departamento": {
                         "type": "string",
@@ -1986,15 +2855,40 @@
                     },
                     "direccionDetallada": {
                         "type": "string",
-                        "description": "Direccion detallada o indicaciones del lugar",
+                        "description": "Direccion detallada o indicaciones del lugar (opcional si se reporta por GPS)",
                         "example": "Carrera 14 # 12-25, frente a la plaza principal",
                         "maxLength": 255,
                         "minLength": 0
+                    },
+                    "latitud": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Latitud geodesica en grados decimales (WGS84)",
+                        "example": 4.533889,
+                        "maximum": 90.0,
+                        "minimum": -90.0
+                    },
+                    "longitud": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Longitud geodesica en grados decimales (WGS84)",
+                        "example": -75.681111,
+                        "maximum": 180.0,
+                        "minimum": -180.0
+                    },
+                    "altitud": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Altitud sobre el nivel del mar en metros (opcional)",
+                        "example": 1483.0,
+                        "maximum": 9000.0,
+                        "minimum": -500.0
                     }
                 },
                 "required": [
                     "departamento",
-                    "direccionDetallada",
+                    "latitud",
+                    "longitud",
                     "municipio"
                 ]
             },
@@ -2102,13 +2996,13 @@
                     "organizacionId": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Identificador de la organizacion o entidad asignada",
+                        "description": "Identificador del comite o brigada comunitaria asignada",
                         "example": 15
                     },
                     "organizacionNombre": {
                         "type": "string",
-                        "description": "Nombre de la entidad u organizacion asignada",
-                        "example": "Cuerpo Oficial de Bomberos de Armenia"
+                        "description": "Nombre del comite o brigada comunitaria asignada",
+                        "example": "Brigada Comunitaria de Emergencias Armenia"
                     },
                     "observacionTecnica": {
                         "type": "string",
@@ -2260,6 +3154,101 @@
                     "prioridad"
                 ]
             },
+            "VerificarCodigoRequestDto": {
+                "type": "object",
+                "description": "Solicitud de verificacion de codigo OTP para recuperacion de contrasena",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "Correo electronico de la cuenta",
+                        "example": "juan.perez@example.com"
+                    },
+                    "codigo": {
+                        "type": "string",
+                        "description": "Codigo OTP de 6 digitos recibido por correo",
+                        "example": 482915,
+                        "pattern": "^[0-9]{6}$"
+                    }
+                },
+                "required": [
+                    "codigo",
+                    "email"
+                ]
+            },
+            "ApiResponseVerificarCodigoResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/VerificarCodigoResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "VerificarCodigoResponseDto": {
+                "type": "object",
+                "description": "Respuesta de verificacion de codigo con token temporal de restablecimiento",
+                "properties": {
+                    "resetToken": {
+                        "type": "string",
+                        "description": "Token temporal firmado criptograficamente para autorizar el cambio de contrasena",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "mensaje": {
+                        "type": "string",
+                        "description": "Mensaje informativo de confirmacion",
+                        "example": "Codigo verificado exitosamente"
+                    }
+                }
+            },
+            "RestablecerPasswordRequestDto": {
+                "type": "object",
+                "description": "Solicitud para restablecer la contrasena utilizando el token de autorizacion temporal",
+                "properties": {
+                    "resetToken": {
+                        "type": "string",
+                        "description": "Token temporal emitido tras validar el codigo OTP en /auth/verificar-codigo",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "nuevaPassword": {
+                        "type": "string",
+                        "description": "Nueva contrasena segura",
+                        "example": "NuevaPasswordSegura2026*",
+                        "maxLength": 50,
+                        "minLength": 6
+                    }
+                },
+                "required": [
+                    "nuevaPassword",
+                    "resetToken"
+                ]
+            },
+            "ApiResponseVoid": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
             "CaracterizacionRequestDto": {
                 "type": "object",
                 "properties": {
@@ -2373,23 +3362,19 @@
                     "ubicacion"
                 ]
             },
-            "ApiResponseVoid": {
+            "SolicitarRecuperacionRequestDto": {
                 "type": "object",
+                "description": "Solicitud para el envio de un codigo OTP de recuperacion al correo electronico",
                 "properties": {
-                    "success": {
-                        "type": "boolean"
-                    },
-                    "message": {
-                        "type": "string"
-                    },
-                    "data": {
-                        "type": "object"
-                    },
-                    "timestamp": {
+                    "email": {
                         "type": "string",
-                        "format": "date-time"
+                        "description": "Correo electronico de la cuenta a recuperar",
+                        "example": "juan.perez@example.com"
                     }
-                }
+                },
+                "required": [
+                    "email"
+                ]
             },
             "LoginRequestDto": {
                 "type": "object",
@@ -2512,6 +3497,54 @@
                     "ubicacion"
                 ]
             },
+            "ResolverAlertaRequestDto": {
+                "type": "object",
+                "description": "Solicitud para dar por resuelta una alerta adjuntando el informe comunitario de resolucion",
+                "properties": {
+                    "informeResolucion": {
+                        "type": "string",
+                        "description": "Informe detallado de las actividades realizadas, recursos entregados y solucion implementada",
+                        "example": "Se culminaron las labores comunitarias de dragado y limpieza del canal. Familias del sector recibieron asistencia comunitaria.",
+                        "maxLength": 1500,
+                        "minLength": 20
+                    }
+                },
+                "required": [
+                    "informeResolucion"
+                ]
+            },
+            "RechazarAlertaRequestDto": {
+                "type": "object",
+                "description": "Solicitud para descartar o rechazar una alerta comunitaria con justificacion obligatoria",
+                "properties": {
+                    "motivo": {
+                        "type": "string",
+                        "description": "Justificacion clara y documentada por la cual se rechaza o descarta el reporte",
+                        "example": "Se realizo inspeccion comunitaria en el sitio y se constató que se trataba de una falsa alarma.",
+                        "maxLength": 500,
+                        "minLength": 10
+                    }
+                },
+                "required": [
+                    "motivo"
+                ]
+            },
+            "IniciarGestionRequestDto": {
+                "type": "object",
+                "description": "Solicitud para registrar el inicio de atencion de una alerta por la brigada, comite comunitario o lider",
+                "properties": {
+                    "observacionInicial": {
+                        "type": "string",
+                        "description": "Notas operativas iniciales o equipo de brigadistas en desplazamiento",
+                        "example": "Brigada comunitaria en desplazamiento hacia el sector para verificar afectacion y coordinar apoyo.",
+                        "maxLength": 500,
+                        "minLength": 0
+                    }
+                },
+                "required": [
+                    "observacionInicial"
+                ]
+            },
             "CancelarDireccionamientoRequestDto": {
                 "type": "object",
                 "description": "Peticion para cancelar o revertir el direccionamiento de una alerta hacia una entidad",
@@ -2519,7 +3552,7 @@
                     "motivo": {
                         "type": "string",
                         "description": "Justificacion fundamentada del motivo por el cual se revoca el direccionamiento",
-                        "example": "Se direcciono inicialmente a Bomberos por error de digitacion, corresponde atencion de Policia Nacional",
+                        "example": "Se direcciono inicialmente a la Brigada de Emergencias por error de digitacion, corresponde atencion del Comite de Convivencia",
                         "maxLength": 500,
                         "minLength": 10
                     }
@@ -2724,8 +3757,8 @@
                     },
                     "razonSocial": {
                         "type": "string",
-                        "description": "Razon social o nombre institucional (en caso de organizacion)",
-                        "example": "Cuerpo de Bomberos Voluntarios"
+                        "description": "Nombre o razon social del comite o brigada comunitaria",
+                        "example": "Brigada Comunitaria de Emergencias"
                     },
                     "nit": {
                         "type": "string",
@@ -2789,50 +3822,6 @@
                     }
                 }
             },
-            "ApiResponseListDepartamentoResponseDto": {
-                "type": "object",
-                "properties": {
-                    "success": {
-                        "type": "boolean"
-                    },
-                    "message": {
-                        "type": "string"
-                    },
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/DepartamentoResponseDto"
-                        }
-                    },
-                    "timestamp": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                }
-            },
-            "DepartamentoResponseDto": {
-                "type": "object",
-                "description": "Catalogo de departamento con municipios asociados",
-                "properties": {
-                    "departamento": {
-                        "type": "string",
-                        "description": "Nombre oficial del departamento",
-                        "example": "Quindío"
-                    },
-                    "municipios": {
-                        "type": "array",
-                        "description": "Lista oficial de municipios pertenecientes al departamento",
-                        "example": [
-                            "Armenia",
-                            "Calarcá",
-                            "Circasia"
-                        ],
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
             "ApiResponseListString": {
                 "type": "object",
                 "properties": {
@@ -2847,6 +3836,264 @@
                         "items": {
                             "type": "string"
                         }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "ApiResponseListDepartamentoMunicipiosDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DepartamentoMunicipiosDto"
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "DepartamentoMunicipiosDto": {
+                "type": "object",
+                "description": "Estructura de un departamento de Colombia con sus respectivos municipios",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Identificador secuencial del departamento",
+                        "example": 25
+                    },
+                    "departamento": {
+                        "type": "string",
+                        "description": "Nombre oficial del departamento",
+                        "example": "Quindío"
+                    },
+                    "municipios": {
+                        "type": "array",
+                        "description": "Lista ordenada de municipios pertenecientes al departamento",
+                        "example": [
+                            "Armenia",
+                            "Buenavista",
+                            "Calarcá",
+                            "Circasia"
+                        ],
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "ApiResponsePageNotificacionResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/PageNotificacionResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "NotificacionResponseDto": {
+                "type": "object",
+                "description": "Informacion estructurada de una notificacion en la bandeja de entrada",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador unico de la notificacion",
+                        "example": 1
+                    },
+                    "alertaId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador de la alerta asociada para navegacion directa",
+                        "example": 15
+                    },
+                    "titulo": {
+                        "type": "string",
+                        "description": "Titulo descriptivo del evento",
+                        "example": "Alerta Direccionada"
+                    },
+                    "mensaje": {
+                        "type": "string",
+                        "description": "Mensaje corto para mostrar en la lista de la bandeja",
+                        "example": "Su alerta \"Hueco peligroso en vía principal...\" ha cambiado a estado DIRECCIONADA"
+                    },
+                    "nuevoEstado": {
+                        "type": "string",
+                        "description": "Nuevo estado de la alerta comunitaria",
+                        "enum": [
+                            "PENDIENTE_REVISION",
+                            "EN_GESTION",
+                            "DIRECCIONADA",
+                            "RESUELTA",
+                            "RECHAZADA"
+                        ],
+                        "example": "DIRECCIONADA"
+                    },
+                    "motivoAccion": {
+                        "type": "string",
+                        "description": "Motivo, accion, observacion tecnica o informe de resolucion del cambio",
+                        "example": "Asignado a la brigada de emergencias para señalizacion"
+                    },
+                    "responsableNombre": {
+                        "type": "string",
+                        "description": "Nombre de la persona o comite responsable de la accion",
+                        "example": "Lider Comunitario Armenia"
+                    },
+                    "responsableRol": {
+                        "type": "string",
+                        "description": "Rol del responsable de la accion",
+                        "example": "ROLE_LIDER"
+                    },
+                    "leida": {
+                        "type": "boolean",
+                        "description": "Indica si la notificacion ya fue leida por el usuario",
+                        "example": false
+                    },
+                    "fechaCreacion": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Fecha y hora en que se genero la notificacion",
+                        "example": "2026-11-01T16:30:00"
+                    }
+                }
+            },
+            "PageNotificacionResponseDto": {
+                "type": "object",
+                "properties": {
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/NotificacionResponseDto"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/PageableObject"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/SortObject"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageableObject": {
+                "type": "object",
+                "properties": {
+                    "offset": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "paged": {
+                        "type": "boolean"
+                    },
+                    "pageNumber": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageSize": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/SortObject"
+                    },
+                    "unpaged": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "SortObject": {
+                "type": "object",
+                "properties": {
+                    "empty": {
+                        "type": "boolean"
+                    },
+                    "sorted": {
+                        "type": "boolean"
+                    },
+                    "unsorted": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApiResponseNotificacionResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/NotificacionResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "ApiResponseLong": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "timestamp": {
                         "type": "string",
@@ -2924,57 +4171,17 @@
                     "sort": {
                         "$ref": "#/components/schemas/SortObject"
                     },
-                    "numberOfElements": {
-                        "type": "integer",
-                        "format": "int32"
-                    },
                     "first": {
                         "type": "boolean"
                     },
                     "last": {
                         "type": "boolean"
                     },
-                    "empty": {
-                        "type": "boolean"
-                    }
-                }
-            },
-            "PageableObject": {
-                "type": "object",
-                "properties": {
-                    "offset": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "paged": {
-                        "type": "boolean"
-                    },
-                    "pageNumber": {
+                    "numberOfElements": {
                         "type": "integer",
                         "format": "int32"
                     },
-                    "pageSize": {
-                        "type": "integer",
-                        "format": "int32"
-                    },
-                    "sort": {
-                        "$ref": "#/components/schemas/SortObject"
-                    },
-                    "unpaged": {
-                        "type": "boolean"
-                    }
-                }
-            },
-            "SortObject": {
-                "type": "object",
-                "properties": {
                     "empty": {
-                        "type": "boolean"
-                    },
-                    "sorted": {
-                        "type": "boolean"
-                    },
-                    "unsorted": {
                         "type": "boolean"
                     }
                 }
@@ -3002,23 +4209,23 @@
             },
             "OrganizacionResponseDto": {
                 "type": "object",
-                "description": "Datos de contacto de una organizacion elegible para atencion de alertas",
+                "description": "Datos de contacto de un comite o brigada comunitaria elegible para atencion de alertas",
                 "properties": {
                     "id": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Identificador unico de la entidad u organizacion",
+                        "description": "Identificador unico del comite o brigada comunitaria",
                         "example": 5
                     },
                     "nombre": {
                         "type": "string",
-                        "description": "Nombre oficial o razon social de la entidad",
-                        "example": "Cuerpo Oficial de Bomberos de Armenia"
+                        "description": "Nombre oficial o denominacion del comite comunitario",
+                        "example": "Brigada Comunitaria de Emergencias Armenia"
                     },
                     "email": {
                         "type": "string",
-                        "description": "Correo electronico institucional",
-                        "example": "bomberos.armenia@redalerta.gov.co"
+                        "description": "Correo electronico de contacto del comite",
+                        "example": "brigada.emergencias.armenia@redalerta.org"
                     },
                     "telefono": {
                         "type": "string",
@@ -3034,6 +4241,54 @@
                         "type": "string",
                         "description": "Municipio territorial de operacion",
                         "example": "Armenia"
+                    }
+                }
+            },
+            "ApiResponseCursorPageResponseDtoAlertaResponseDto": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/CursorPageResponseDtoAlertaResponseDto"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "CursorPageResponseDtoAlertaResponseDto": {
+                "type": "object",
+                "description": "Estructura de respuesta paginada por cursor para scroll infinito",
+                "properties": {
+                    "content": {
+                        "type": "array",
+                        "description": "Lista de elementos correspondientes al lote actual",
+                        "items": {
+                            "$ref": "#/components/schemas/AlertaResponseDto"
+                        }
+                    },
+                    "nextCursor": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Identificador del ultimo elemento entregado para usar como cursor en la siguiente peticion; null si no hay mas lotes",
+                        "example": 42
+                    },
+                    "hasNext": {
+                        "type": "boolean",
+                        "description": "Indica si existen mas registros disponibles despues de este lote",
+                        "example": true
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Cantidad de elementos retornados en el lote actual",
+                        "example": 10
                     }
                 }
             },
@@ -3086,15 +4341,15 @@
                     "sort": {
                         "$ref": "#/components/schemas/SortObject"
                     },
-                    "numberOfElements": {
-                        "type": "integer",
-                        "format": "int32"
-                    },
                     "first": {
                         "type": "boolean"
                     },
                     "last": {
                         "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
                     },
                     "empty": {
                         "type": "boolean"

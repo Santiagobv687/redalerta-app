@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Corresponde a DepartamentoResponseDto en el catálogo OpenAPI (/catalogo/ubicaciones).
+ * Corresponde a DepartamentoMunicipiosDto en el catálogo OpenAPI (/ubicaciones/catalogo).
  */
 public class DepartamentoResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
     private String departamento;
     private List<String> municipios = new ArrayList<>();
 
@@ -19,6 +20,20 @@ public class DepartamentoResponse implements Serializable {
     public DepartamentoResponse(String departamento, List<String> municipios) {
         this.departamento = departamento;
         this.municipios = municipios;
+    }
+
+    public DepartamentoResponse(Integer id, String departamento, List<String> municipios) {
+        this.id = id;
+        this.departamento = departamento;
+        this.municipios = municipios;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getDepartamento() {

@@ -21,11 +21,32 @@
             android:textStyle="bold"
             android:letterSpacing="0.05" />
 
+        <!-- Subtítulo explicativo con contexto territorial -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/reg_paso2_subtitulo"
+            android:textColor="@color/ra_light_text_secondary"
+            android:textSize="12sp"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Indicador de progreso durante la sincronización del catálogo OpenAPI -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="@color/ra_red"
+            app:trackColor="@color/ra_light_border" />
+
         <!-- DEPARTAMENTO -->
         <TextView style="@style/Widget.RedAlerta.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:labelFor="@+id/etDepartamento"
             android:text="@string/reg_label_departamento" />
 
@@ -35,7 +56,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:hint="@string/reg_label_departamento"
+            android:hint="@string/reg_hint_departamento"
+            app:startIconDrawable="@drawable/ic_location_on"
+            app:startIconTint="@color/ra_red"
+            app:endIconTint="@color/ra_light_label"
+            app:errorIconDrawable="@drawable/ic_warning"
             app:endIconMode="dropdown_menu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -43,7 +68,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:paddingStart="16dp"
+                android:minHeight="48dp"
+                android:paddingStart="12dp"
                 android:paddingEnd="16dp"
                 android:textSize="14sp"
                 android:textColor="@color/ra_light_text" />
@@ -63,7 +89,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:hint="@string/reg_label_municipio"
+            android:hint="@string/reg_hint_municipio"
+            app:startIconDrawable="@drawable/ic_location_on"
+            app:startIconTint="@color/ra_light_hint"
+            app:endIconTint="@color/ra_light_label"
+            app:errorIconDrawable="@drawable/ic_warning"
+            app:helperText="@string/reg_helper_seleccione_depto"
             app:endIconMode="dropdown_menu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -71,7 +102,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:paddingStart="16dp"
+                android:minHeight="48dp"
+                android:paddingStart="12dp"
                 android:paddingEnd="16dp"
                 android:textSize="14sp"
                 android:textColor="@color/ra_light_text" />
@@ -82,6 +114,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:labelFor="@+id/etBarrio"
             android:text="@string/reg_label_barrio" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -90,13 +123,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:hint="@string/reg_hint_barrio">
+            android:hint="@string/reg_hint_barrio"
+            app:errorIconDrawable="@drawable/ic_warning">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etBarrio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
+                android:minHeight="48dp"
                 android:maxLines="1"
                 android:textColor="@color/ra_light_text"
                 android:textSize="14sp" />
@@ -107,6 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:labelFor="@+id/etDireccion"
             android:text="@string/reg_label_direccion" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -115,13 +151,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:hint="@string/reg_hint_direccion">
+            android:hint="@string/reg_hint_direccion"
+            app:errorIconDrawable="@drawable/ic_warning">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDireccion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPostalAddress"
+                android:minHeight="48dp"
                 android:maxLines="1"
                 android:textColor="@color/ra_light_text"
                 android:textSize="14sp" />

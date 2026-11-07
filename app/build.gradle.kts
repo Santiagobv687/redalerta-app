@@ -16,15 +16,23 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BASE_URL", "\"http://192.168.1.11:8080/api/v1/\"")
     }
 
     buildTypes {
+
+        debug {
+            buildConfigField("String", "BASE_URL", "\"http://192.168.1.11:8080/api/v1/\"")
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "BASE_URL", "\"https://api.redalerta.com/api/v1/\"")
         }
     }
 
@@ -34,7 +42,8 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true          // útil para no usar findViewById
+        viewBinding = true
+        buildConfig = true
     }
 }
 

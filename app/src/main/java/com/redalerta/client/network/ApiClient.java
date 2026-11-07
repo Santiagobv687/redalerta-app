@@ -7,11 +7,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import com.redalerta.client.BuildConfig;
 
 public class ApiClient {
-
-    // URL por defecto para emulador Android apuntando a Spring Boot backend
-    private static final String BASE_URL = "http://192.168.1.6:8080/api/v1/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getRetrofit(Context context) {
@@ -24,12 +22,13 @@ public class ApiClient {
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(new AuthInterceptor(session))
                     .addInterceptor(logging)
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
+                    .connectTimeout(90, TimeUnit.SECONDS)
+                    .readTimeout(90, TimeUnit.SECONDS)
+                    .writeTimeout(90, TimeUnit.SECONDS)
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(BuildConfig.BASE_URL)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

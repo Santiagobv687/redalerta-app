@@ -21,8 +21,17 @@ public interface ApiService {
     @POST("auth/logout")
     Call<ApiResponse<Void>> logout();
 
-    // ═══ Catálogos Públicos ═══
-    @GET("catalogo/ubicaciones")
+    // ═══ Catálogo de Ubicaciones (DIVIPOLA) ═══
+    @GET("ubicaciones/catalogo")
+    Call<ApiResponse<List<DepartamentoResponse>>> obtenerCatalogoCompleto();
+
+    @GET("ubicaciones/departamentos")
+    Call<ApiResponse<List<String>>> listarDepartamentos();
+
+    @GET("ubicaciones/municipios")
+    Call<ApiResponse<List<String>>> listarMunicipiosPorDepartamento(@Query("departamento") String departamento);
+
+    @GET("ubicaciones/catalogo")
     Call<ApiResponse<List<DepartamentoResponse>>> obtenerUbicaciones();
 
     // ═══ Usuarios / Perfil ═══
