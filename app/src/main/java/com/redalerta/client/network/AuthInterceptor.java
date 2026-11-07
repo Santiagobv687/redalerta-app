@@ -20,8 +20,11 @@ public class AuthInterceptor implements Interceptor {
         Request original = chain.request();
         String token = session.getToken();
 
-        Request.Builder builder = original.newBuilder()
-                .header("Content-Type", "application/json");
+        Request.Builder builder = original.newBuilder();
+
+        if (original.header("Content-Type") == null && (original.body() == null || original.body().contentType() == null)) {
+            builder.header("Content-Type", "application/json");
+        }
 
         if (token != null && !token.isEmpty()) {
             builder.header("Authorization", "Bearer " + token);
