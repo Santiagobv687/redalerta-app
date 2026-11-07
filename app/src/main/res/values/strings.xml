@@ -13,9 +13,80 @@
     <string name="hint_contrasena">••••••••</string>
 
     <string name="btn_login">INGRESAR</string>
+    <string name="btn_olvido_contrasena">¿Olvidó su contraseña?</string>
 
     <string name="login_no_cuenta">¿No tiene cuenta registrada?</string>
     <string name="btn_registrar_nuevo">Registrar nuevo usuario</string>
+
+    <!-- ═══ Recuperación de Contraseña - Paso 1 (Solicitud de Correo) ═══ -->
+    <string name="rec_titulo">RECUPERAR CONTRASEÑA</string>
+    <string name="rec_subtitulo">Ingrese el correo electrónico asociado a su cuenta para restablecer su acceso de forma segura.</string>
+    <string name="rec_card_titulo">CORREO DE LA CUENTA</string>
+    <string name="rec_label_correo">CORREO ELECTRÓNICO REGISTRADO *</string>
+    <string name="rec_hint_correo">ejemplo@correo.com</string>
+    <string name="rec_btn_enviar_codigo">ENVIAR CÓDIGO DE VERIFICACIÓN</string>
+    <string name="rec_info_titulo">¿Cómo funciona la verificación?</string>
+    <string name="rec_info_item1_titulo">Código de 6 dígitos</string>
+    <string name="rec_info_item1_desc">Enviaremos un código único de verificación a la bandeja de entrada de su correo electrónico.</string>
+    <string name="rec_info_item2_titulo">Vigencia de 10 minutos</string>
+    <string name="rec_info_item2_desc">El código será válido durante 10 minutos. Si se excede este tiempo, podrá solicitar uno nuevo.</string>
+    <string name="rec_info_item3_titulo">No lo comparta con nadie</string>
+    <string name="rec_info_item3_desc">Este código es estrictamente personal. Ningún miembro o líder de RedAlerta se lo solicitará.</string>
+    <string name="rec_error_correo_vacio">Ingrese su correo electrónico</string>
+    <string name="rec_error_correo_invalido">Ingrese un correo electrónico válido</string>
+    <string name="rec_msg_codigo_enviado">Si el correo está registrado, recibirá su código de 6 dígitos en breve.</string>
+
+    <!-- ═══ Recuperación de Contraseña - Paso 2 (Verificación de Código OTP) ═══ -->
+    <string name="rec_paso2_topbar_volver">Cambiar correo</string>
+    <string name="rec_paso2_titulo">VERIFICAR CÓDIGO</string>
+    <string name="rec_paso2_subtitulo">Ingrese el código de seguridad de 6 dígitos para validar su identidad.</string>
+    <string name="rec_paso2_correo_label">CORREO ELECTRÓNICO INGRESADO</string>
+    <string name="rec_paso2_btn_editar_correo">Editar correo</string>
+    <string name="rec_paso2_card_titulo">CÓDIGO DE VERIFICACIÓN</string>
+    <string name="rec_paso2_instruccion_bloques">Escriba un dígito en cada casilla:</string>
+    <string name="rec_paso2_btn_verificar">VERIFICAR CÓDIGO</string>
+    <string name="rec_paso2_label_no_recibio">¿No recibió el código de verificación?</string>
+    <string name="rec_paso2_btn_reenviar">Enviar uno nuevo</string>
+    <string name="rec_paso2_btn_reenviar_contador">Enviar uno nuevo en %1$s</string>
+    <string name="rec_paso2_info_titulo">Información importante sobre el envío</string>
+    <string name="rec_paso2_info1_titulo">Verificación de cuenta asociada</string>
+    <string name="rec_paso2_info1_desc">Si existe una cuenta vinculada a este correo electrónico, se realizará el envío del código de 6 dígitos de forma inmediata.</string>
+    <string name="rec_paso2_info2_titulo">¿No encuentra el código?</string>
+    <string name="rec_paso2_info2_desc">Asegúrese de que su correo esté bien escrito en el recuadro superior o revise su bandeja de Correo no deseado (Spam).</string>
+    <string name="rec_paso2_error_incompleto">Por favor, complete los 6 dígitos del código de verificación.</string>
+    <string name="rec_paso2_msg_verificado">Código verificado exitosamente.</string>
+    <string name="rec_paso2_msg_reenviado">Se ha solicitado un nuevo código para %1$s.</string>
+
+    <!-- ═══ Recuperación de Contraseña - Paso 3 (Nueva Contraseña y Éxito) ═══ -->
+    <string name="rec_paso3_topbar_cancelar">Cancelar</string>
+    <string name="rec_paso3_titulo">NUEVA CONTRASEÑA</string>
+    <string name="rec_paso3_subtitulo">Defina su nueva clave de acceso y confírmela para finalizar la recuperación de su cuenta.</string>
+    <string name="rec_paso3_card_titulo">DEFINIR CREDENCIALES</string>
+    <string name="rec_paso3_label_nueva">NUEVA CONTRASEÑA *</string>
+    <string name="rec_paso3_hint_nueva">Mínimo 6 caracteres</string>
+    <string name="rec_paso3_label_confirmar">CONFIRMAR NUEVA CONTRASEÑA *</string>
+    <string name="rec_paso3_hint_confirmar">Repita la nueva contraseña</string>
+    <string name="rec_paso3_btn_actualizar">ACTUALIZAR CONTRASEÑA</string>
+    <string name="rec_paso3_info_titulo">Recomendaciones para su nueva clave</string>
+    <string name="rec_paso3_info1_titulo">Fácil de recordar, difícil de adivinar</string>
+    <string name="rec_paso3_info1_desc">Utilice al menos 6 caracteres combinando letras y números que usted pueda recordar sin dificultad.</string>
+    <string name="rec_paso3_info2_titulo">Evite usar datos personales públicos</string>
+    <string name="rec_paso3_info2_desc">Por su seguridad, no utilice su número de documento, teléfono móvil ni secuencias simples como 123456.</string>
+    <string name="rec_paso3_info3_titulo">Autorización temporal de un solo uso</string>
+    <string name="rec_paso3_info3_desc">Esta sesión de cambio está protegida. Si sale sin guardar, deberá solicitar un nuevo código de verificación.</string>
+    <string name="rec_paso3_error_vacia">Ingrese su nueva contraseña</string>
+    <string name="rec_paso3_error_corta">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="rec_paso3_error_confirmar_vacia">Confirme su nueva contraseña</string>
+    <string name="rec_paso3_error_no_coinciden">Las contraseñas no coinciden. Verifíquelas.</string>
+
+    <!-- ═══ Feedback de Contraseña Actualizada ═══ -->
+    <string name="rec_exito_titulo">¡CONTRASEÑA ACTUALIZADA!</string>
+    <string name="rec_exito_subtitulo">Su clave de acceso ha sido restablecida correctamente en el sistema RedAlerta.</string>
+    <string name="rec_exito_card_titulo">Resumen de seguridad de su cuenta</string>
+    <string name="rec_exito_item1">• Su contraseña anterior ha quedado desactivada de forma inmediata.</string>
+    <string name="rec_exito_item2">• El código temporal de verificación ya fue consumido y no puede reutilizarse.</string>
+    <string name="rec_exito_item3">• A partir de este momento, utilice su nueva clave para ingresar a la aplicación.</string>
+    <string name="rec_exito_btn_login">Iniciar sesión</string>
 
     <string name="msg_admin_web">Los administradores deben ingresar desde el portal web de RedAlerta.</string>
 

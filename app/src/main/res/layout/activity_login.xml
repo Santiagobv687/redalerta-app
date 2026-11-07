@@ -128,13 +128,30 @@
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- ═══════════ Enlace táctil: ¿Olvidó su contraseña? (Mínimo 48dp Ley de Fitts) ═══════════ -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOlvidoContrasena"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="4dp"
+            android:minHeight="48dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:text="@string/btn_olvido_contrasena"
+            android:textColor="@color/ra_gray_light"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:rippleColor="#33E53935" />
+
         <!-- ═══════════ Botón: INGRESAR ═══════════ -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
             style="@style/Widget.RedAlerta.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="12dp"
             android:text="@string/btn_login" />
 
         <!-- ═══════════ Indicador de carga ═══════════ -->

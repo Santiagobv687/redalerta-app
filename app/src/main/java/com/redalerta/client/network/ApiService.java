@@ -21,6 +21,15 @@ public interface ApiService {
     @POST("auth/logout")
     Call<ApiResponse<Void>> logout();
 
+    @POST("auth/recuperar-password")
+    Call<ApiResponse<Void>> solicitarRecuperacion(@Body SolicitarRecuperacionRequest request);
+
+    @POST("auth/verificar-codigo")
+    Call<ApiResponse<VerificarCodigoResponse>> verificarCodigo(@Body VerificarCodigoRequest request);
+
+    @POST("auth/restablecer-password")
+    Call<ApiResponse<Void>> restablecerPassword(@Body RestablecerPasswordRequest request);
+
     // ═══ Catálogo de Ubicaciones (DIVIPOLA) ═══
     @GET("ubicaciones/catalogo")
     Call<ApiResponse<List<DepartamentoResponse>>> obtenerCatalogoCompleto();
