@@ -19,13 +19,13 @@
         tools:src="@drawable/ic_photo_library" />
 
     <!-- Progress bar mientras carga Glide -->
-    <ProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/pbCargaImagen"
-        style="?android:attr/progressBarStyle"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:indeterminateTint="@color/ra_white" />
+        android:indeterminate="true"
+        app:indicatorColor="@color/ra_white" />
 
     <!-- Botón Cerrar ("X") -->
     <ImageButton

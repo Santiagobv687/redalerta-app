@@ -23,14 +23,16 @@
             android:contentDescription="Miniatura de la evidencia"
             tools:src="@drawable/ic_photo_library" />
 
-        <!-- Overlay de Carga Indeterminada (mientras se sube a S3) -->
-        <ProgressBar
+        <!-- Overlay de Carga Indeterminada-->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/pbSubiendo"
-            style="?android:attr/progressBarStyleSmall"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_gravity="center"
-            android:indeterminateTint="@color/ra_red"
+            android:indeterminate="true"
+            app:indicatorColor="@color/ra_red"
+            app:indicatorSize="28dp"
+            app:trackThickness="3dp"
             android:visibility="gone" />
 
         <!-- Botón Eliminar ("X") -->

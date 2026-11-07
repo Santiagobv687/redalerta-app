@@ -3,15 +3,19 @@ package com.redalerta.client.viewmodel;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.redalerta.client.model.alerta.Alerta;
 import com.redalerta.client.model.alerta.CrearAlertaRequest;
+import com.redalerta.client.model.alerta.CursorPageAlertaResponse;
 import com.redalerta.client.model.alerta.ModificarAlertaRequest;
 import com.redalerta.client.model.alerta.PageAlertaResponse;
 import com.redalerta.client.model.alerta.UploadEvidenciaResponse;
@@ -23,7 +27,13 @@ import com.redalerta.client.util.ManejadorErrores.ContextoOperacion;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -34,6 +44,12 @@ import retrofit2.Response;
 
 public class AlertaViewModel extends AndroidViewModel {
 
+    private static final int FEED_PAGE_SIZE = 10;
+
+    // Pool de hilos de E/S en segundo plano (equivalente a Dispatchers.IO)
+    private final ExecutorService ioExecutor = Executors.newCachedThreadPool();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
     private final MutableLiveData<Boolean> cargando = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<Alerta> alertaCreada = new MutableLiveData<>();
@@ -42,9 +58,19 @@ public class AlertaViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Alerta>> misAlertas = new MutableLiveData<>();
     private final MutableLiveData<List<Alerta>> todasLasAlertas = new MutableLiveData<>();
 
-    // Filtros de búsqueda para el endpoint /alertas
+    // Estado cerrado en memoria para el Feed Comunitario (ViewModel Cache + Keyset Pagination)
+    private final MutableLiveData<FeedUiState> feedUiState = new MutableLiveData<>(FeedUiState.Loading.INSTANCE);
+    private final List<Alerta> alertasAcumuladas = new ArrayList<>();
+    private boolean feedHasNext = false;
+    @Nullable
+    private Long feedNextCursor = null;
+    private boolean cargandoFeedEnCurso = false;
+    private boolean cargandoSiguientePagina = false;
+    private boolean feedInicializado = false;
+
+    // Filtros de búsqueda para el endpoint /alertas/feed y /alertas
     private final MutableLiveData<String> departamentoFiltro = new MutableLiveData<>("Quindío");
-    private final MutableLiveData<String> municipioFiltro = new MutableLiveData<>("TODO"); // Por defecto Todo el Departamento
+    private final MutableLiveData<String> municipioFiltro = new MutableLiveData<>("TODO");
     private final MutableLiveData<String> estadoFiltro = new MutableLiveData<>(null);
 
     public AlertaViewModel(@NonNull Application application) {
@@ -58,24 +84,63 @@ public class AlertaViewModel extends AndroidViewModel {
     public LiveData<Boolean> getAlertaEliminadaExito() { return alertaEliminadaExito; }
     public LiveData<List<Alerta>> getMisAlertas() { return misAlertas; }
     public LiveData<List<Alerta>> getTodasLasAlertas() { return todasLasAlertas; }
+    public LiveData<FeedUiState> getFeedUiState() { return feedUiState; }
 
     public LiveData<String> getDepartamentoFiltro() { return departamentoFiltro; }
     public LiveData<String> getMunicipioFiltro() { return municipioFiltro; }
     public LiveData<String> getEstadoFiltro() { return estadoFiltro; }
 
+    /**
+     * Inicializa el filtro de municipio según el rol del usuario sin disparar recargas redundantes
+     * si el filtro ya coincide con el valor en memoria.
+     */
+    public void inicializarMunicipioFiltroPorDefecto(String municipioPorDefecto) {
+        String normalizado = (municipioPorDefecto == null || municipioPorDefecto.trim().isEmpty())
+                ? "TODO"
+                : municipioPorDefecto.trim();
+        String actual = municipioFiltro.getValue();
+        if (actual == null || !actual.equalsIgnoreCase(normalizado)) {
+            municipioFiltro.setValue(normalizado);
+            if (feedInicializado) {
+                invalidarCacheYRecargarFeed();
+            }
+        }
+    }
+
     public void setDepartamentoFiltro(String departamento) {
+        String actual = departamentoFiltro.getValue();
+        if (Objects.equals(actual, departamento)) return;
         departamentoFiltro.setValue(departamento);
-        cargarTodasLasAlertas();
+        invalidarCacheYRecargarFeed();
     }
 
     public void setMunicipioFiltro(String municipio) {
-        municipioFiltro.setValue(municipio);
-        cargarTodasLasAlertas();
+        String normalizado = (municipio == null || municipio.trim().isEmpty()) ? "TODO" : municipio.trim();
+        String actual = municipioFiltro.getValue();
+        if (actual != null && actual.equalsIgnoreCase(normalizado) && feedInicializado) {
+            return;
+        }
+        municipioFiltro.setValue(normalizado);
+        invalidarCacheYRecargarFeed();
     }
 
     public void setEstadoFiltro(String estado) {
+        String actual = estadoFiltro.getValue();
+        if (Objects.equals(actual, estado) && feedInicializado) {
+            return;
+        }
         estadoFiltro.setValue(estado);
-        cargarTodasLasAlertas();
+        invalidarCacheYRecargarFeed();
+    }
+
+    private void invalidarCacheYRecargarFeed() {
+        synchronized (alertasAcumuladas) {
+            alertasAcumuladas.clear();
+            feedNextCursor = null;
+            feedHasNext = false;
+            feedInicializado = false;
+        }
+        cargarFeed(true);
     }
 
     public interface OnEvidenciaSubidaListener {
@@ -85,48 +150,62 @@ public class AlertaViewModel extends AndroidViewModel {
 
     // ══════════════════════════════════════════════════
     // SUBIR EVIDENCIA MULTIPART (POST /api/v1/alertas/evidencias/upload)
+    // Ejecuta la lectura de bytes en segundo plano (ioExecutor) para no bloquear el hilo principal.
     // ══════════════════════════════════════════════════
     public void subirEvidencia(Uri uri, OnEvidenciaSubidaListener listener) {
         if (uri == null) return;
-        try {
-            ContentResolver resolver = getApplication().getContentResolver();
-            String mimeType = resolver.getType(uri);
-            if (mimeType == null) mimeType = "image/jpeg";
+        ioExecutor.execute(() -> {
+            try {
+                ContentResolver resolver = getApplication().getContentResolver();
+                String mimeType = resolver.getType(uri);
+                if (mimeType == null) mimeType = "image/jpeg";
 
-            InputStream inputStream = resolver.openInputStream(uri);
-            byte[] bytes = readAllBytes(inputStream);
+                byte[] bytes;
+                try (InputStream inputStream = resolver.openInputStream(uri)) {
+                    if (inputStream == null) {
+                        mainHandler.post(() -> {
+                            if (listener != null) listener.onError("No se pudo abrir la imagen seleccionada");
+                        });
+                        return;
+                    }
+                    bytes = readAllBytes(inputStream);
+                }
 
-            RequestBody requestFile = RequestBody.create(MediaType.parse(mimeType), bytes);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("archivo", "evidencia.jpg", requestFile);
+                RequestBody requestFile = RequestBody.create(MediaType.parse(mimeType), bytes);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("archivo", "evidencia.jpg", requestFile);
 
-            ApiClient.getApiService(getApplication())
-                    .subirEvidencia(body)
-                    .enqueue(new Callback<ApiResponse<UploadEvidenciaResponse>>() {
-                        @Override
-                        public void onResponse(@NonNull Call<ApiResponse<UploadEvidenciaResponse>> call,
-                                               @NonNull Response<ApiResponse<UploadEvidenciaResponse>> response) {
-                            if (response.isSuccessful() && response.body() != null && response.body().isSuccess() && response.body().getData() != null) {
-                                String url = response.body().getData().getUrl();
-                                if (listener != null) listener.onExito(url);
-                            } else {
-                                if (listener != null) listener.onError("No fue posible subir la imagen seleccionada");
+                ApiClient.getApiService(getApplication())
+                        .subirEvidencia(body)
+                        .enqueue(new Callback<ApiResponse<UploadEvidenciaResponse>>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ApiResponse<UploadEvidenciaResponse>> call,
+                                                   @NonNull Response<ApiResponse<UploadEvidenciaResponse>> response) {
+                                if (response.isSuccessful() && response.body() != null
+                                        && response.body().isSuccess() && response.body().getData() != null) {
+                                    String url = response.body().getData().getUrl();
+                                    if (listener != null) listener.onExito(url);
+                                } else {
+                                    if (listener != null) listener.onError("No fue posible subir la imagen seleccionada");
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(@NonNull Call<ApiResponse<UploadEvidenciaResponse>> call, @NonNull Throwable t) {
-                            if (listener != null) listener.onError(ManejadorErrores.obtenerMensajeFalloRed(t));
-                        }
-                    });
-        } catch (Exception e) {
-            Log.e("AlertaViewModel", "Error al procesar la imagen para subir", e);
-            if (listener != null) listener.onError("Error al procesar el archivo de imagen");
-        }
+                            @Override
+                            public void onFailure(@NonNull Call<ApiResponse<UploadEvidenciaResponse>> call, @NonNull Throwable t) {
+                                if (listener != null) listener.onError(ManejadorErrores.obtenerMensajeFalloRed(t));
+                            }
+                        });
+            } catch (Exception e) {
+                Log.e("AlertaViewModel", "Error al procesar la imagen para subir", e);
+                mainHandler.post(() -> {
+                    if (listener != null) listener.onError("Error al procesar el archivo de imagen");
+                });
+            }
+        });
     }
 
     private byte[] readAllBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
+        int bufferSize = 4096;
         byte[] buffer = new byte[bufferSize];
         int len;
         while ((len = inputStream.read(buffer)) != -1) {
@@ -142,7 +221,7 @@ public class AlertaViewModel extends AndroidViewModel {
         cargando.setValue(true);
         error.setValue(null);
 
-        ApiClient.getApiService(getApplication())
+        ioExecutor.execute(() -> ApiClient.getApiService(getApplication())
                 .crearAlerta(request)
                 .enqueue(new Callback<ApiResponse<Alerta>>() {
                     @Override
@@ -152,7 +231,10 @@ public class AlertaViewModel extends AndroidViewModel {
                         if (response.isSuccessful() && response.body() != null) {
                             ApiResponse<Alerta> body = response.body();
                             if (body.isSuccess() && body.getData() != null) {
-                                alertaCreada.setValue(body.getData());
+                                Alerta nueva = body.getData();
+                                alertaCreada.setValue(nueva);
+                                // Refrescar el feed en segundo plano para incluir la nueva alerta
+                                cargarFeed(true);
                             } else {
                                 error.setValue(body.getMessage() != null ? body.getMessage() : "Error al registrar la alerta");
                             }
@@ -166,7 +248,7 @@ public class AlertaViewModel extends AndroidViewModel {
                         cargando.setValue(false);
                         error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                     }
-                });
+                }));
     }
 
     // ══════════════════════════════════════════════════
@@ -176,7 +258,7 @@ public class AlertaViewModel extends AndroidViewModel {
         cargando.setValue(true);
         error.setValue(null);
 
-        ApiClient.getApiService(getApplication())
+        ioExecutor.execute(() -> ApiClient.getApiService(getApplication())
                 .listarMisAlertas(0, 20, "fechaCreacion,desc")
                 .enqueue(new Callback<ApiResponse<PageAlertaResponse>>() {
                     @Override
@@ -200,7 +282,7 @@ public class AlertaViewModel extends AndroidViewModel {
                         cargando.setValue(false);
                         error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                     }
-                });
+                }));
     }
 
     // ══════════════════════════════════════════════════
@@ -210,7 +292,7 @@ public class AlertaViewModel extends AndroidViewModel {
         cargando.setValue(true);
         error.setValue(null);
 
-        ApiClient.getApiService(getApplication())
+        ioExecutor.execute(() -> ApiClient.getApiService(getApplication())
                 .modificarAlerta(id, request)
                 .enqueue(new Callback<ApiResponse<Alerta>>() {
                     @Override
@@ -222,7 +304,7 @@ public class AlertaViewModel extends AndroidViewModel {
                             if (body.isSuccess() && body.getData() != null) {
                                 alertaModificada.setValue(body.getData());
                                 cargarMisAlertas();
-                                cargarTodasLasAlertas();
+                                cargarFeed(true);
                             } else {
                                 error.setValue(body.getMessage() != null ? body.getMessage() : "Error al modificar la alerta");
                             }
@@ -236,7 +318,7 @@ public class AlertaViewModel extends AndroidViewModel {
                         cargando.setValue(false);
                         error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                     }
-                });
+                }));
     }
 
     // ══════════════════════════════════════════════════
@@ -249,7 +331,7 @@ public class AlertaViewModel extends AndroidViewModel {
 
         try {
             long id = Long.parseLong(alerta.getId());
-            ApiClient.getApiService(getApplication())
+            ioExecutor.execute(() -> ApiClient.getApiService(getApplication())
                     .eliminarAlerta(id)
                     .enqueue(new Callback<ApiResponse<Void>>() {
                         @Override
@@ -259,7 +341,7 @@ public class AlertaViewModel extends AndroidViewModel {
                             if (response.isSuccessful()) {
                                 alertaEliminadaExito.setValue(true);
                                 cargarMisAlertas();
-                                cargarTodasLasAlertas();
+                                cargarFeed(true);
                             } else {
                                 error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ContextoOperacion.ALERTAS));
                             }
@@ -270,7 +352,7 @@ public class AlertaViewModel extends AndroidViewModel {
                             cargando.setValue(false);
                             error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
                         }
-                    });
+                    }));
         } catch (NumberFormatException e) {
             cargando.setValue(false);
             error.setValue("El identificador de la alerta no es válido");
@@ -280,50 +362,231 @@ public class AlertaViewModel extends AndroidViewModel {
     public void actualizarEstadoAlerta(Alerta alerta, String nuevoEstado) {
         if (alerta != null) {
             alerta.setEstado(nuevoEstado);
-            cargarTodasLasAlertas();
+            cargarFeed(true);
         }
     }
 
     // ══════════════════════════════════════════════════
-    // FEED GENERAL COMUNITARIO (GET /api/v1/alertas)
+    // FEED COMUNITARIO CON RETENCIÓN EN MEMORIA Y KEYSET PAGINATION
+    // (GET /api/v1/alertas/feed con respaldo a GET /api/v1/alertas)
     // ══════════════════════════════════════════════════
     public void cargarTodasLasAlertas() {
-        cargando.setValue(true);
-        error.setValue(null);
+        cargarFeed(false);
+    }
 
-        String mun = municipioFiltro.getValue();
-        String estado = estadoFiltro.getValue();
+    public void cargarFeed() {
+        cargarFeed(false);
+    }
 
-        // Si municipio es "TODO", no se envía como filtro a la API
-        if (mun != null && (mun.equalsIgnoreCase("TODO") || mun.trim().isEmpty())) {
-            mun = null;
+    /**
+     * Carga el Feed Comunitario de Alertas:
+     * - Si la lista en memoria ya tiene alertas y {@code forzarRecarga == false}, NO limpia la pantalla
+     *   ni emite {@link FeedUiState.Loading}; mantiene el estado {@link FeedUiState.Success} inmediatamente.
+     * - Si {@code forzarRecarga == true} (ej. Pull-to-Refresh), realiza la petición en segundo plano
+     *   y actualiza la lista al recibir respuesta.
+     */
+    public void cargarFeed(boolean forzarRecarga) {
+        synchronized (alertasAcumuladas) {
+            if (!forzarRecarga && feedInicializado && !alertasAcumuladas.isEmpty()) {
+                // Retención en memoria: mantener alertas visibles en 0ms sin emitir Loading
+                if (!(feedUiState.getValue() instanceof FeedUiState.Success)) {
+                    feedUiState.setValue(new FeedUiState.Success(
+                            new ArrayList<>(alertasAcumuladas),
+                            feedHasNext,
+                            feedNextCursor
+                    ));
+                }
+                return;
+            }
+
+            if (cargandoFeedEnCurso) {
+                return;
+            }
+            cargandoFeedEnCurso = true;
+
+            if (alertasAcumuladas.isEmpty()) {
+                feedUiState.setValue(FeedUiState.Loading.INSTANCE);
+                cargando.setValue(true);
+            }
         }
 
-        // Llamada REAL al endpoint GET /api/v1/alertas (Departamento es fijo en el backend por el token del usuario)
-        ApiClient.getApiService(getApplication())
-                .listarAlertas(mun, estado, null, null, 0, 20, "fechaCreacion,desc")
-                .enqueue(new Callback<ApiResponse<PageAlertaResponse>>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse<PageAlertaResponse>> call,
-                                           @NonNull Response<ApiResponse<PageAlertaResponse>> response) {
-                        cargando.setValue(false);
-                        if (response.isSuccessful() && response.body() != null) {
-                            ApiResponse<PageAlertaResponse> apiResponse = response.body();
-                            if (apiResponse.isSuccess() && apiResponse.getData() != null) {
-                                todasLasAlertas.setValue(apiResponse.getData().getContent());
-                            } else {
-                                error.setValue(apiResponse.getMessage() != null ? apiResponse.getMessage() : "Error al obtener las alertas comunitarias");
-                            }
+        error.setValue(null);
+        final String municipioQuery = obtenerMunicipioQuery();
+        final String estadoQuery = estadoFiltro.getValue();
+
+        ioExecutor.execute(() -> {
+            try {
+                Response<ApiResponse<CursorPageAlertaResponse>> response = ApiClient
+                        .getApiService(getApplication())
+                        .listarFeedAlertas(null, FEED_PAGE_SIZE, municipioQuery, estadoQuery, null, null)
+                        .execute();
+
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().isSuccess() && response.body().getData() != null) {
+                    CursorPageAlertaResponse cursorPage = response.body().getData();
+                    List<Alerta> recibidas = cursorPage.getContent() != null
+                            ? cursorPage.getContent()
+                            : new ArrayList<>();
+
+                    synchronized (alertasAcumuladas) {
+                        alertasAcumuladas.clear();
+                        alertasAcumuladas.addAll(recibidas);
+                        feedHasNext = cursorPage.isHasNext();
+                        feedNextCursor = cursorPage.getNextCursor();
+                        feedInicializado = true;
+                        cargandoFeedEnCurso = false;
+
+                        List<Alerta> snapshot = new ArrayList<>(alertasAcumuladas);
+                        todasLasAlertas.postValue(snapshot);
+                        cargando.postValue(false);
+
+                        if (snapshot.isEmpty()) {
+                            feedUiState.postValue(FeedUiState.Empty.INSTANCE);
                         } else {
-                            error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ContextoOperacion.ALERTAS));
+                            feedUiState.postValue(new FeedUiState.Success(snapshot, feedHasNext, feedNextCursor));
                         }
                     }
+                } else {
+                    // Respaldo al endpoint paginado estándar GET /api/v1/alertas
+                    ejecutarRespaldoListarAlertas(municipioQuery, estadoQuery);
+                }
+            } catch (Exception t) {
+                synchronized (alertasAcumuladas) {
+                    cargandoFeedEnCurso = false;
+                }
+                String msgError = ManejadorErrores.obtenerMensajeFalloRed(t);
+                cargando.postValue(false);
+                error.postValue(msgError);
+                feedUiState.postValue(new FeedUiState.Error(msgError));
+            }
+        });
+    }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse<PageAlertaResponse>> call, @NonNull Throwable t) {
-                        cargando.setValue(false);
-                        error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
+    /**
+     * Carga el siguiente lote del Feed Comunitario usando Keyset Pagination ({@code nextCursor})
+     * y anexa los nuevos elementos a la lista existente en memoria sin parpadeos.
+     */
+    public void cargarSiguientePaginaFeed() {
+        final Long cursorActual;
+        synchronized (alertasAcumuladas) {
+            if (cargandoFeedEnCurso || cargandoSiguientePagina || !feedHasNext || feedNextCursor == null) {
+                return;
+            }
+            cargandoSiguientePagina = true;
+            cursorActual = feedNextCursor;
+        }
+
+        final String municipioQuery = obtenerMunicipioQuery();
+        final String estadoQuery = estadoFiltro.getValue();
+
+        ioExecutor.execute(() -> {
+            try {
+                Response<ApiResponse<CursorPageAlertaResponse>> response = ApiClient
+                        .getApiService(getApplication())
+                        .listarFeedAlertas(cursorActual, FEED_PAGE_SIZE, municipioQuery, estadoQuery, null, null)
+                        .execute();
+
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().isSuccess() && response.body().getData() != null) {
+                    CursorPageAlertaResponse cursorPage = response.body().getData();
+                    List<Alerta> nuevosItems = cursorPage.getContent() != null
+                            ? cursorPage.getContent()
+                            : new ArrayList<>();
+
+                    synchronized (alertasAcumuladas) {
+                        Set<String> idsExistentes = new HashSet<>();
+                        for (Alerta a : alertasAcumuladas) {
+                            if (a.getId() != null) {
+                                idsExistentes.add(a.getId());
+                            }
+                        }
+                        for (Alerta nuevo : nuevosItems) {
+                            if (nuevo.getId() == null || !idsExistentes.contains(nuevo.getId())) {
+                                alertasAcumuladas.add(nuevo);
+                            }
+                        }
+
+                        feedHasNext = cursorPage.isHasNext();
+                        feedNextCursor = cursorPage.getNextCursor();
+                        cargandoSiguientePagina = false;
+
+                        List<Alerta> snapshot = new ArrayList<>(alertasAcumuladas);
+                        todasLasAlertas.postValue(snapshot);
+                        feedUiState.postValue(new FeedUiState.Success(snapshot, feedHasNext, feedNextCursor));
                     }
-                });
+                } else {
+                    synchronized (alertasAcumuladas) {
+                        cargandoSiguientePagina = false;
+                    }
+                }
+            } catch (Exception e) {
+                synchronized (alertasAcumuladas) {
+                    cargandoSiguientePagina = false;
+                }
+            }
+        });
+    }
+
+    private void ejecutarRespaldoListarAlertas(@Nullable String municipioQuery, @Nullable String estadoQuery) {
+        try {
+            Response<ApiResponse<PageAlertaResponse>> fallbackResponse = ApiClient
+                    .getApiService(getApplication())
+                    .listarAlertas(municipioQuery, estadoQuery, null, null, 0, 20, "fechaCreacion,desc")
+                    .execute();
+
+            synchronized (alertasAcumuladas) {
+                cargandoFeedEnCurso = false;
+                cargando.postValue(false);
+
+                if (fallbackResponse.isSuccessful() && fallbackResponse.body() != null
+                        && fallbackResponse.body().isSuccess() && fallbackResponse.body().getData() != null) {
+                    List<Alerta> recibidas = fallbackResponse.body().getData().getContent() != null
+                            ? fallbackResponse.body().getData().getContent()
+                            : new ArrayList<>();
+
+                    alertasAcumuladas.clear();
+                    alertasAcumuladas.addAll(recibidas);
+                    feedHasNext = false;
+                    feedNextCursor = null;
+                    feedInicializado = true;
+
+                    List<Alerta> snapshot = new ArrayList<>(alertasAcumuladas);
+                    todasLasAlertas.postValue(snapshot);
+
+                    if (snapshot.isEmpty()) {
+                        feedUiState.postValue(FeedUiState.Empty.INSTANCE);
+                    } else {
+                        feedUiState.postValue(new FeedUiState.Success(snapshot, false, null));
+                    }
+                } else {
+                    String msg = ManejadorErrores.obtenerMensajeAmigable(fallbackResponse, ContextoOperacion.ALERTAS);
+                    error.postValue(msg);
+                    feedUiState.postValue(new FeedUiState.Error(msg));
+                }
+            }
+        } catch (Exception e) {
+            synchronized (alertasAcumuladas) {
+                cargandoFeedEnCurso = false;
+            }
+            String msg = ManejadorErrores.obtenerMensajeFalloRed(e);
+            cargando.postValue(false);
+            error.postValue(msg);
+            feedUiState.postValue(new FeedUiState.Error(msg));
+        }
+    }
+
+    @Nullable
+    private String obtenerMunicipioQuery() {
+        String mun = municipioFiltro.getValue();
+        if (mun != null && (mun.equalsIgnoreCase("TODO") || mun.trim().isEmpty())) {
+            return null;
+        }
+        return mun;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        ioExecutor.shutdownNow();
     }
 }

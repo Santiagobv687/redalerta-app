@@ -1,20 +1,18 @@
 package com.redalerta.client.ui.alert;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ItemAlertaBinding;
 import com.redalerta.client.model.alerta.Alerta;
@@ -23,27 +21,57 @@ import com.redalerta.client.util.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class AlertaAdapter extends RecyclerView.Adapter<AlertaAdapter.AlertaViewHolder> {
+public class AlertaAdapter extends ListAdapter<Alerta, AlertaAdapter.AlertaViewHolder> {
 
     public interface OnAlertaClickListener {
         void onAlertaClick(Alerta alerta);
     }
 
-    private final List<Alerta> listaAlertas;
+    private static final DiffUtil.ItemCallback<Alerta> DIFF_CALLBACK = new DiffUtil.ItemCallback<Alerta>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Alerta oldItem, @NonNull Alerta newItem) {
+            if (oldItem.getId() != null && newItem.getId() != null) {
+                return oldItem.getId().equals(newItem.getId());
+            }
+            return oldItem == newItem;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Alerta oldItem, @NonNull Alerta newItem) {
+            return Objects.equals(oldItem.getId(), newItem.getId())
+                    && Objects.equals(oldItem.getEstado(), newItem.getEstado())
+                    && Objects.equals(oldItem.getTitulo(), newItem.getTitulo())
+                    && Objects.equals(oldItem.getDescripcion(), newItem.getDescripcion())
+                    && Objects.equals(oldItem.getCategoria(), newItem.getCategoria())
+                    && Objects.equals(oldItem.getPrioridad(), newItem.getPrioridad())
+                    && Objects.equals(oldItem.getBarrio(), newItem.getBarrio())
+                    && Objects.equals(oldItem.getDireccion(), newItem.getDireccion())
+                    && Objects.equals(oldItem.getEvidenciaUrl(), newItem.getEvidenciaUrl())
+                    && oldItem.getTotalEvidencias() == newItem.getTotalEvidencias()
+                    && oldItem.isEsAnonimo() == newItem.isEsAnonimo()
+                    && Objects.equals(oldItem.getFechaActualizacion(), newItem.getFechaActualizacion());
+        }
+    };
+
     private final OnAlertaClickListener clickListener;
 
-    public AlertaAdapter(List<Alerta> listaAlertas, OnAlertaClickListener clickListener) {
-        this.listaAlertas = listaAlertas != null ? listaAlertas : new ArrayList<>();
+    public AlertaAdapter(OnAlertaClickListener clickListener) {
+        super(DIFF_CALLBACK);
         this.clickListener = clickListener;
     }
 
-    public void actualizarLista(List<Alerta> nuevasAlertas) {
-        this.listaAlertas.clear();
-        if (nuevasAlertas != null) {
-            this.listaAlertas.addAll(nuevasAlertas);
+    public AlertaAdapter(List<Alerta> listaAlertas, OnAlertaClickListener clickListener) {
+        super(DIFF_CALLBACK);
+        this.clickListener = clickListener;
+        if (listaAlertas != null && !listaAlertas.isEmpty()) {
+            submitList(new ArrayList<>(listaAlertas));
         }
-        notifyDataSetChanged();
+    }
+
+    public void actualizarLista(List<Alerta> nuevasAlertas) {
+        submitList(nuevasAlertas != null ? new ArrayList<>(nuevasAlertas) : new ArrayList<>());
     }
 
     @NonNull
@@ -59,13 +87,10 @@ public class AlertaAdapter extends RecyclerView.Adapter<AlertaAdapter.AlertaView
 
     @Override
     public void onBindViewHolder(@NonNull AlertaViewHolder holder, int position) {
-        Alerta alerta = listaAlertas.get(position);
-        holder.bind(alerta, clickListener);
-    }
-
-    @Override
-    public int getItemCount() {
-        return listaAlertas != null ? listaAlertas.size() : 0;
+        Alerta alerta = getItem(position);
+        if (alerta != null) {
+            holder.bind(alerta, clickListener);
+        }
     }
 
     public static class AlertaViewHolder extends RecyclerView.ViewHolder {
