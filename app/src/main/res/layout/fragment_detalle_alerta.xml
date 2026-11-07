@@ -27,6 +27,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollDetalleAlerta"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -179,15 +180,16 @@
                     app:tint="@color/ra_red" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="UBICACIÓN"
+                        android:text="UBICACIÓN DEL INCIDENTE"
                         android:textColor="@color/ra_text_muted"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -201,7 +203,77 @@
                         android:textSize="15sp"
                         tools:text="Armenia • Carrera 14 # 12-25" />
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCentrarMapaDetalle"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:minHeight="48dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="Centrar"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_my_location"
+                    app:iconPadding="4dp"
+                    app:iconSize="15dp"
+                    app:iconTint="@color/ra_red"
+                    app:strokeColor="@color/ra_light_border" />
             </LinearLayout>
+
+            <!-- Mapa de solo visualización con navegación habilitada -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMapaDetalle"
+                style="@style/Widget.RedAlerta.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/ra_light_border"
+                        app:strokeWidth="1dp">
+
+                        <org.osmdroid.views.MapView
+                            android:id="@+id/mapViewDetalle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:id="@+id/tvCoordenadasDetalle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:textColor="@color/ra_light_label"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="Lat: 4.533889, Lon: -75.681111 • Alt: 1483 m" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:text="Puede desplazarse y hacer zoom en el mapa para consultar puntos de referencia cercanos"
+                        android:textColor="@color/ra_light_text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <View
                 android:layout_width="match_parent"

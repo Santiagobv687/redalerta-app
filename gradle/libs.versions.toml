@@ -18,6 +18,8 @@ glide = "4.16.0"
 securityCrypto = "1.1.0-alpha06"
 firebaseBom = "33.4.0"
 googleServices = "4.4.2"
+osmdroid = "6.1.18"
+shimmer = "0.5.0"
 
 [libraries]
 # Testing

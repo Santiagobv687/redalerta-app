@@ -71,6 +71,12 @@ dependencies {
     // Glide (evidencias)
     implementation(libs.glide)
 
+    // Mapa interactivo (OpenStreetMap)
+    implementation(libs.osmdroid.android)
+
+    // Efecto Shimmer (Skeleton UI)
+    implementation(libs.shimmer)
+
     // Seguridad (JWT)
     implementation(libs.security.crypto)
 
