@@ -84,6 +84,7 @@ public class EditarPerfilFragment extends Fragment {
         TextWatcher watcher = new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                limpiarErrores();
                 validarEstadoBotonGuardar();
             }
             @Override public void afterTextChanged(Editable s) {}
@@ -256,13 +257,20 @@ public class EditarPerfilFragment extends Fragment {
     }
 
     private void limpiarErrores() {
-        binding.tilNombre.setError(null);
-        binding.tilApellido.setError(null);
-        binding.tilEmail.setError(null);
-        binding.tilTelefono.setError(null);
-        binding.tilDepartamento.setError(null);
-        binding.tilMunicipio.setError(null);
-        binding.tilDireccionResidencia.setError(null);
+        limpiarErrorCampo(binding.tilNombre);
+        limpiarErrorCampo(binding.tilApellido);
+        limpiarErrorCampo(binding.tilEmail);
+        limpiarErrorCampo(binding.tilTelefono);
+        limpiarErrorCampo(binding.tilDepartamento);
+        limpiarErrorCampo(binding.tilMunicipio);
+        limpiarErrorCampo(binding.tilDireccionResidencia);
+    }
+
+    private void limpiarErrorCampo(com.google.android.material.textfield.TextInputLayout til) {
+        if (til != null) {
+            til.setError(null);
+            til.setErrorEnabled(false);
+        }
     }
 
     private void cancelarYVolver() {

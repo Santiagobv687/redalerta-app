@@ -33,9 +33,10 @@ public class RegistroPaso1Fragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         // Dropdown de Tipos de Documento
         String[] tipos = {"Cédula de Ciudadanía (CC)", "Cédula de Extranjería (CE)", "Pasaporte"};
+        binding.etTipoDoc.setDropDownBackgroundResource(com.redalerta.client.R.drawable.bg_dropdown_popup);
         binding.etTipoDoc.setAdapter(new ArrayAdapter<>(
                 requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
+                com.redalerta.client.R.layout.item_dropdown_ubicacion,
                 tipos));
 
         // Cargar datos previos si el usuario retrocede
@@ -66,26 +67,51 @@ public class RegistroPaso1Fragment extends Fragment {
         et.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                til.setError(null);
+                limpiarErrorCampo(til);
             }
             @Override public void afterTextChanged(Editable s) {}
         });
     }
 
+    private void limpiarErrorCampo(TextInputLayout til) {
+        if (til != null) {
+            til.setError(null);
+            til.setErrorEnabled(false);
+        }
+    }
+
     private void cargardatosPrevios() {
         RegistroRequest req = ((RegistroActivity) requireActivity()).getRegistroRequest();
         if (req != null) {
-            if (req.getNombre() != null) binding.etNombre.setText(req.getNombre());
+            if (req.getNombrePila() != null) {
+                binding.etNombre.setText(req.getNombrePila());
+            } else if (req.getNombre() != null) {
+                binding.etNombre.setText(req.getNombre());
+            }
             if (req.getApellido() != null) binding.etApellido.setText(req.getApellido());
             if (req.getCorreo() != null) binding.etCorreo.setText(req.getCorreo());
             if (req.getTelefono() != null) binding.etTelefono.setText(req.getTelefono());
 
+            if (req.getTipoDocumentoLabel() != null && !req.getTipoDocumentoLabel().isEmpty()) {
+                binding.etTipoDoc.setText(req.getTipoDocumentoLabel(), false);
+            } else if (req.getDocumento() != null && req.getDocumento().getTipo() != null) {
+                binding.etTipoDoc.setText(formatearTipoDocumentoAmigable(req.getDocumento().getTipo()), false);
+            }
+
             DocumentoRequest doc = req.getDocumento();
-            if (doc != null) {
-                if (doc.getTipo() != null) binding.etTipoDoc.setText(doc.getTipo(), false);
-                if (doc.getNumero() != null) binding.etNumDoc.setText(doc.getNumero());
+            if (doc != null && doc.getNumero() != null) {
+                binding.etNumDoc.setText(doc.getNumero());
             }
         }
+    }
+
+    private String formatearTipoDocumentoAmigable(String codigoBackend) {
+        if ("TARJETA_EXTRANJERIA".equalsIgnoreCase(codigoBackend)) {
+            return "Cédula de Extranjería (CE)";
+        } else if ("PASAPORTE".equalsIgnoreCase(codigoBackend)) {
+            return "Pasaporte";
+        }
+        return "Cédula de Ciudadanía (CC)";
     }
 
     private boolean validar() {
@@ -97,12 +123,12 @@ public class RegistroPaso1Fragment extends Fragment {
         String correo = binding.etCorreo.getText().toString().trim();
         String telefono = binding.etTelefono.getText().toString().trim();
 
-        if (tipoDoc.isEmpty()) { binding.tilTipoDoc.setError("Seleccione tipo de documento"); ok = false; } else { binding.tilTipoDoc.setError(null); }
-        if (numDoc.isEmpty()) { binding.tilNumDoc.setError("Número de documento requerido"); ok = false; } else { binding.tilNumDoc.setError(null); }
-        if (nombre.isEmpty()) { binding.tilNombre.setError("Nombre requerido (Mín. 3 caracteres)"); ok = false; } else { binding.tilNombre.setError(null); }
-        if (apellido.isEmpty()) { binding.tilApellido.setError("Apellido requerido"); ok = false; } else { binding.tilApellido.setError(null); }
-        if (!Validaciones.esCorreoValido(correo)) { binding.tilCorreo.setError("Correo electrónico inválido"); ok = false; } else { binding.tilCorreo.setError(null); }
-        if (telefono.length() > 20) { binding.tilTelefono.setError("Máximo 20 dígitos"); ok = false; } else { binding.tilTelefono.setError(null); }
+        if (tipoDoc.isEmpty()) { binding.tilTipoDoc.setError("Seleccione tipo de documento"); ok = false; } else { limpiarErrorCampo(binding.tilTipoDoc); }
+        if (numDoc.isEmpty()) { binding.tilNumDoc.setError("Número de documento requerido"); ok = false; } else { limpiarErrorCampo(binding.tilNumDoc); }
+        if (nombre.isEmpty() || nombre.length() < 3) { binding.tilNombre.setError("Nombre requerido (Mín. 3 caracteres)"); ok = false; } else { limpiarErrorCampo(binding.tilNombre); }
+        if (apellido.isEmpty()) { binding.tilApellido.setError("Apellido requerido"); ok = false; } else { limpiarErrorCampo(binding.tilApellido); }
+        if (!Validaciones.esCorreoValido(correo)) { binding.tilCorreo.setError("Correo electrónico inválido"); ok = false; } else { limpiarErrorCampo(binding.tilCorreo); }
+        if (telefono.length() > 20) { binding.tilTelefono.setError("Máximo 20 dígitos"); ok = false; } else { limpiarErrorCampo(binding.tilTelefono); }
 
         return ok;
     }
@@ -115,14 +141,16 @@ public class RegistroPaso1Fragment extends Fragment {
         String correo = binding.etCorreo.getText().toString().trim();
         String telefono = binding.etTelefono.getText().toString().trim();
 
-        req.setNombre(nombre + " " + apellido);
+        req.setNombrePila(nombre);
         req.setApellido(apellido);
+        req.setNombre((nombre + " " + apellido).trim());
         req.setCorreo(correo);
         req.setTelefono(telefono);
 
         // Documento
         String tipoDoc = binding.etTipoDoc.getText().toString().trim();
         String numDoc = binding.etNumDoc.getText().toString().trim();
+        req.setTipoDocumentoLabel(tipoDoc);
         req.setTipoDocumento(tipoDoc);
         req.setNumeroDocumento(numDoc);
     }

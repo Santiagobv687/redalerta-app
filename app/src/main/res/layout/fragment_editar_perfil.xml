@@ -54,8 +54,7 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="NOMBRE *"
-                app:errorEnabled="true">
+                android:hint="NOMBRE *">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNombre"
@@ -73,9 +72,8 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="APELLIDO *"
-                app:errorEnabled="true">
+                android:layout_marginTop="12dp"
+                android:hint="APELLIDO *">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etApellido"
@@ -93,9 +91,8 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="CORREO ELECTRÓNICO *"
-                app:errorEnabled="true">
+                android:layout_marginTop="12dp"
+                android:hint="CORREO ELECTRÓNICO *">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEmail"
@@ -112,11 +109,10 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:hint="TELÉFONO / CELULAR"
                 app:counterEnabled="true"
-                app:counterMaxLength="20"
-                app:errorEnabled="true">
+                app:counterMaxLength="20">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etTelefono"
@@ -146,8 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="DEPARTAMENTO DE RESIDENCIA *"
-                app:endIconMode="dropdown_menu"
-                app:errorEnabled="true">
+                app:endIconMode="dropdown_menu">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/etDepartamento"
@@ -164,10 +159,9 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:hint="MUNICIPIO / CIUDAD DE RESIDENCIA *"
-                app:endIconMode="dropdown_menu"
-                app:errorEnabled="true">
+                app:endIconMode="dropdown_menu">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/etMunicipio"
@@ -184,11 +178,10 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:hint="DIRECCIÓN DE RESIDENCIA DETALLADA *"
                 app:counterEnabled="true"
-                app:counterMaxLength="150"
-                app:errorEnabled="true">
+                app:counterMaxLength="150">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDireccionResidencia"

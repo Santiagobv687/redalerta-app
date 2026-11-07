@@ -67,8 +67,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Detalle lo sucedido (mínimo 10 caracteres) *"
                 app:counterEnabled="true"
-                app:counterMaxLength="1000"
-                app:errorEnabled="true">
+                app:counterMaxLength="1000">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDescripcion"
@@ -100,8 +99,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="DEPARTAMENTO *"
-                app:endIconMode="dropdown_menu"
-                app:errorEnabled="true">
+                app:endIconMode="dropdown_menu">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/etDepartamento"
@@ -118,10 +116,9 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:hint="MUNICIPIO / CIUDAD *"
-                app:endIconMode="dropdown_menu"
-                app:errorEnabled="true">
+                app:endIconMode="dropdown_menu">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/etMunicipio"
@@ -138,11 +135,10 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:hint="DIRECCIÓN DETALLADA O PUNTO DE REFERENCIA *"
                 app:counterEnabled="true"
-                app:counterMaxLength="200"
-                app:errorEnabled="true">
+                app:counterMaxLength="200">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDireccionDetallada"

@@ -119,10 +119,17 @@ public class CambiarPasswordFragment extends Fragment {
     }
 
     private void limpiarErrores() {
-        binding.tilPasswordActual.setError(null);
-        binding.tilPasswordNuevo.setError(null);
-        binding.tilConfirmarPassword.setError(null);
+        limpiarErrorCampo(binding.tilPasswordActual);
+        limpiarErrorCampo(binding.tilPasswordNuevo);
+        limpiarErrorCampo(binding.tilConfirmarPassword);
         binding.tvPasswordErrorBanner.setVisibility(View.GONE);
+    }
+
+    private void limpiarErrorCampo(com.google.android.material.textfield.TextInputLayout til) {
+        if (til != null) {
+            til.setError(null);
+            til.setErrorEnabled(false);
+        }
     }
 
     private void cancelarYVolver() {
@@ -159,7 +166,7 @@ public class CambiarPasswordFragment extends Fragment {
                 binding.tilPasswordActual.setError("Verifica los datos ingresados");
             } else {
                 binding.tvPasswordErrorBanner.setVisibility(View.GONE);
-                binding.tilPasswordActual.setError(null);
+                limpiarErrorCampo(binding.tilPasswordActual);
             }
         });
     }

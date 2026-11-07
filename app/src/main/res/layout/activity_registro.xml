@@ -35,14 +35,29 @@
             android:textStyle="bold"
             android:letterSpacing="0.08" />
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/tvVolverLogin"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:minHeight="48dp"
+            android:insetTop="6dp"
+            android:insetBottom="6dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="14dp"
             android:text="@string/reg_topbar_volver"
             android:textColor="@color/ra_white"
-            android:textSize="13sp" />
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:backgroundTint="#1FE53935"
+            app:strokeColor="@color/ra_red"
+            app:strokeWidth="1.5dp"
+            app:cornerRadius="8dp"
+            app:icon="@drawable/ic_arrow_back"
+            app:iconSize="16dp"
+            app:iconPadding="6dp"
+            app:iconTint="@color/ra_red"
+            app:rippleColor="#33E53935" />
     </LinearLayout>
 
     <!-- ═══════════ Contenido scrollable ═══════════ -->

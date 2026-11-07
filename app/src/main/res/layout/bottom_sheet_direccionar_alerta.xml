@@ -154,8 +154,7 @@
         android:layout_marginTop="6dp"
         android:hint="Comentarios o indicaciones (mín. 10 chars)"
         app:counterEnabled="true"
-        app:counterMaxLength="1000"
-        app:errorEnabled="true">
+        app:counterMaxLength="1000">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etObservacion"

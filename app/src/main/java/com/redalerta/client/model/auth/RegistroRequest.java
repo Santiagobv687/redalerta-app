@@ -5,7 +5,7 @@ import com.redalerta.client.model.usuario.*;
 import java.io.Serializable;
 
 /**
- * Corresponde a RegistroRequestDto en OpenAPI.
+ * Corresponde a RegistroRequestDto.
  */
 public class RegistroRequest implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -19,7 +19,9 @@ public class RegistroRequest implements Serializable {
     private CaracterizacionRequest caracterizacion = new CaracterizacionRequest();
 
     // Campos temporales UI
+    private transient String nombrePila;
     private transient String apellido;
+    private transient String tipoDocumentoLabel;
     private transient String localidad;
     private transient String barrio;
     private transient String direccion;
@@ -36,15 +38,28 @@ public class RegistroRequest implements Serializable {
         this.nombre = nombre;
     }
 
+    public String getNombrePila() {
+        return nombrePila;
+    }
+
+    public void setNombrePila(String nombrePila) {
+        this.nombrePila = nombrePila;
+    }
+
     public String getApellido() {
         return apellido;
     }
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
-        if (this.nombre != null && apellido != null && !this.nombre.contains(apellido)) {
-            this.nombre = (this.nombre.trim() + " " + apellido.trim()).trim();
-        }
+    }
+
+    public String getTipoDocumentoLabel() {
+        return tipoDocumentoLabel;
+    }
+
+    public void setTipoDocumentoLabel(String tipoDocumentoLabel) {
+        this.tipoDocumentoLabel = tipoDocumentoLabel;
     }
 
     public DocumentoRequest getDocumento() {
