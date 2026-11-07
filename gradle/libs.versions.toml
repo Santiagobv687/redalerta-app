@@ -51,6 +51,12 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 # Glide (evidencias multimedia)
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 
+# Mapa interactivo (OpenStreetMap)
+osmdroid-android = { group = "org.osmdroid", name = "osmdroid-android", version.ref = "osmdroid" }
+
+# Efecto Shimmer (Skeleton UI)
+shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
+
 # Seguridad (token JWT cifrado)
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 

@@ -3,7 +3,7 @@ package com.redalerta.client.model.usuario;
 import java.io.Serializable;
 
 /**
- * Corresponde a UsuarioResponseDto / UsuarioSesionDto en OpenAPI.
+ * Corresponde a UsuarioResponseDto / UsuarioSesionDto.
  */
 public class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -12,7 +12,7 @@ public class Usuario implements Serializable {
     private String nombre;
     private String email;
     private String telefono;
-    private String rol; // "ROLE_CIUDADANO", "ROLE_LIDER", "ROLE_ORGANIZACION", "ROLE_ADMIN"
+    private String rol; // "ROLE_CIUDADANO", "ROLE_LIDER", "ROLE_ORGANIZACION"
     private Boolean activo;
     private DocumentoRequest documento;
     private UbicacionRequest ubicacion;

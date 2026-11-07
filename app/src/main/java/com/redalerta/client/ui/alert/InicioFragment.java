@@ -17,13 +17,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentInicioFeedBinding;
-import com.redalerta.client.model.alerta.Alerta;
 import com.redalerta.client.model.common.DepartamentoResponse;
 import com.redalerta.client.util.SessionManager;
 import com.redalerta.client.util.UbicacionCatalogoHelper;
 import com.redalerta.client.viewmodel.AlertaViewModel;
+import com.redalerta.client.viewmodel.FeedUiState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class InicioFragment extends Fragment {
     private AlertaViewModel viewModel;
     private AlertaAdapter adapter;
     private SessionManager session;
+    private LinearLayoutManager layoutManager;
 
     private final Handler fabHandler = new Handler(Looper.getMainLooper());
     private final Runnable expandFabRunnable = () -> {
@@ -59,13 +61,16 @@ public class InicioFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(AlertaViewModel.class);
 
         String rol = session.getRol();
-        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol)
+                || "LIDER".equalsIgnoreCase(rol)
+                || "ROLE_ADMIN".equalsIgnoreCase(rol)
+                || "ADMINISTRADOR".equalsIgnoreCase(rol);
 
         if (esLider) {
             String munLider = session.getMunicipio() != null ? session.getMunicipio() : "Armenia";
-            viewModel.setMunicipioFiltro(munLider);
-        } else {
-            viewModel.setMunicipioFiltro("TODO");
+            viewModel.inicializarMunicipioFiltroPorDefecto(munLider);
+        } else if (viewModel.getMunicipioFiltro().getValue() == null) {
+            viewModel.inicializarMunicipioFiltroPorDefecto("TODO");
         }
 
         setupRecyclerView();
@@ -76,12 +81,12 @@ public class InicioFragment extends Fragment {
         setupErrorRetry();
         observeViewModel();
 
-        // Cargar alertas iniciales
-        viewModel.cargarTodasLasAlertas();
+        // Cargar el feed respetando la caché en memoria (forzarRecarga = false)
+        viewModel.cargarFeed(false);
     }
 
     private void setupRecyclerView() {
-        adapter = new AlertaAdapter(new ArrayList<>(), alerta -> {
+        adapter = new AlertaAdapter(alerta -> {
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
@@ -89,17 +94,36 @@ public class InicioFragment extends Fragment {
                     .commit();
         });
 
-        binding.rvFeedAlertas.setLayoutManager(new LinearLayoutManager(requireContext()));
+        layoutManager = new LinearLayoutManager(requireContext());
+        binding.rvFeedAlertas.setLayoutManager(layoutManager);
+        binding.rvFeedAlertas.setHasFixedSize(true);
+        binding.rvFeedAlertas.setItemAnimator(null);
         binding.rvFeedAlertas.setAdapter(adapter);
+
+        // Scroll infinito por cursor (Keyset Pagination)
+        binding.rvFeedAlertas.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy <= 0 || layoutManager == null) return;
+
+                int totalItemCount = layoutManager.getItemCount();
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+
+                if (totalItemCount > 0 && lastVisibleItemPosition >= totalItemCount - 3) {
+                    viewModel.cargarSiguientePaginaFeed();
+                }
+            }
+        });
     }
 
     private void setupSwipeRefresh() {
         binding.swipeRefresh.setColorSchemeResources(R.color.ra_red);
-        binding.swipeRefresh.setOnRefreshListener(() -> viewModel.cargarTodasLasAlertas());
+        binding.swipeRefresh.setOnRefreshListener(() -> viewModel.cargarFeed(true));
     }
 
     private void setupFabScrollBehavior() {
-        String rol = new com.redalerta.client.util.SessionManager(requireContext()).getRol();
+        String rol = session.getRol();
         boolean esCiudadano = "ROLE_CIUDADANO".equalsIgnoreCase(rol) || "CIUDADANO".equalsIgnoreCase(rol) || rol == null;
 
         if (!esCiudadano) {
@@ -136,7 +160,10 @@ public class InicioFragment extends Fragment {
 
     private void setupTerritorioFilter() {
         String rol = session.getRol();
-        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol) || "LIDER".equalsIgnoreCase(rol) || "ROLE_ADMIN".equalsIgnoreCase(rol) || "ADMINISTRADOR".equalsIgnoreCase(rol);
+        boolean esLider = "ROLE_LIDER".equalsIgnoreCase(rol)
+                || "LIDER".equalsIgnoreCase(rol)
+                || "ROLE_ADMIN".equalsIgnoreCase(rol)
+                || "ADMINISTRADOR".equalsIgnoreCase(rol);
 
         if (esLider) {
             String munLider = session.getMunicipio() != null ? session.getMunicipio() : "Armenia";
@@ -213,6 +240,20 @@ public class InicioFragment extends Fragment {
     }
 
     private void setupEstadoFilter() {
+        // Sincronizar el chip seleccionado con el filtro activo en el ViewModel antes de adjuntar el listener
+        String estadoActivo = viewModel.getEstadoFiltro().getValue();
+        if ("PENDIENTE_REVISION".equals(estadoActivo)) {
+            binding.chipGroupEstado.check(R.id.chipEstadoRevision);
+        } else if ("EN_GESTION".equals(estadoActivo)) {
+            binding.chipGroupEstado.check(R.id.chipEstadoGestion);
+        } else if ("DIRECCIONADA".equals(estadoActivo)) {
+            binding.chipGroupEstado.check(R.id.chipEstadoDireccionada);
+        } else if ("RESUELTA".equals(estadoActivo)) {
+            binding.chipGroupEstado.check(R.id.chipEstadoResuelta);
+        } else {
+            binding.chipGroupEstado.check(R.id.chipEstadoTodos);
+        }
+
         binding.chipGroupEstado.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.contains(R.id.chipEstadoRevision)) {
                 viewModel.setEstadoFiltro("PENDIENTE_REVISION");
@@ -229,65 +270,70 @@ public class InicioFragment extends Fragment {
     }
 
     private void setupErrorRetry() {
-        binding.btnReintentar.setOnClickListener(v -> viewModel.cargarTodasLasAlertas());
+        binding.btnReintentar.setOnClickListener(v -> viewModel.cargarFeed(true));
     }
 
     private void observeViewModel() {
-        // Observar estado de carga
-        viewModel.getCargando().observe(getViewLifecycleOwner(), cargando -> {
-            if (cargando != null) {
-                if (cargando && !binding.swipeRefresh.isRefreshing()) {
-                    binding.layoutLoading.setVisibility(View.VISIBLE);
-                    binding.layoutEmpty.setVisibility(View.GONE);
-                    binding.layoutError.setVisibility(View.GONE);
-                } else if (!cargando) {
-                    binding.layoutLoading.setVisibility(View.GONE);
-                    binding.swipeRefresh.setRefreshing(false);
-                }
-            }
-        });
+        // Observar estado cerrado FeedUiState (Loading con Shimmer / Success con DiffUtil / Empty / Error)
+        viewModel.getFeedUiState().observe(getViewLifecycleOwner(), state -> {
+            if (binding == null || state == null) return;
 
-        // Observar errores
-        viewModel.getError().observe(getViewLifecycleOwner(), errorMsg -> {
-            if (errorMsg != null && !errorMsg.trim().isEmpty()) {
-                binding.layoutError.setVisibility(View.VISIBLE);
-                binding.tvErrorMensaje.setText(errorMsg);
-                binding.swipeRefresh.setVisibility(View.GONE);
+            if (state instanceof FeedUiState.Loading) {
+                binding.layoutLoading.setVisibility(View.GONE);
                 binding.layoutEmpty.setVisibility(View.GONE);
-            } else {
                 binding.layoutError.setVisibility(View.GONE);
-            }
-        });
+                binding.rvFeedAlertas.setVisibility(View.GONE);
 
-        // Observar lista de alertas
-        viewModel.getTodasLasAlertas().observe(getViewLifecycleOwner(), alertas -> {
-            if (alertas == null || alertas.isEmpty()) {
-                binding.layoutEmpty.setVisibility(View.VISIBLE);
-                binding.swipeRefresh.setVisibility(View.GONE);
-                binding.layoutError.setVisibility(View.GONE);
-            } else {
+                binding.shimmerViewContainer.setVisibility(View.VISIBLE);
+                binding.shimmerViewContainer.startShimmer();
+
+            } else if (state instanceof FeedUiState.Success successState) {
+                binding.shimmerViewContainer.stopShimmer();
+                binding.shimmerViewContainer.setVisibility(View.GONE);
+                binding.layoutLoading.setVisibility(View.GONE);
+                binding.swipeRefresh.setRefreshing(false);
+
                 binding.layoutEmpty.setVisibility(View.GONE);
                 binding.layoutError.setVisibility(View.GONE);
                 binding.swipeRefresh.setVisibility(View.VISIBLE);
+                binding.rvFeedAlertas.setVisibility(View.VISIBLE);
 
-                if (adapter == null) {
-                    adapter = new AlertaAdapter(alertas, alerta -> {
-                        requireActivity().getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
-                                .addToBackStack(null)
-                                .commit();
-                    });
-                    binding.rvFeedAlertas.setAdapter(adapter);
+                adapter.submitList(successState.alertas());
+
+            } else if (state instanceof FeedUiState.Empty) {
+                binding.shimmerViewContainer.stopShimmer();
+                binding.shimmerViewContainer.setVisibility(View.GONE);
+                binding.layoutLoading.setVisibility(View.GONE);
+                binding.swipeRefresh.setRefreshing(false);
+
+                binding.rvFeedAlertas.setVisibility(View.GONE);
+                binding.layoutError.setVisibility(View.GONE);
+                binding.layoutEmpty.setVisibility(View.VISIBLE);
+
+            } else if (state instanceof FeedUiState.Error errorState) {
+                binding.shimmerViewContainer.stopShimmer();
+                binding.shimmerViewContainer.setVisibility(View.GONE);
+                binding.layoutLoading.setVisibility(View.GONE);
+                binding.swipeRefresh.setRefreshing(false);
+
+                if (adapter != null && adapter.getItemCount() > 0) {
+                    // Si ya hay alertas retenidas en memoria, conservarlas en pantalla y mostrar aviso discreto
+                    binding.swipeRefresh.setVisibility(View.VISIBLE);
+                    binding.rvFeedAlertas.setVisibility(View.VISIBLE);
+                    binding.layoutError.setVisibility(View.GONE);
+                    Snackbar.make(binding.getRoot(), errorState.mensaje(), Snackbar.LENGTH_LONG).show();
                 } else {
-                    adapter.actualizarLista(alertas);
+                    binding.rvFeedAlertas.setVisibility(View.GONE);
+                    binding.layoutEmpty.setVisibility(View.GONE);
+                    binding.layoutError.setVisibility(View.VISIBLE);
+                    binding.tvErrorMensaje.setText(errorState.mensaje());
                 }
             }
         });
 
         // Observar municipio de filtro
         viewModel.getMunicipioFiltro().observe(getViewLifecycleOwner(), mun -> {
-            if (mun != null) {
+            if (binding != null && mun != null) {
                 if (mun.equalsIgnoreCase("TODO")) {
                     binding.tvMunicipio.setText(getString(R.string.filtro_todos_municipios));
                     binding.btnFiltroTerritorio.setText("Todo el Dpto");
@@ -300,7 +346,26 @@ public class InicioFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        if (binding != null && binding.shimmerViewContainer.isShimmerStarted()) {
+            binding.shimmerViewContainer.stopShimmer();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (binding != null && binding.shimmerViewContainer.getVisibility() == View.VISIBLE) {
+            binding.shimmerViewContainer.startShimmer();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
+        if (binding != null) {
+            binding.shimmerViewContainer.stopShimmer();
+        }
         super.onDestroyView();
         fabHandler.removeCallbacks(expandFabRunnable);
         binding = null;

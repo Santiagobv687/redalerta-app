@@ -51,6 +51,16 @@ public interface ApiService {
     Call<ApiResponse<Usuario>> actualizarPerfil(@Body ActualizarPerfilRequest request);
 
     // ═══ Alertas ═══
+    @GET("alertas/feed")
+    Call<ApiResponse<CursorPageAlertaResponse>> listarFeedAlertas(
+            @Query("cursor") Long cursor,
+            @Query("size") Integer size,
+            @Query("municipio") String municipio,
+            @Query("estado") String estado,
+            @Query("fechaInicio") String fechaInicio,
+            @Query("fechaFin") String fechaFin
+    );
+
     @GET("alertas")
     Call<ApiResponse<PageAlertaResponse>> listarAlertas(
             @Query("municipio") String municipio,
