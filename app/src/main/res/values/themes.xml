@@ -162,6 +162,25 @@
         <item name="android:navigationBarColor">@color/ra_light_bg</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="popupMenuStyle">@style/Widget.RedAlerta.PopupMenu</item>
+        <item name="android:popupMenuStyle">@style/Widget.RedAlerta.PopupMenu</item>
+        <item name="materialCalendarTheme">@style/ThemeOverlay.RedAlerta.DatePicker</item>
+    </style>
+
+    <!-- PopupMenu redondeado con borde institucional -->
+    <style name="Widget.RedAlerta.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_dropdown_popup</item>
+        <item name="android:popupElevation">6dp</item>
+    </style>
+
+    <!-- Selector de fecha (MaterialDatePicker) con superficie clara e identidad RedAlerta -->
+    <style name="ThemeOverlay.RedAlerta.DatePicker" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorPrimary">@color/ra_red</item>
+        <item name="colorOnPrimary">@color/ra_white</item>
+        <item name="colorSurface">@color/ra_light_card</item>
+        <item name="colorOnSurface">@color/ra_light_text</item>
+        <item name="colorOnSurfaceVariant">@color/ra_light_text_secondary</item>
+        <item name="colorSurfaceContainerHigh">@color/ra_light_card</item>
     </style>
 
     <!-- ═══ Estilos para Verificación (Admin) ═══ -->

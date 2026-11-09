@@ -143,7 +143,7 @@ public class RestablecerPasswordActivity extends AppCompatActivity {
         viewModel.getError().observe(this, msg -> {
             if (msg != null && !msg.trim().isEmpty()) {
                 binding.tilNuevaPassword.setError(msg);
-                Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(binding.getRoot(), msg);
             }
         });
 

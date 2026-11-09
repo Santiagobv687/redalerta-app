@@ -3,13 +3,13 @@
 
     <!-- ═══ Login ═══ -->
     <string name="login_brand">RED ALERTA</string>
-    <string name="login_title">INICIAR SESIÓN</string>
+    <string name="login_title">Iniciar sesión</string>
     <string name="login_subtitle">Acceda con sus credenciales</string>
 
-    <string name="label_correo">CORREO ELECTRÓNICO</string>
+    <string name="label_correo">Correo electrónico</string>
     <string name="hint_correo">usuario@redalerta.gov</string>
 
-    <string name="label_contrasena">CONTRASEÑA</string>
+    <string name="label_contrasena">Contraseña</string>
     <string name="hint_contrasena">••••••••</string>
 
     <string name="btn_login">INGRESAR</string>
@@ -19,10 +19,10 @@
     <string name="btn_registrar_nuevo">Registrar nuevo usuario</string>
 
     <!-- ═══ Recuperación de Contraseña - Paso 1 (Solicitud de Correo) ═══ -->
-    <string name="rec_titulo">RECUPERAR CONTRASEÑA</string>
+    <string name="rec_titulo">Recuperar contraseña</string>
     <string name="rec_subtitulo">Ingrese el correo electrónico asociado a su cuenta para restablecer su acceso de forma segura.</string>
-    <string name="rec_card_titulo">CORREO DE LA CUENTA</string>
-    <string name="rec_label_correo">CORREO ELECTRÓNICO REGISTRADO *</string>
+    <string name="rec_card_titulo">Correo de la cuenta</string>
+    <string name="rec_label_correo">Correo electrónico registrado *</string>
     <string name="rec_hint_correo">ejemplo@correo.com</string>
     <string name="rec_btn_enviar_codigo">ENVIAR CÓDIGO DE VERIFICACIÓN</string>
     <string name="rec_info_titulo">¿Cómo funciona la verificación?</string>
@@ -38,11 +38,11 @@
 
     <!-- ═══ Recuperación de Contraseña - Paso 2 (Verificación de Código OTP) ═══ -->
     <string name="rec_paso2_topbar_volver">Cambiar correo</string>
-    <string name="rec_paso2_titulo">VERIFICAR CÓDIGO</string>
+    <string name="rec_paso2_titulo">Verificar código</string>
     <string name="rec_paso2_subtitulo">Ingrese el código de seguridad de 6 dígitos para validar su identidad.</string>
-    <string name="rec_paso2_correo_label">CORREO ELECTRÓNICO INGRESADO</string>
+    <string name="rec_paso2_correo_label">Correo electrónico ingresado</string>
     <string name="rec_paso2_btn_editar_correo">Editar correo</string>
-    <string name="rec_paso2_card_titulo">CÓDIGO DE VERIFICACIÓN</string>
+    <string name="rec_paso2_card_titulo">Código de verificación</string>
     <string name="rec_paso2_instruccion_bloques">Escriba un dígito en cada casilla:</string>
     <string name="rec_paso2_btn_verificar">VERIFICAR CÓDIGO</string>
     <string name="rec_paso2_label_no_recibio">¿No recibió el código de verificación?</string>
@@ -92,32 +92,33 @@
 
     <!-- ═══ Registro general ═══ -->
     <string name="reg_topbar_volver">Volver al login</string>
-    <string name="reg_titulo">REGISTRO DE USUARIO</string>
+    <string name="reg_titulo">Registro de usuario</string>
     <string name="reg_subtitulo">Complete los datos para crear su cuenta en el sistema</string>
 
     <!-- ═══ Paso 1 ═══ -->
-    <string name="reg_paso1_titulo">DATOS PERSONALES</string>
-    <string name="reg_label_tipo_doc">TIPO DE DOCUMENTO</string>
-    <string name="reg_label_num_doc">NÚMERO DE DOCUMENTO</string>
-    <string name="reg_label_nombre">NOMBRE</string>
-    <string name="reg_label_apellido">APELLIDO</string>
-    <string name="reg_label_correo">CORREO ELECTRÓNICO</string>
-    <string name="reg_label_telefono">TELÉFONO MÓVIL</string>
+    <string name="reg_paso1_titulo">Datos personales</string>
+    <string name="reg_label_tipo_doc">Tipo de documento *</string>
+    <string name="reg_label_num_doc">Número de documento *</string>
+    <string name="reg_label_nombre">Nombre *</string>
+    <string name="reg_label_apellido">Apellido *</string>
+    <string name="reg_label_correo">Correo electrónico *</string>
+    <string name="reg_label_telefono">Teléfono móvil *</string>
+    <string name="reg_helper_telefono">Se usará para contactarlo en caso de coordinar apoyo ante emergencias</string>
     <string name="reg_hint_doc">1234567890</string>
     <string name="reg_hint_nombre">Nombre</string>
     <string name="reg_hint_apellido">Apellido</string>
     <string name="reg_hint_correo_reg">correo@ejemplo.com</string>
-    <string name="reg_hint_telefono">300 000 0000</string>
+    <string name="reg_hint_telefono">Ej. 300 123 4567</string>
 
     <!-- ═══ Paso 2 ═══ -->
-    <string name="reg_paso2_titulo">INFORMACIÓN DE UBICACIÓN</string>
+    <string name="reg_paso2_titulo">Información de ubicación</string>
     <string name="reg_paso2_subtitulo">Seleccione su territorio en el catálogo nacional para asociar su cuenta y canalizar alertas comunitarias.</string>
-    <string name="reg_label_departamento">DEPARTAMENTO</string>
-    <string name="reg_label_municipio">MUNICIPIO / CIUDAD</string>
-    <string name="reg_label_localidad">LOCALIDAD</string>
-    <string name="reg_label_barrio">BARRIO / SECTOR</string>
-    <string name="reg_label_direccion">DIRECCIÓN DE RESIDENCIA</string>
-    <string name="reg_label_rol">ROL EN EL SISTEMA</string>
+    <string name="reg_label_departamento">Departamento *</string>
+    <string name="reg_label_municipio">Municipio / Ciudad *</string>
+    <string name="reg_label_localidad">Localidad</string>
+    <string name="reg_label_barrio">Barrio / Sector</string>
+    <string name="reg_label_direccion">Dirección de residencia *</string>
+    <string name="reg_label_rol">Rol en el sistema</string>
     <string name="reg_hint_departamento">Seleccionar departamento…</string>
     <string name="reg_hint_municipio">Seleccionar municipio…</string>
     <string name="reg_hint_localidad">Seleccionar localidad…</string>
@@ -130,29 +131,30 @@
     <string name="reg_error_municipio_requerido">Seleccione su municipio</string>
 
     <!-- ═══ Paso 3 ═══ -->
-    <string name="reg_paso3_titulo">CARACTERIZACIÓN SOCIAL</string>
-    <string name="reg_paso3_caracterizacion_titulo">ENCUESTA DE CARACTERIZACIÓN</string>
-    <string name="reg_label_fecha_nacimiento">FECHA DE NACIMIENTO *</string>
-    <string name="reg_label_genero">GÉNERO *</string>
-    <string name="reg_label_integrantes">INTEGRANTES DEL HOGAR *</string>
+    <string name="reg_paso3_titulo">Caracterización social</string>
+    <string name="reg_paso3_caracterizacion_titulo">Encuesta de caracterización</string>
+    <string name="reg_label_fecha_nacimiento">Fecha de nacimiento *</string>
+    <string name="reg_label_genero">Género *</string>
+    <string name="reg_label_integrantes">Personas que conforman el hogar (incluyéndose usted) *</string>
     <string name="reg_hint_fecha_nacimiento">AAAA-MM-DD</string>
     <string name="reg_hint_genero">Seleccionar género…</string>
-    <string name="reg_hint_integrantes">1</string>
+    <string name="reg_hint_integrantes">Ej. 3</string>
+    <string name="reg_helper_integrantes">Indique el total de personas que habitan en la vivienda</string>
     <string name="reg_sw_gestacion">¿En estado de gestación o lactancia?</string>
     <string name="reg_sw_menores">¿Convive con menores de edad?</string>
-    <string name="reg_label_cant_menores">CANTIDAD DE MENORES</string>
+    <string name="reg_label_cant_menores">Cantidad de menores</string>
     <string name="reg_sw_discapacidad">¿Algún integrante con discapacidad?</string>
-    <string name="reg_label_espec_discapacidad">ESPECIFIQUE LA DISCAPACIDAD</string>
+    <string name="reg_label_espec_discapacidad">Especifique la discapacidad</string>
     <string name="reg_sw_etnico">¿Pertenece a un grupo étnico?</string>
-    <string name="reg_label_espec_etnico">ESPECIFIQUE EL GRUPO ÉTNICO</string>
+    <string name="reg_label_espec_etnico">Especifique el grupo étnico</string>
     <string name="reg_opcion_si">Sí</string>
     <string name="reg_opcion_no">No</string>
 
     <!-- ═══ Paso 4 ═══ -->
-    <string name="reg_paso4_titulo">SEGURIDAD Y CONFIRMACIÓN</string>
+    <string name="reg_paso4_titulo">Seguridad y confirmación</string>
     <string name="reg_resumen_titulo">Resumen del registro</string>
-    <string name="reg_label_contrasena">CONTRASEÑA</string>
-    <string name="reg_label_confirmar">CONFIRMAR CONTRASEÑA</string>
+    <string name="reg_label_contrasena">Contraseña *</string>
+    <string name="reg_label_confirmar">Confirmar contraseña *</string>
     <string name="reg_hint_contrasena">Mínimo 6 caracteres</string>
     <string name="reg_hint_confirmar">Repita la contraseña</string>
     <string name="reg_terminos">Acepto los Términos y condiciones del sistema RedAlerta y autorizo el tratamiento de mis datos personales conforme a la Ley 1581 de 2012.</string>
@@ -178,22 +180,22 @@
     <string name="menu_salir">Salir</string>
 
     <!-- Registro de Alerta -->
-    <string name="alerta_titulo">REGISTRO DE ALERTA COMUNITARIA</string>
+    <string name="alerta_titulo">Registro de alerta comunitaria</string>
     <string name="alerta_subtitulo">Complete el formulario con la información del incidente. Sea preciso para agilizar la respuesta.</string>
-    <string name="alerta_tipo_label">TIPO DE EMERGENCIA *</string>
-    <string name="alerta_desc_label">DESCRIPCIÓN DEL INCIDENTE *</string>
+    <string name="alerta_tipo_label">Tipo de emergencia *</string>
+    <string name="alerta_desc_label">Descripción del incidente *</string>
     <string name="alerta_desc_hint">Describa con detalle qué está ocurriendo, cuántas personas están involucradas, si hay riesgo inmediato de vida...</string>
-    <string name="alerta_dir_label">DIRECCIÓN EXACTA *</string>
+    <string name="alerta_dir_label">Dirección exacta *</string>
     <string name="alerta_dir_hint">Cra 15 #82-34</string>
-    <string name="alerta_barrio_label">BARRIO / SECTOR *</string>
+    <string name="alerta_barrio_label">Barrio / Sector *</string>
     <string name="alerta_barrio_hint">Nombre del barrio</string>
-    <string name="alerta_prioridad_label">NIVEL DE PRIORIDAD *</string>
+    <string name="alerta_prioridad_label">Nivel de prioridad *</string>
     <string name="alerta_prioridad_alta">Alta — Riesgo vital inmediato</string>
     <string name="alerta_prioridad_media">Media — Situación urgente</string>
     <string name="alerta_prioridad_baja">Baja — Requiere atención</string>
     <string name="alerta_heridos">¿Hay personas heridas o atrapadas?</string>
     <string name="alerta_anonimo">Publicar como anónimo (su nombre no será visible)</string>
-    <string name="alerta_evidencia_label">URL DE EVIDENCIA FOTOGRÁFICA (OPCIONAL)</string>
+    <string name="alerta_evidencia_label">URL de evidencia fotográfica (opcional)</string>
     <string name="alerta_evidencia_hint">https://...</string>
     <string name="alerta_btn_registrar">REGISTRAR ALERTA</string>
     <string name="alerta_reportado_por">Reportado por:</string>
@@ -208,7 +210,7 @@
     <string name="tipo_otro">Otro</string>
 
     <!-- ═══ Alerta Registrada ═══ -->
-    <string name="alerta_registrada_titulo">ALERTA REGISTRADA</string>
+    <string name="alerta_registrada_titulo">Alerta registrada</string>
     <string name="alerta_registrada_subtitulo">Su alerta ha sido recibida y está en proceso de verificación.</string>
     <string name="alerta_registrada_tipo_label">Tipo</string>
     <string name="alerta_registrada_prioridad_label">Prioridad</string>
@@ -226,13 +228,13 @@
     <string name="mis_alertas_ver_seguimiento">Ver seguimiento</string>
 
     <!-- Inicio -->
-    <string name="inicio_titulo">INICIO</string>
+    <string name="inicio_titulo">Inicio</string>
     <string name="inicio_subtitulo">Conoce las alertas publicadas recientemente por la comunidad.</string>
 
     <!-- Admin -->
     <string name="admin_verificacion">Verificación y\nDireccionamiento</string>
     <string name="admin_gestion">Gestión y Seguimiento</string>
-    <string name="verif_titulo">VERIFICACIÓN Y DIRECCIONAMIENTO</string>
+    <string name="verif_titulo">Verificación y direccionamiento</string>
     <string name="verif_subtitulo">Revise, valide y asigne unidades de respuesta a las alertas recibidas.</string>
     <string name="verif_pendientes">Pendientes</string>
     <string name="verif_verificadas">Verificadas</string>
@@ -245,6 +247,44 @@
     <string name="verif_estado_verificada">Verificada</string>
     <string name="verif_estado_rechazada">Rechazada</string>
     <string name="verif_asignar_estado">Cambiar estado a...</string>
+    <string name="verif_label_descripcion">Descripción</string>
+    <string name="verif_label_ubicacion">Ubicación</string>
+    <string name="verif_label_reportante">Reportante</string>
+    <string name="verif_label_fecha_hora">Fecha y hora</string>
+
+    <!-- Perfil y edición -->
+    <string name="perfil_seccion_datos_personales">Datos personales</string>
+    <string name="perfil_label_nombre">Nombre *</string>
+    <string name="perfil_label_apellido">Apellido *</string>
+    <string name="perfil_seccion_ubicacion">Ubicación y residencia</string>
+    <string name="perfil_hint_direccion_detallada">Dirección de residencia detallada *</string>
+
+    <!-- Cambiar contraseña -->
+    <string name="pwd_hint_actual">Contraseña actual *</string>
+    <string name="pwd_hint_nueva">Nueva contraseña (mín. 8 caracteres) *</string>
+    <string name="pwd_hint_confirmar">Confirmar nueva contraseña *</string>
+
+    <!-- Alertas: creación y modificación -->
+    <string name="alerta_seccion_descripcion">Descripción del incidente *</string>
+    <string name="alerta_hint_descripcion">Detalle lo sucedido (mínimo 10 caracteres) *</string>
+    <string name="alerta_seccion_ubicacion">Ubicación y geolocalización GPS *</string>
+    <string name="alerta_label_departamento">Departamento *</string>
+    <string name="alerta_label_municipio">Municipio / Ciudad *</string>
+    <string name="alerta_label_direccion_detallada">Dirección detallada o punto de referencia *</string>
+    <string name="alerta_helper_direccion">Especifique la calle, carrera, barrio o indicaciones para llegar al lugar</string>
+    <string name="alerta_seccion_evidencias">Evidencias fotográficas (Máx. 5)</string>
+    <string name="alerta_helper_ubicacion_gps">Determinado automáticamente por el mapa GPS</string>
+    <string name="alerta_municipio_detectado">Municipio detectado: %1$s, %2$s</string>
+    <string name="alerta_guia_cambiar_ubicacion">Para cambiar el municipio o departamento, mueva el puntero en el mapa con «Seleccionar en el mapa»</string>
+    <string name="alerta_label_anonimo">Publicar de forma anónima</string>
+    <string name="alerta_desc_anonimo">Al activar esta opción, su nombre no será visible para los demás miembros de la comunidad en el feed público. Los líderes comunitarios verán el reporte con la etiqueta «Anónimo».</string>
+
+    <!-- Direccionamiento -->
+    <string name="dir_seccion_categoria">Categoría del incidente *</string>
+    <string name="dir_seccion_prioridad">Nivel de prioridad *</string>
+    <string name="dir_seccion_organizacion">Organización destino *</string>
+    <string name="dir_seccion_observacion">Observación técnica *</string>
+
     <!-- Feed de Alertas / Territorio -->
     <string name="territorio_departamento_fijo">QUINDÍO</string>
     <string name="territorio_municipio_activo">Armenia</string>
@@ -264,6 +304,31 @@
     <string name="reportar_alerta_fab">Reportar Alerta</string>
     <string name="reportar_alerta_desc">Reportar nueva alerta comunitaria</string>
 
-    <string name="gestion_titulo">GESTIÓN Y SEGUIMIENTO</string>
+    <string name="gestion_titulo">Gestión y seguimiento</string>
     <string name="gestion_mensaje">Módulo en construcción...</string>
+
+    <!-- Cerrar sesión -->
+    <string name="logout_dialog_titulo">¿Cerrar sesión?</string>
+    <string name="logout_dialog_mensaje">Saldrás de tu cuenta RedAlerta en este dispositivo. Para volver a reportar o consultar alertas deberás iniciar sesión nuevamente.</string>
+    <string name="logout_dialog_confirmar">Sí, cerrar sesión</string>
+    <string name="logout_dialog_cancelar">Cancelar</string>
+
+    <!-- Eliminar alerta -->
+    <string name="eliminar_alerta_dialog_titulo">¿Eliminar este reporte?</string>
+    <string name="eliminar_alerta_dialog_mensaje">¿Estás seguro de que deseas eliminar el reporte «%1$s»? Esta acción retirará la alerta de forma permanente del sistema comunitario.</string>
+    <string name="eliminar_alerta_dialog_confirmar">Sí, eliminar reporte</string>
+
+    <!-- Cancelar direccionamiento -->
+    <string name="cancelar_dir_dialog_titulo">Cancelar direccionamiento</string>
+    <string name="cancelar_dir_dialog_mensaje">La alerta regresará al estado Pendiente de revisión y se retirará la asignación a la entidad. Ingresa el motivo justificado:</string>
+    <string name="cancelar_dir_dialog_hint_motivo">Motivo de cancelación (mín. 5 caracteres) *</string>
+    <string name="cancelar_dir_dialog_error_motivo">Ingresa un motivo de al menos 5 caracteres</string>
+    <string name="cancelar_dir_dialog_confirmar">Confirmar cancelación</string>
+    <string name="cancelar_dir_dialog_volver">Volver sin cancelar</string>
+
+    <!-- Términos y condiciones -->
+    <string name="terminos_dialog_titulo">Términos y Tratamiento de Datos</string>
+    <string name="terminos_dialog_contenido">1. Finalidad del sistema RedAlerta\nRedAlerta es una plataforma comunitaria para el reporte temprano, verificación y direccionamiento de incidentes y emergencias en el territorio.\n\n2. Tratamiento de Datos Personales (Ley 1581 de 2012)\nSus datos de identificación, contacto, ubicación residencial y caracterización social serán tratados de forma confidencial con el único propósito de gestionar reportes comunitarios, validar la autenticidad de las alertas y facilitar la atención por parte de líderes comunitarios y organismos de socorro.\n\n3. Reportes Anónimos\nAl publicar una alerta de forma anónima, su nombre completo se ocultará en el feed público para proteger su identidad ante la comunidad.\n\n4. Uso Responsable\nEl usuario se compromete a suministrar información veraz y abstenerse de generar falsas alarmas que afecten la operación de las entidades de respuesta.</string>
+    <string name="terminos_dialog_aceptar">Aceptar términos</string>
+    <string name="terminos_dialog_cerrar">Cerrar</string>
 </resources>

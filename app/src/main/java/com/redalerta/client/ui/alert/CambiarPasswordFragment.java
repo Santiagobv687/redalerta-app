@@ -153,7 +153,10 @@ public class CambiarPasswordFragment extends Fragment {
         viewModel.getPasswordActualizadoExito().observe(getViewLifecycleOwner(), exito -> {
             if (exito != null && exito) {
                 viewModel.limpiarEstadoExito();
-                Toast.makeText(requireContext(), "Contraseña actualizada exitosamente", Toast.LENGTH_SHORT).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarExito(
+                        requireActivity(),
+                        "Contraseña actualizada exitosamente"
+                );
                 cancelarYVolver();
             }
         });

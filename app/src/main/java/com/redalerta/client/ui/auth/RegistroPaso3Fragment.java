@@ -141,6 +141,7 @@ public class RegistroPaso3Fragment extends Fragment {
 
     private void mostrarDatePicker() {
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTheme(com.redalerta.client.R.style.ThemeOverlay_RedAlerta_DatePicker)
                 .setTitleText("Seleccione fecha de nacimiento")
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build();
@@ -229,12 +230,24 @@ public class RegistroPaso3Fragment extends Fragment {
         }
         limpiarErrorCampo(binding.tilGenero);
 
-        int numIntegrantes = 1;
-        if (!numIntegrantesStr.isEmpty()) {
-            try {
-                numIntegrantes = Integer.parseInt(numIntegrantesStr);
-            } catch (NumberFormatException ignored) {}
+        if (numIntegrantesStr.isEmpty()) {
+            binding.tilIntegrantes.setError("Indique el número de personas en el hogar (mínimo 1)");
+            return false;
         }
+
+        int numIntegrantes;
+        try {
+            numIntegrantes = Integer.parseInt(numIntegrantesStr);
+        } catch (NumberFormatException e) {
+            binding.tilIntegrantes.setError("Ingrese un número válido");
+            return false;
+        }
+
+        if (numIntegrantes < 1) {
+            binding.tilIntegrantes.setError("Debe ser al menos 1 persona (usted)");
+            return false;
+        }
+        limpiarErrorCampo(binding.tilIntegrantes);
 
         // Ensamblar objeto Caracterización
         CaracterizacionRequest car = new CaracterizacionRequest();

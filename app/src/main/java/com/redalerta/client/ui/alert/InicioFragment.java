@@ -171,9 +171,10 @@ public class InicioFragment extends Fragment {
             binding.tvMunicipio.setText(getString(R.string.filtro_municipio_puntual, munLider));
 
             binding.btnFiltroTerritorio.setOnClickListener(v -> {
-                Toast.makeText(requireContext(),
-                        "Como Líder Comunitario, tu territorio está asignado fijamente en " + munLider,
-                        Toast.LENGTH_SHORT).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarInfo(
+                        binding.getRoot(),
+                        "Como Líder Comunitario, tu territorio está asignado fijamente en " + munLider
+                );
             });
             return;
         }

@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Marca ambos campos en rojo por seguridad, pero muestra el texto una sola vez debajo de la contraseña
                 binding.tilCorreo.setError(" ");
                 binding.tilContrasena.setError(msg);
-                Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(binding.getRoot(), msg);
             }
         });
 
