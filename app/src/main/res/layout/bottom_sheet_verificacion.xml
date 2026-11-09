@@ -24,20 +24,20 @@
 
     <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="16dp" android:background="@color/ra_border_light"/>
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DESCRIPCIÓN" style="@style/Widget.RedAlerta.Label"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/verif_label_descripcion" style="@style/Widget.RedAlerta.Label"/>
     <TextView android:id="@+id/bsDescripcion" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textSize="13sp" android:textColor="@color/ra_light_text"/>
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UBICACIÓN" style="@style/Widget.RedAlerta.Label" android:layout_marginTop="16dp"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/verif_label_ubicacion" style="@style/Widget.RedAlerta.Label" android:layout_marginTop="16dp"/>
     <TextView android:id="@+id/bsUbicacion" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textSize="13sp" android:textColor="@color/ra_light_text"/>
 
     <!-- Fila: Reportante y Fecha -->
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="16dp">
         <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="REPORTERO" style="@style/Widget.RedAlerta.Label"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/verif_label_reportante" style="@style/Widget.RedAlerta.Label"/>
             <TextView android:id="@+id/bsReportante" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textSize="13sp"/>
         </LinearLayout>
         <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FECHA / HORA" style="@style/Widget.RedAlerta.Label"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/verif_label_fecha_hora" style="@style/Widget.RedAlerta.Label"/>
             <TextView android:id="@+id/bsFecha" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textSize="13sp"/>
         </LinearLayout>
     </LinearLayout>
@@ -45,7 +45,7 @@
     <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="16dp" android:background="@color/ra_border_light"/>
 
     <!-- Dropdown y Botón -->
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CAMBIAR ESTADO A..." style="@style/Widget.RedAlerta.Label"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/verif_asignar_estado" style="@style/Widget.RedAlerta.Label"/>
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.RedAlerta.InputLight"
         android:layout_width="match_parent"
@@ -56,6 +56,10 @@
             android:id="@+id/dropdownEstado"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 

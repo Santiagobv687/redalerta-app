@@ -39,14 +39,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="CATEGORÍA DEL INCIDENTE *"
+        android:text="@string/dir_seccion_categoria"
         android:textColor="@color/ra_light_text"
         android:textSize="13sp"
         android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilCategoria"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        style="@style/Widget.RedAlerta.InputLight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
@@ -56,7 +56,11 @@
             android:id="@+id/etCategoria"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:inputType="none"
+            android:minHeight="48dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:textColor="@color/ra_light_text"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -66,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="NIVEL DE PRIORIDAD *"
+        android:text="@string/dir_seccion_prioridad"
         android:textColor="@color/ra_light_text"
         android:textSize="13sp"
         android:textStyle="bold" />
@@ -114,14 +118,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="ORGANIZACIÓN DESTINO *"
+        android:text="@string/dir_seccion_organizacion"
         android:textColor="@color/ra_light_text"
         android:textSize="13sp"
         android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilOrganizacion"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        style="@style/Widget.RedAlerta.InputLight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
@@ -131,7 +135,11 @@
             android:id="@+id/etOrganizacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:inputType="none"
+            android:minHeight="48dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:textColor="@color/ra_light_text"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -141,14 +149,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="OBSERVACIÓN TÉCNICA *"
+        android:text="@string/dir_seccion_observacion"
         android:textColor="@color/ra_light_text"
         android:textSize="13sp"
         android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilObservacion"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        style="@style/Widget.RedAlerta.InputLight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"

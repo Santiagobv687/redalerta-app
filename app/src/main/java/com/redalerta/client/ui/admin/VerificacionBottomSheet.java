@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
+import com.redalerta.client.util.AlertaMensajesHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -61,16 +61,17 @@ public class VerificacionBottomSheet extends BottomSheetDialogFragment {
             binding.bsEstado.setText(alertaActual.getEstado());
         }
 
-        // Dropdown de estados
+        // Dropdown de estados con diseño institucional
         String[] opciones = {"Verificada", "Rechazada"};
-        binding.dropdownEstado.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, opciones));
+        binding.dropdownEstado.setDropDownBackgroundResource(R.drawable.bg_dropdown_popup);
+        binding.dropdownEstado.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.item_dropdown_ubicacion, opciones));
 
         binding.btnCerrar.setOnClickListener(v -> dismiss());
 
         binding.btnAceptar.setOnClickListener(v -> {
             String seleccion = binding.dropdownEstado.getText().toString();
             if (seleccion.isEmpty()) {
-                Toast.makeText(requireContext(), "Seleccione un estado", Toast.LENGTH_SHORT).show();
+                AlertaMensajesHelper.mostrarError(binding.getRoot(), "Seleccione un estado");
                 return;
             }
 
