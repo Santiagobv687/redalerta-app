@@ -32,9 +32,9 @@ import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentRegistroAlertaBinding;
 import com.redalerta.client.model.alerta.CrearAlertaRequest;
 import com.redalerta.client.model.alerta.UbicacionAlertaDto;
+import com.redalerta.client.ui.MainActivity;
 import com.redalerta.client.util.GeocodificacionHelper;
 import com.redalerta.client.util.SessionManager;
-import com.redalerta.client.util.UbicacionCatalogoHelper;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 import org.osmdroid.config.Configuration;
@@ -62,6 +62,10 @@ public class RegistroAlertaFragment extends Fragment {
     private FragmentRegistroAlertaBinding binding;
     private SessionManager session;
     private AlertaViewModel viewModel;
+
+    // Información territorial confirmada para UbicacionAlertaDto (OpenAPI)
+    private String departamentoDetectado = "Quindío";
+    private String municipioDetectado = "Armenia";
 
     // Estado de coordenadas GPS confirmadas para el payload UbicacionAlertaDto
     private double latitudConfirmada = DEFAULT_LATITUD;
@@ -101,7 +105,7 @@ public class RegistroAlertaFragment extends Fragment {
         locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
 
         setupToolbar();
-        setupUbicacionSelectores();
+        setupUbicacionInfo();
         setupMapaInteractivo();
         setupPermisosYGps();
         setupEvidencias();
@@ -121,25 +125,18 @@ public class RegistroAlertaFragment extends Fragment {
         );
     }
 
-    private void setupUbicacionSelectores() {
-        UbicacionCatalogoHelper.configurarSelectoresEncadenados(
-                requireContext(),
-                binding.tilDepartamento,
-                binding.etDepartamento,
-                binding.tilMunicipio,
-                binding.etMunicipio,
-                this::validarEstadoBotonPublicar
-        );
-
+    private void setupUbicacionInfo() {
         String deptoSesion = session.getDepartamento() != null ? session.getDepartamento() : "Quindío";
         String munSesion = session.getMunicipio() != null ? session.getMunicipio() : "Armenia";
 
-        if (binding.etDepartamento.getText().toString().isEmpty()) {
-            binding.etDepartamento.setText(deptoSesion, false);
-        }
-        if (binding.etMunicipio.getText().toString().isEmpty()) {
-            binding.etMunicipio.setText(munSesion, false);
-        }
+        departamentoDetectado = deptoSesion;
+        municipioDetectado = munSesion;
+        actualizarTextoUbicacionDetectada();
+    }
+
+    private void actualizarTextoUbicacionDetectada() {
+        if (binding == null || !isAdded()) return;
+        binding.tvUbicacionDetectada.setText(getString(R.string.alerta_municipio_detectado, municipioDetectado, departamentoDetectado));
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -360,20 +357,13 @@ public class RegistroAlertaFragment extends Fragment {
         binding.tvEstadoGeocoder.setText("Consultando departamento, municipio y dirección…");
         binding.tvEstadoGeocoder.setTextColor(ContextCompat.getColor(requireContext(), R.color.ra_light_text_secondary));
 
-        String deptoActual = binding.etDepartamento.getText() != null
-                ? binding.etDepartamento.getText().toString().trim()
-                : session.getDepartamento();
-        String munActual = binding.etMunicipio.getText() != null
-                ? binding.etMunicipio.getText().toString().trim()
-                : session.getMunicipio();
-
         GeocodificacionHelper.obtenerUbicacionDesdeCoordenadas(
                 requireContext(),
                 latitud,
                 longitud,
                 altitud,
-                deptoActual,
-                munActual,
+                departamentoDetectado,
+                municipioDetectado,
                 resultado -> {
                     if (!isAdded() || binding == null) return;
 
@@ -381,11 +371,12 @@ public class RegistroAlertaFragment extends Fragment {
 
                     // Actualizar Departamento y Municipio si se obtuvieron
                     if (dto.getDepartamento() != null && !dto.getDepartamento().isEmpty()) {
-                        binding.etDepartamento.setText(dto.getDepartamento(), false);
+                        departamentoDetectado = dto.getDepartamento();
                     }
                     if (dto.getMunicipio() != null && !dto.getMunicipio().isEmpty()) {
-                        binding.etMunicipio.setText(dto.getMunicipio(), false);
+                        municipioDetectado = dto.getMunicipio();
                     }
+                    actualizarTextoUbicacionDetectada();
 
                     // Actualizar Dirección detallada con lo extraído por Geocoder o el texto de respaldo GPS
                     if (dto.getDireccionDetallada() != null && !dto.getDireccionDetallada().isEmpty()) {
@@ -398,8 +389,6 @@ public class RegistroAlertaFragment extends Fragment {
                             : ContextCompat.getColor(requireContext(), R.color.ra_status_revision_text);
                     binding.tvEstadoGeocoder.setTextColor(colorTexto);
 
-                    limpiarErrorCampo(binding.tilDepartamento);
-                    limpiarErrorCampo(binding.tilMunicipio);
                     limpiarErrorCampo(binding.tilDireccionDetallada);
                     validarEstadoBotonPublicar();
                 }
@@ -440,7 +429,10 @@ public class RegistroAlertaFragment extends Fragment {
 
         binding.btnAgregarFoto.setOnClickListener(v -> {
             if (listaEvidencias.size() >= 5) {
-                Toast.makeText(requireContext(), "Máximo 5 evidencias fotográficas permitidas", Toast.LENGTH_SHORT).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(
+                        binding.getRoot(),
+                        "Máximo 5 evidencias fotográficas permitidas"
+                );
                 return;
             }
             pickerLauncher.launch("image/*");
@@ -473,7 +465,7 @@ public class RegistroAlertaFragment extends Fragment {
                 listaEvidencias.remove(item);
                 evidenciasAdapter.notifyDataSetChanged();
                 binding.tvEstadoSubidaFotos.setText("No fue posible subir la imagen. Intente nuevamente.");
-                Toast.makeText(requireContext(), mensajeError, Toast.LENGTH_SHORT).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(binding.getRoot(), mensajeError);
                 validarEstadoBotonPublicar();
             }
         });
@@ -484,8 +476,6 @@ public class RegistroAlertaFragment extends Fragment {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 limpiarErrorCampo(binding.tilDescripcion);
-                limpiarErrorCampo(binding.tilDepartamento);
-                limpiarErrorCampo(binding.tilMunicipio);
                 limpiarErrorCampo(binding.tilDireccionDetallada);
                 validarEstadoBotonPublicar();
             }
@@ -494,6 +484,9 @@ public class RegistroAlertaFragment extends Fragment {
 
         binding.etDescripcion.addTextChangedListener(watcher);
         binding.etDireccionDetallada.addTextChangedListener(watcher);
+
+        // Al hacer tap en la tarjeta de anonimato o en el checkbox
+        binding.cardAnonimo.setOnClickListener(v -> binding.cbAnonimo.toggle());
         binding.cbAnonimo.setOnCheckedChangeListener((btn, checked) -> {
             actualizarReportadoPor();
             validarEstadoBotonPublicar();
@@ -524,11 +517,9 @@ public class RegistroAlertaFragment extends Fragment {
         if (binding == null) return;
 
         String desc = binding.etDescripcion.getText() != null ? binding.etDescripcion.getText().toString().trim() : "";
-        String depto = binding.etDepartamento.getText() != null ? binding.etDepartamento.getText().toString().trim() : "";
-        String mun = binding.etMunicipio.getText() != null ? binding.etMunicipio.getText().toString().trim() : "";
-
         boolean descValida = desc.length() >= 10 && desc.length() <= 1000;
-        boolean ubicacionValida = !depto.isEmpty() && !mun.isEmpty();
+        boolean ubicacionValida = departamentoDetectado != null && !departamentoDetectado.isEmpty()
+                && municipioDetectado != null && !municipioDetectado.isEmpty();
 
         boolean subiendoFoto = false;
         for (EvidenciasSeleccionadasAdapter.EvidenciaItem item : listaEvidencias) {
@@ -543,8 +534,6 @@ public class RegistroAlertaFragment extends Fragment {
 
     private void procesarPublicarAlerta() {
         String desc = binding.etDescripcion.getText().toString().trim();
-        String depto = binding.etDepartamento.getText().toString().trim();
-        String mun = binding.etMunicipio.getText().toString().trim();
         String dir = binding.etDireccionDetallada.getText().toString().trim();
 
         if (desc.length() < 10) {
@@ -552,18 +541,6 @@ public class RegistroAlertaFragment extends Fragment {
             return;
         }
         limpiarErrorCampo(binding.tilDescripcion);
-
-        if (depto.isEmpty()) {
-            binding.tilDepartamento.setError("Seleccione departamento");
-            return;
-        }
-        limpiarErrorCampo(binding.tilDepartamento);
-
-        if (mun.isEmpty()) {
-            binding.tilMunicipio.setError("Seleccione municipio");
-            return;
-        }
-        limpiarErrorCampo(binding.tilMunicipio);
 
         if (dir.isEmpty()) {
             dir = GeocodificacionHelper.DIRECCION_POR_DEFECTO_GPS;
@@ -581,8 +558,8 @@ public class RegistroAlertaFragment extends Fragment {
 
         // Construir DTO de ubicación conforme al esquema UbicacionAlertaDto en OpenAPI
         UbicacionAlertaDto ubicacionDto = new UbicacionAlertaDto(
-                depto,
-                mun,
+                departamentoDetectado,
+                municipioDetectado,
                 dir,
                 latitudConfirmada,
                 longitudConfirmada,
@@ -611,13 +588,16 @@ public class RegistroAlertaFragment extends Fragment {
         viewModel.getError().observe(getViewLifecycleOwner(), msg -> {
             binding.btnRegistrarAlerta.setEnabled(true);
             if (msg != null && !msg.trim().isEmpty()) {
-                Snackbar.make(binding.getRoot(), msg, Snackbar.LENGTH_LONG).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(binding.getRoot(), msg);
             }
         });
 
         viewModel.getAlertaCreada().observe(getViewLifecycleOwner(), alerta -> {
             if (alerta != null) {
-                Toast.makeText(requireContext(), "Alerta publicada exitosamente", Toast.LENGTH_SHORT).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarExito(
+                        requireActivity(),
+                        "Alerta publicada exitosamente"
+                );
                 requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
@@ -626,6 +606,9 @@ public class RegistroAlertaFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBottomNavigationVisible(false);
+        }
         if (binding != null) {
             binding.mapViewUbicacion.onResume();
         }
@@ -644,6 +627,9 @@ public class RegistroAlertaFragment extends Fragment {
         detenerActualizacionesUbicacion();
         if (binding != null) {
             binding.mapViewUbicacion.onDetach();
+        }
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBottomNavigationVisible(true);
         }
         super.onDestroyView();
         binding = null;

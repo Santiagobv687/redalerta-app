@@ -67,7 +67,7 @@ public class RegistroPaso4Fragment extends Fragment {
         viewModel.getError().observe(getViewLifecycleOwner(), msg -> {
             if (msg != null && !msg.trim().isEmpty()) {
                 binding.tilContrasena.setError(msg);
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(binding.getRoot(), msg);
             }
         });
 
@@ -160,8 +160,14 @@ public class RegistroPaso4Fragment extends Fragment {
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             ss.setSpan(new ClickableSpan() {
                 @Override public void onClick(@NonNull View widget) {
-                    Toast.makeText(requireContext(),
-                            "Abriendo Términos y condiciones…", Toast.LENGTH_SHORT).show();
+                    com.redalerta.client.util.AlertaMensajesHelper.mostrarDialogoTerminos(
+                            requireContext(),
+                            () -> {
+                                if (binding != null) {
+                                    binding.cbTerminos.setChecked(true);
+                                }
+                            }
+                    );
                 }
             }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
@@ -189,8 +195,10 @@ public class RegistroPaso4Fragment extends Fragment {
         limpiarErrorCampo(binding.tilConfirmar);
 
         if (!binding.cbTerminos.isChecked()) {
-            Toast.makeText(requireContext(),
-                    "Debe aceptar los términos y condiciones", Toast.LENGTH_SHORT).show();
+            com.redalerta.client.util.AlertaMensajesHelper.mostrarError(
+                    binding.getRoot(),
+                    "Debe aceptar los términos y condiciones"
+            );
             return;
         }
 

@@ -102,12 +102,11 @@ public class MisPublicacionesFragment extends Fragment {
         if (alerta == null) return;
         String codigo = alerta.getId() != null ? "ALR-" + alerta.getId() : "alerta";
 
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Eliminar alerta")
-                .setMessage("¿Estás seguro de que deseas eliminar el reporte '" + codigo + "'? Esta acción retirará el reporte permanentemente del sistema.")
-                .setPositiveButton("Eliminar", (dialog, which) -> viewModel.eliminarAlerta(alerta))
-                .setNegativeButton("Cancelar", null)
-                .show();
+        com.redalerta.client.util.AlertaMensajesHelper.mostrarDialogoEliminarAlerta(
+                requireContext(),
+                codigo,
+                () -> viewModel.eliminarAlerta(alerta)
+        );
     }
 
     private void setupSwipeRefresh() {
@@ -231,7 +230,10 @@ public class MisPublicacionesFragment extends Fragment {
         // Observar confirmación de eliminación exitosa
         viewModel.getAlertaEliminadaExito().observe(getViewLifecycleOwner(), exito -> {
             if (exito != null && exito) {
-                Toast.makeText(requireContext(), "Alerta eliminada exitosamente", Toast.LENGTH_SHORT).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarExito(
+                        binding.getRoot(),
+                        "Alerta eliminada exitosamente"
+                );
             }
         });
 

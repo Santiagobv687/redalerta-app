@@ -301,11 +301,10 @@ public class VerificarCodigoActivity extends AppCompatActivity {
         viewModel.getRecuperacionSolicitada().observe(this, msg -> {
             if (msg != null && !msg.isEmpty()) {
                 viewModel.limpiarEstadoRecuperacionSolicitada();
-                Toast.makeText(
-                        this,
-                        getString(R.string.rec_paso2_msg_reenviado, correoUsuario),
-                        Toast.LENGTH_LONG
-                ).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarExito(
+                        binding.getRoot(),
+                        getString(R.string.rec_paso2_msg_reenviado, correoUsuario)
+                );
             }
         });
 

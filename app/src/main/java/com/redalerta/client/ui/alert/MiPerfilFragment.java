@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.FragmentMiPerfilBinding;
 import com.redalerta.client.model.usuario.DocumentoRequest;
@@ -76,10 +75,7 @@ public class MiPerfilFragment extends Fragment {
 
         // Opción 3: Cerrar sesión
         binding.btnOpcionCerrarSesion.setOnClickListener(v -> {
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Cerrar sesión")
-                    .setMessage("¿Estás seguro de que deseas salir de tu cuenta RedAlerta en este dispositivo?")
-                    .setPositiveButton("Cerrar sesión", (dialog, which) -> {
+            com.redalerta.client.util.CerrarSesionDialog.mostrar(requireContext(), () -> {
                         // Notificar al backend POST /api/v1/auth/logout
                         ApiClient.getApiService(requireContext()).logout().enqueue(new Callback<ApiResponse<Void>>() {
                             @Override
@@ -93,9 +89,7 @@ public class MiPerfilFragment extends Fragment {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         requireActivity().finish();
-                    })
-                    .setNegativeButton("Cancelar", null)
-                    .show();
+            });
         });
     }
 
@@ -151,7 +145,7 @@ public class MiPerfilFragment extends Fragment {
 
         viewModel.getError().observe(getViewLifecycleOwner(), errorMsg -> {
             if (errorMsg != null && !errorMsg.trim().isEmpty()) {
-                Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(binding.getRoot(), errorMsg);
             }
         });
     }
