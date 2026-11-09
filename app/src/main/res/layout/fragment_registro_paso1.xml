@@ -173,6 +173,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            app:helperText="@string/reg_helper_telefono"
+            app:helperTextEnabled="true"
             android:hint="@string/reg_hint_telefono">
 
             <com.google.android.material.textfield.TextInputEditText

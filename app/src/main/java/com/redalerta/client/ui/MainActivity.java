@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityMainBinding;
 import com.redalerta.client.network.ApiClient;
@@ -20,6 +19,7 @@ import com.redalerta.client.ui.alert.MiPerfilFragment;
 import com.redalerta.client.ui.alert.MisPublicacionesFragment;
 import com.redalerta.client.ui.auth.LoginActivity;
 import com.redalerta.client.ui.org.BandejaOrganizacionFragment;
+import com.redalerta.client.util.CerrarSesionDialog;
 import com.redalerta.client.util.SessionManager;
 
 import retrofit2.Call;
@@ -107,8 +107,13 @@ public class MainActivity extends AppCompatActivity {
         binding.btnSalir.setOnClickListener(v -> confirmarYCerrarSesion());
 
         // ══════════════════════════════════════════════════
-        // Manejo del botón "atrás" físico
+        // Manejo del botón "atrás" físico y visibilidad del BottomNav
         // ══════════════════════════════════════════════════
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            boolean esPantallaRaiz = getSupportFragmentManager().getBackStackEntryCount() == 0;
+            setBottomNavigationVisible(esPantallaRaiz);
+        });
+
         getOnBackPressedDispatcher().addCallback(this,
                 new OnBackPressedCallback(true) {
                     @Override
@@ -122,13 +127,14 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    public void setBottomNavigationVisible(boolean visible) {
+        if (binding != null && binding.bottomNavigation != null) {
+            binding.bottomNavigation.setVisibility(visible ? android.view.View.VISIBLE : android.view.View.GONE);
+        }
+    }
+
     private void confirmarYCerrarSesion() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Cerrar sesión")
-                .setMessage("¿Estás seguro de que deseas salir de tu cuenta RedAlerta en este dispositivo?")
-                .setPositiveButton("Cerrar sesión", (dialog, which) -> ejecutarLogoutBackendYSalir())
-                .setNegativeButton("Cancelar", null)
-                .show();
+        CerrarSesionDialog.mostrar(this, this::ejecutarLogoutBackendYSalir);
     }
 
     private void ejecutarLogoutBackendYSalir() {

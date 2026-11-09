@@ -10,8 +10,11 @@ import androidx.lifecycle.MutableLiveData;
 import com.redalerta.client.model.alerta.Alerta;
 import com.redalerta.client.model.alerta.CancelarDireccionamientoRequest;
 import com.redalerta.client.model.alerta.DireccionarAlertaRequest;
+import com.redalerta.client.model.alerta.IniciarGestionRequest;
 import com.redalerta.client.model.alerta.OrganizacionResponse;
 import com.redalerta.client.model.alerta.PageAlertaResponse;
+import com.redalerta.client.model.alerta.RechazarAlertaRequest;
+import com.redalerta.client.model.alerta.ResolverAlertaRequest;
 import com.redalerta.client.network.ApiClient;
 import com.redalerta.client.network.ApiResponse;
 import com.redalerta.client.util.ManejadorErrores;
@@ -30,6 +33,7 @@ public class AlertaLiderViewModel extends AndroidViewModel {
 
     private final MutableLiveData<UiState> uiState = new MutableLiveData<>(UiState.IDLE);
     private final MutableLiveData<String> error = new MutableLiveData<>();
+    private final MutableLiveData<String> mensajeExito = new MutableLiveData<>();
     private final MutableLiveData<List<OrganizacionResponse>> organizacionesElegibles = new MutableLiveData<>();
     private final MutableLiveData<Alerta> alertaDireccionada = new MutableLiveData<>();
     private final MutableLiveData<Alerta> alertaDetalle = new MutableLiveData<>();
@@ -41,10 +45,19 @@ public class AlertaLiderViewModel extends AndroidViewModel {
 
     public LiveData<UiState> getUiState() { return uiState; }
     public LiveData<String> getError() { return error; }
+    public LiveData<String> getMensajeExito() { return mensajeExito; }
     public LiveData<List<OrganizacionResponse>> getOrganizacionesElegibles() { return organizacionesElegibles; }
     public LiveData<Alerta> getAlertaDireccionada() { return alertaDireccionada; }
     public LiveData<Alerta> getAlertaDetalle() { return alertaDetalle; }
     public LiveData<List<Alerta>> getBandejaDireccionadas() { return bandejaDireccionadas; }
+
+    public void limpiarMensajeExito() {
+        mensajeExito.setValue(null);
+    }
+
+    public void limpiarError() {
+        error.setValue(null);
+    }
 
     public void cargarOrganizacionesElegibles() {
         uiState.setValue(UiState.LOADING);
@@ -97,6 +110,7 @@ public class AlertaLiderViewModel extends AndroidViewModel {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Response<ApiResponse<Alerta>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    mensajeExito.setValue("Estado de la alerta actualizado con éxito");
                     alertaDireccionada.setValue(response.body().getData());
                     uiState.setValue(UiState.SUCCESS);
                 } else {
@@ -120,6 +134,7 @@ public class AlertaLiderViewModel extends AndroidViewModel {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Response<ApiResponse<Alerta>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    mensajeExito.setValue("Estado de la alerta actualizado con éxito");
                     alertaDireccionada.setValue(response.body().getData());
                     uiState.setValue(UiState.SUCCESS);
                 } else {
@@ -143,10 +158,85 @@ public class AlertaLiderViewModel extends AndroidViewModel {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Response<ApiResponse<Alerta>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    mensajeExito.setValue("Estado de la alerta actualizado con éxito");
                     alertaDireccionada.setValue(response.body().getData());
                     uiState.setValue(UiState.SUCCESS);
                 } else {
                     error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ManejadorErrores.ContextoOperacion.GENERAL));
+                    uiState.setValue(UiState.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Throwable t) {
+                error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
+                uiState.setValue(UiState.ERROR);
+            }
+        });
+    }
+
+    // ═══ Gestión y Atención Comunitaria (ROLE_ORGANIZACION) ═══
+
+    public void iniciarGestionAlerta(long alertaId, String observacionInicial) {
+        uiState.setValue(UiState.LOADING);
+        IniciarGestionRequest request = new IniciarGestionRequest(observacionInicial);
+        ApiClient.getApiService(getApplication()).iniciarGestionAlerta(alertaId, request).enqueue(new Callback<ApiResponse<Alerta>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Response<ApiResponse<Alerta>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    mensajeExito.setValue("Gestión iniciada");
+                    alertaDireccionada.setValue(response.body().getData());
+                    uiState.setValue(UiState.SUCCESS);
+                } else {
+                    error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ManejadorErrores.ContextoOperacion.ALERTAS));
+                    uiState.setValue(UiState.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Throwable t) {
+                error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
+                uiState.setValue(UiState.ERROR);
+            }
+        });
+    }
+
+    public void resolverAlerta(long alertaId, String informeResolucion) {
+        uiState.setValue(UiState.LOADING);
+        ResolverAlertaRequest request = new ResolverAlertaRequest(informeResolucion);
+        ApiClient.getApiService(getApplication()).resolverAlerta(alertaId, request).enqueue(new Callback<ApiResponse<Alerta>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Response<ApiResponse<Alerta>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    mensajeExito.setValue("Alerta resuelta exitosamente");
+                    alertaDireccionada.setValue(response.body().getData());
+                    uiState.setValue(UiState.SUCCESS);
+                } else {
+                    error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ManejadorErrores.ContextoOperacion.ALERTAS));
+                    uiState.setValue(UiState.ERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Throwable t) {
+                error.setValue(ManejadorErrores.obtenerMensajeFalloRed(t));
+                uiState.setValue(UiState.ERROR);
+            }
+        });
+    }
+
+    public void rechazarAlerta(long alertaId, String motivo) {
+        uiState.setValue(UiState.LOADING);
+        RechazarAlertaRequest request = new RechazarAlertaRequest(motivo);
+        ApiClient.getApiService(getApplication()).rechazarAlerta(alertaId, request).enqueue(new Callback<ApiResponse<Alerta>>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Alerta>> call, @NonNull Response<ApiResponse<Alerta>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    mensajeExito.setValue("Alerta rechazada");
+                    alertaDireccionada.setValue(response.body().getData());
+                    uiState.setValue(UiState.SUCCESS);
+                } else {
+                    error.setValue(ManejadorErrores.obtenerMensajeAmigable(response, ManejadorErrores.ContextoOperacion.ALERTAS));
                     uiState.setValue(UiState.ERROR);
                 }
             }

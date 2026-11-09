@@ -27,6 +27,9 @@ public class Alerta implements Serializable {
     private Long organizacionId;
     private String organizacionNombre;
     private String observacionTecnica;
+    private String observacionInicial;
+    private String informeResolucion;
+    private String motivoRechazo;
 
     // Campos de conveniencia para la UI / Adapters
     private String titulo;
@@ -89,6 +92,15 @@ public class Alerta implements Serializable {
 
     public String getObservacionTecnica() { return observacionTecnica; }
     public void setObservacionTecnica(String observacionTecnica) { this.observacionTecnica = observacionTecnica; }
+
+    public String getObservacionInicial() { return observacionInicial; }
+    public void setObservacionInicial(String observacionInicial) { this.observacionInicial = observacionInicial; }
+
+    public String getInformeResolucion() { return informeResolucion; }
+    public void setInformeResolucion(String informeResolucion) { this.informeResolucion = informeResolucion; }
+
+    public String getMotivoRechazo() { return motivoRechazo; }
+    public void setMotivoRechazo(String motivoRechazo) { this.motivoRechazo = motivoRechazo; }
 
     // Helpers UI
     public String getTitulo() {

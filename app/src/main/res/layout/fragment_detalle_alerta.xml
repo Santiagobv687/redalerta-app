@@ -371,6 +371,16 @@
         android:visibility="gone"
         tools:visibility="visible">
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressAccionLider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="@color/ra_red"
+            app:trackCornerRadius="4dp" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEvaluarDireccionar"
             android:layout_width="match_parent"
@@ -407,36 +417,103 @@
 
     </LinearLayout>
 
-    <!-- BANNER INFORMATIVO PARA ORGANIZACIÓN -->
+    <!-- ACCIONES INFERIORES PARA ORGANIZACIÓN (ROLE_ORGANIZACION) -->
     <LinearLayout
         android:id="@+id/layoutBannerOrganizacion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginBottom="80dp"
-        android:background="@color/ra_summary_bg"
+        android:background="@color/ra_white"
         android:elevation="8dp"
-        android:gravity="center"
+        android:orientation="vertical"
         android:paddingHorizontal="20dp"
         android:paddingVertical="16dp"
         android:visibility="gone"
         tools:visibility="visible">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_check_success"
-            app:tint="@color/ra_summary_text" />
-
-        <TextView
-            android:layout_width="wrap_content"
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressAccionOrganizacion"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Caso asignado a su entidad para atención operativa"
-            android:textColor="@color/ra_summary_text"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="10dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="@color/ra_red"
+            app:trackCornerRadius="4dp" />
+
+        <!-- Encabezado informativo -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_check_success"
+                app:tint="@color/ra_summary_text" />
+
+            <TextView
+                android:id="@+id/tvEstadoOperativoOrganizacion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Caso asignado a su entidad para atención operativa"
+                android:textColor="@color/ra_summary_text"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 1. Botón destacado: Iniciar Gestión (visible en estado DIRECCIONADA) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnIniciarGestion"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Iniciar Gestión"
+            android:textColor="@color/ra_white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:backgroundTint="@color/ra_red"
+            app:cornerRadius="26dp" />
+
+        <!-- 2. Botón destacado: Resolver Alerta (visible en estado EN_GESTION) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnResolverAlerta"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Resolver Alerta"
+            android:textColor="@color/ra_white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:backgroundTint="@color/ra_success_card_text"
+            app:cornerRadius="26dp" />
+
+        <!-- 3. Botón secundario: Rechazar Alerta (visible en DIRECCIONADA o EN_GESTION) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRechazarAlerta"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Rechazar Alerta"
+            android:textColor="@color/ra_red"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:cornerRadius="26dp"
+            app:strokeColor="@color/ra_red" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

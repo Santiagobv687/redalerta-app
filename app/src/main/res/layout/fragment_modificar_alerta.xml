@@ -26,14 +26,15 @@
             app:titleTextColor="@color/ra_white" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- FORMULARIO CON SCROLL -->
+    <!-- FORMULARIO CON SCROLL Y ADAPTACIÓN AL TECLADO (adjustResize) -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollModificarAlerta"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingBottom="96dp"
+        android:isScrollContainer="true"
+        android:paddingBottom="24dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -56,17 +57,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="6dp"
-                android:text="DESCRIPCIÓN DEL INCIDENTE *"
+                android:text="@string/alerta_seccion_descripcion"
                 android:textColor="@color/ra_light_text"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilDescripcion"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.RedAlerta.InputLight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Detalle lo sucedido (mínimo 10 caracteres) *"
+                android:hint="@string/alerta_hint_descripcion"
                 app:counterEnabled="true"
                 app:counterMaxLength="1000">
 
@@ -78,6 +79,7 @@
                     android:inputType="textMultiLine|textCapSentences"
                     android:maxLength="1000"
                     android:minLines="4"
+                    android:padding="14dp"
                     android:textColor="@color/ra_light_text"
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -88,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="6dp"
-                android:text="UBICACIÓN Y GEOLOCALIZACIÓN GPS *"
+                android:text="@string/alerta_seccion_ubicacion"
                 android:textColor="@color/ra_light_text"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -231,6 +233,7 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <!-- Lectura de coordenadas WGS84 capturadas -->
+                    <!-- Lectura de coordenadas WGS84 capturadas -->
                     <TextView
                         android:id="@+id/tvCoordenadasGps"
                         android:layout_width="match_parent"
@@ -241,6 +244,18 @@
                         android:textSize="12sp"
                         android:textStyle="bold"
                         tools:text="Lat: 4.533889, Lon: -75.681111 • Alt: 1483 m" />
+
+                    <!-- Ubicación territorial detectada automáticamente por el mapa GPS -->
+                    <TextView
+                        android:id="@+id/tvUbicacionDetectada"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:textColor="@color/ra_light_text"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        tools:text="Municipio detectado: Armenia, Quindío" />
 
                     <!-- Botón explícito modo vista previa: "Seleccionar en el mapa" -->
                     <com.google.android.material.button.MaterialButton
@@ -297,51 +312,18 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Selector Departamento -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilDepartamento"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="DEPARTAMENTO *"
-                app:endIconMode="dropdown_menu">
-
-                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/etDepartamento"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:textColor="@color/ra_light_text"
-                    android:textSize="14sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Selector Municipio -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilMunicipio"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="MUNICIPIO / CIUDAD *"
-                app:endIconMode="dropdown_menu">
-
-                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/etMunicipio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:textColor="@color/ra_light_text"
-                    android:textSize="14sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Dirección Detallada / Punto de Referencia -->
+            <!-- Dirección Detallada / Punto de Referencia (Único campo editable de ubicación) -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilDireccionDetallada"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.RedAlerta.InputLight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:hint="DIRECCIÓN DETALLADA O PUNTO DE REFERENCIA *"
+                android:hint="@string/alerta_label_direccion_detallada"
+                app:helperText="@string/alerta_helper_direccion"
+                app:helperTextEnabled="true"
+                app:startIconDrawable="@drawable/ic_location_on"
+                app:startIconTint="@color/ra_red"
                 app:counterEnabled="true"
                 app:counterMaxLength="255">
 
@@ -351,6 +333,9 @@
                     android:layout_height="wrap_content"
                     android:inputType="textPostalAddress|textCapSentences"
                     android:maxLength="255"
+                    android:minHeight="48dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="16dp"
                     android:textColor="@color/ra_light_text"
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -367,7 +352,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="EVIDENCIAS FOTOGRÁFICAS (Máx. 5)"
+                    android:text="@string/alerta_seccion_evidencias"
                     android:textColor="@color/ra_light_text"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -405,18 +390,58 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/item_evidencia_seleccionada" />
 
-            <!-- 4. CHECKBOX DE ANONIMATO -->
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/cbAnonimo"
+            <!-- 4. OPCIÓN DE ANONIMATO Y PRIVACIDAD -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAnonimo"
+                style="@style/Widget.RedAlerta.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:buttonTint="@color/ra_red"
-                android:text="¿Publicar de forma anónima?"
-                android:textColor="@color/ra_light_text"
-                android:textSize="15sp"
-                app:checkedIconTint="@color/ra_white"
-                app:checkedIconVisible="true" />
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="14dp">
+
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/cbAnonimo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp"
+                        android:clickable="false"
+                        android:focusable="false" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/alerta_label_anonimo"
+                            android:textColor="@color/ra_light_text"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:lineSpacingMultiplier="1.15"
+                            android:text="@string/alerta_desc_anonimo"
+                            android:textColor="@color/ra_light_text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- 5. BOTONES DE ACCIÓN -->
             <com.google.android.material.button.MaterialButton

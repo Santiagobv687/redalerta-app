@@ -92,6 +92,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            app:helperText="@string/reg_helper_integrantes"
+            app:helperTextEnabled="true"
             android:hint="@string/reg_hint_integrantes">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -99,7 +101,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:text="1"
                 android:textColor="@color/ra_light_text"
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>

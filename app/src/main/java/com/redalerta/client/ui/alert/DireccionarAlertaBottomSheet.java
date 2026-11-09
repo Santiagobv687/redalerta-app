@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
+import com.redalerta.client.util.AlertaMensajesHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,7 +78,8 @@ public class DireccionarAlertaBottomSheet extends BottomSheetDialogFragment {
                 "DESASTRE NATURAL", "INCENDIO", "SEGURIDAD CIUDADANA",
                 "INFRAESTRUCTURA Y SERVICIOS", "SALUD Y EMERGENCIA MEDICA", "AMBIENTAL", "OTRO"
         };
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, categorias);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.item_dropdown_ubicacion, categorias);
+        binding.etCategoria.setDropDownBackgroundResource(R.drawable.bg_dropdown_popup);
         binding.etCategoria.setAdapter(adapter);
 
         if (isModificacion && alerta != null && alerta.getCategoria() != null) {
@@ -192,7 +193,7 @@ public class DireccionarAlertaBottomSheet extends BottomSheetDialogFragment {
             }
             dismiss();
         } catch (Exception e) {
-            Toast.makeText(requireContext(), "Error al procesar ID", Toast.LENGTH_SHORT).show();
+            AlertaMensajesHelper.mostrarError(binding.getRoot(), "Error al procesar ID");
         }
     }
 
@@ -204,7 +205,8 @@ public class DireccionarAlertaBottomSheet extends BottomSheetDialogFragment {
                 for (OrganizacionResponse o : orgs) {
                     nombres.add(o.getNombre());
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, nombres);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.item_dropdown_ubicacion, nombres);
+                binding.etOrganizacion.setDropDownBackgroundResource(R.drawable.bg_dropdown_popup);
                 binding.etOrganizacion.setAdapter(adapter);
 
                 if (isModificacion) {

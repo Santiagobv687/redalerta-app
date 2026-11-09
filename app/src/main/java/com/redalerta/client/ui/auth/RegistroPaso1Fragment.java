@@ -128,7 +128,9 @@ public class RegistroPaso1Fragment extends Fragment {
         if (nombre.isEmpty() || nombre.length() < 3) { binding.tilNombre.setError("Nombre requerido (Mín. 3 caracteres)"); ok = false; } else { limpiarErrorCampo(binding.tilNombre); }
         if (apellido.isEmpty()) { binding.tilApellido.setError("Apellido requerido"); ok = false; } else { limpiarErrorCampo(binding.tilApellido); }
         if (!Validaciones.esCorreoValido(correo)) { binding.tilCorreo.setError("Correo electrónico inválido"); ok = false; } else { limpiarErrorCampo(binding.tilCorreo); }
-        if (telefono.length() > 20) { binding.tilTelefono.setError("Máximo 20 dígitos"); ok = false; } else { limpiarErrorCampo(binding.tilTelefono); }
+        if (telefono.isEmpty()) { binding.tilTelefono.setError("Teléfono móvil requerido"); ok = false; }
+        else if (telefono.length() < 7 || telefono.length() > 20) { binding.tilTelefono.setError("Ingrese un número de teléfono válido (7 a 20 dígitos)"); ok = false; }
+        else { limpiarErrorCampo(binding.tilTelefono); }
 
         return ok;
     }

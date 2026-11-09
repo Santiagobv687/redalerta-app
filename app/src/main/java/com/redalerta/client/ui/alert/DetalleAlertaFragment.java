@@ -250,12 +250,15 @@ public class DetalleAlertaFragment extends Fragment {
             binding.scrollEvidencias.setVisibility(View.GONE);
         }
 
-        // Evaluación del Líder Comunitario (Si existe)
+        // Evaluación del Líder Comunitario y Seguimiento Operativo (Si existe)
         String lider = alerta.getLiderNombre() != null ? alerta.getLiderNombre() : null;
         String obsTech = alerta.getObservacionTecnica() != null ? alerta.getObservacionTecnica() : null;
         String orgNombre = alerta.getOrganizacionNombre() != null ? alerta.getOrganizacionNombre() : null;
+        String obsInicial = alerta.getObservacionInicial() != null ? alerta.getObservacionInicial() : null;
+        String informeRes = alerta.getInformeResolucion() != null ? alerta.getInformeResolucion() : null;
+        String motivoRechazo = alerta.getMotivoRechazo() != null ? alerta.getMotivoRechazo() : null;
 
-        if (lider != null || obsTech != null || orgNombre != null) {
+        if (lider != null || obsTech != null || orgNombre != null || obsInicial != null || informeRes != null || motivoRechazo != null) {
             binding.cardEvaluacionLider.setVisibility(View.VISIBLE);
             if (lider != null) {
                 binding.tvLiderRemitente.setText("Remitido por: " + lider);
@@ -271,9 +274,26 @@ public class DetalleAlertaFragment extends Fragment {
             }
             binding.tvLiderCategoriaPrioridad.setText(catPrioText);
 
+            StringBuilder notasDetalle = new StringBuilder();
             if (obsTech != null && !obsTech.trim().isEmpty()) {
+                notasDetalle.append("Observación técnica: ").append(obsTech.trim());
+            }
+            if (obsInicial != null && !obsInicial.trim().isEmpty()) {
+                if (notasDetalle.length() > 0) notasDetalle.append("\n\n");
+                notasDetalle.append("Nota de inicio de gestión: ").append(obsInicial.trim());
+            }
+            if (informeRes != null && !informeRes.trim().isEmpty()) {
+                if (notasDetalle.length() > 0) notasDetalle.append("\n\n");
+                notasDetalle.append("Informe de resolución: ").append(informeRes.trim());
+            }
+            if (motivoRechazo != null && !motivoRechazo.trim().isEmpty()) {
+                if (notasDetalle.length() > 0) notasDetalle.append("\n\n");
+                notasDetalle.append("Motivo de rechazo: ").append(motivoRechazo.trim());
+            }
+
+            if (notasDetalle.length() > 0) {
                 binding.tvLiderObservacionTecnica.setVisibility(View.VISIBLE);
-                binding.tvLiderObservacionTecnica.setText("Observación técnica: " + obsTech);
+                binding.tvLiderObservacionTecnica.setText(notasDetalle.toString());
             } else {
                 binding.tvLiderObservacionTecnica.setVisibility(View.GONE);
             }
@@ -381,7 +401,7 @@ public class DetalleAlertaFragment extends Fragment {
     }
 
     private void configurarAccionesPorRol() {
-        if (alerta == null) return;
+        if (alerta == null || binding == null) return;
         String rol = sessionManager.getRol();
         String estado = alerta.getEstado() != null ? alerta.getEstado().toUpperCase() : "";
 
@@ -390,6 +410,10 @@ public class DetalleAlertaFragment extends Fragment {
 
         if (esLider) {
             binding.layoutBannerOrganizacion.setVisibility(View.GONE);
+            binding.btnIniciarGestion.setVisibility(View.GONE);
+            binding.btnResolverAlerta.setVisibility(View.GONE);
+            binding.btnRechazarAlerta.setVisibility(View.GONE);
+
             binding.layoutAccionesLider.setVisibility(View.VISIBLE);
 
             if (estado.equals("PENDIENTE_REVISION") || estado.equals("RECHAZADA")) {
@@ -410,10 +434,41 @@ public class DetalleAlertaFragment extends Fragment {
             }
         } else if (esOrganizacion) {
             binding.layoutAccionesLider.setVisibility(View.GONE);
-            binding.layoutBannerOrganizacion.setVisibility(View.VISIBLE);
+
+            if (estado.equals("DIRECCIONADA")) {
+                binding.layoutBannerOrganizacion.setVisibility(View.VISIBLE);
+                binding.tvEstadoOperativoOrganizacion.setText("Caso asignado a su entidad para atención operativa");
+
+                binding.btnIniciarGestion.setVisibility(View.VISIBLE);
+                binding.btnResolverAlerta.setVisibility(View.GONE);
+                binding.btnRechazarAlerta.setVisibility(View.VISIBLE);
+
+                binding.btnIniciarGestion.setOnClickListener(v -> solicitarIniciarGestion());
+                binding.btnRechazarAlerta.setOnClickListener(v -> solicitarRechazarAlerta());
+            } else if (estado.equals("EN_GESTION") || estado.equals("EN_ATENCION")) {
+                binding.layoutBannerOrganizacion.setVisibility(View.VISIBLE);
+                binding.tvEstadoOperativoOrganizacion.setText("Atención comunitaria en terreno en curso");
+
+                binding.btnIniciarGestion.setVisibility(View.GONE);
+                binding.btnResolverAlerta.setVisibility(View.VISIBLE);
+                binding.btnRechazarAlerta.setVisibility(View.VISIBLE);
+
+                binding.btnResolverAlerta.setOnClickListener(v -> solicitarResolverAlerta());
+                binding.btnRechazarAlerta.setOnClickListener(v -> solicitarRechazarAlerta());
+            } else {
+                // RESUELTA, RECHAZADA u otro estado finalizado: ocultar todos los botones de acción
+                binding.layoutBannerOrganizacion.setVisibility(View.GONE);
+                binding.btnIniciarGestion.setVisibility(View.GONE);
+                binding.btnResolverAlerta.setVisibility(View.GONE);
+                binding.btnRechazarAlerta.setVisibility(View.GONE);
+            }
         } else {
+            // Para otros roles (como CIUDADANO común): ocultar todos los botones de acción
             binding.layoutAccionesLider.setVisibility(View.GONE);
             binding.layoutBannerOrganizacion.setVisibility(View.GONE);
+            binding.btnIniciarGestion.setVisibility(View.GONE);
+            binding.btnResolverAlerta.setVisibility(View.GONE);
+            binding.btnRechazarAlerta.setVisibility(View.GONE);
         }
     }
 
@@ -423,40 +478,75 @@ public class DetalleAlertaFragment extends Fragment {
     }
 
     private void solicitarMotivoCancelacion() {
-        final EditText input = new EditText(requireContext());
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        input.setHint("Explique por qué cancela el direccionamiento");
-
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Cancelar Direccionamiento")
-                .setMessage("Esta acción devolverá la alerta a estado PENDIENTE DE REVISIÓN y retirará la asignación a la entidad. Debe ingresar un motivo justificado.")
-                .setView(input)
-                .setPositiveButton("Confirmar y Cancelar", (dialog, which) -> {
-                    String motivo = input.getText().toString().trim();
-                    if (motivo.length() < 5) {
-                        Toast.makeText(requireContext(), "Motivo muy corto", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+        com.redalerta.client.util.AlertaMensajesHelper.mostrarDialogoCancelarDireccionamiento(
+                requireContext(),
+                motivo -> {
                     try {
                         long id = Long.parseLong(alerta.getId());
                         viewModel.cancelarDireccionamiento(id, motivo);
-                    } catch (Exception e) {}
-                })
-                .setNegativeButton("Volver", null)
-                .show();
+                    } catch (Exception ignored) {}
+                }
+        );
+    }
+
+    private void solicitarIniciarGestion() {
+        com.redalerta.client.util.AlertaMensajesHelper.mostrarDialogoIniciarGestion(
+                requireContext(),
+                observacionInicial -> {
+                    try {
+                        long id = Long.parseLong(alerta.getId());
+                        viewModel.iniciarGestionAlerta(id, observacionInicial);
+                    } catch (Exception ignored) {}
+                }
+        );
+    }
+
+    private void solicitarResolverAlerta() {
+        com.redalerta.client.util.AlertaMensajesHelper.mostrarDialogoResolverAlerta(
+                requireContext(),
+                informeResolucion -> {
+                    try {
+                        long id = Long.parseLong(alerta.getId());
+                        viewModel.resolverAlerta(id, informeResolucion);
+                    } catch (Exception ignored) {}
+                }
+        );
+    }
+
+    private void solicitarRechazarAlerta() {
+        com.redalerta.client.util.AlertaMensajesHelper.mostrarDialogoRechazarAlerta(
+                requireContext(),
+                motivo -> {
+                    try {
+                        long id = Long.parseLong(alerta.getId());
+                        viewModel.rechazarAlerta(id, motivo);
+                    } catch (Exception ignored) {}
+                }
+        );
+    }
+
+    private void actualizarEstadoCargaBotones(boolean cargando) {
+        if (binding == null) return;
+        binding.progressAccionLider.setVisibility(cargando ? View.VISIBLE : View.GONE);
+        binding.progressAccionOrganizacion.setVisibility(cargando ? View.VISIBLE : View.GONE);
+
+        binding.btnEvaluarDireccionar.setEnabled(!cargando);
+        binding.btnModificarDireccionamiento.setEnabled(!cargando);
+        binding.btnCancelarDireccionamiento.setEnabled(!cargando);
+
+        binding.btnIniciarGestion.setEnabled(!cargando);
+        binding.btnResolverAlerta.setEnabled(!cargando);
+        binding.btnRechazarAlerta.setEnabled(!cargando);
     }
 
     private void observeViewModel() {
         viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
-            if (state == AlertaLiderViewModel.UiState.LOADING) {
-                // Show loading indicator if needed
-            } else if (state == AlertaLiderViewModel.UiState.SUCCESS) {
-                // Done
-            }
+            boolean enCurso = (state == AlertaLiderViewModel.UiState.LOADING);
+            actualizarEstadoCargaBotones(enCurso);
         });
 
         viewModel.getAlertaDetalle().observe(getViewLifecycleOwner(), al -> {
-            if (al != null) {
+            if (al != null && alerta != null && al.getId() != null && al.getId().equals(alerta.getId())) {
                 this.alerta = al;
                 poblarDatos();
                 configurarAccionesPorRol();
@@ -464,17 +554,33 @@ public class DetalleAlertaFragment extends Fragment {
         });
 
         viewModel.getAlertaDireccionada().observe(getViewLifecycleOwner(), al -> {
-            if (al != null) {
+            if (al != null && (alerta == null || alerta.getId() == null || al.getId() == null || al.getId().equals(alerta.getId()))) {
                 this.alerta = al;
                 poblarDatos();
                 configurarAccionesPorRol();
-                Toast.makeText(requireContext(), "Estado de la alerta actualizado con éxito", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.getMensajeExito().observe(getViewLifecycleOwner(), msgExito -> {
+            if (msgExito != null && !msgExito.isEmpty()) {
+                viewModel.limpiarMensajeExito();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarExito(
+                        binding.getRoot(),
+                        msgExito
+                );
+                // Refrescar la bandeja de la organización en segundo plano si aplica
+                try {
+                    new ViewModelProvider(requireActivity())
+                            .get(com.redalerta.client.viewmodel.OrganizacionBandejaViewModel.class)
+                            .cargarBandejaOrganizacion();
+                } catch (Exception ignored) {}
             }
         });
 
         viewModel.getError().observe(getViewLifecycleOwner(), errorMsg -> {
             if (errorMsg != null && !errorMsg.isEmpty()) {
-                Snackbar.make(binding.getRoot(), errorMsg, Snackbar.LENGTH_LONG).show();
+                viewModel.limpiarError();
+                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(binding.getRoot(), errorMsg);
             }
         });
     }

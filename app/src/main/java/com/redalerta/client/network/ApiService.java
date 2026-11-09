@@ -130,4 +130,25 @@ public interface ApiService {
             @Query("size") Integer size,
             @Query("sort") String sort
     );
+
+    // 1. Iniciar atención en terreno (Pasa de DIRECCIONADA a EN_GESTION)
+    @POST("alertas/{id}/iniciar-gestion")
+    Call<ApiResponse<Alerta>> iniciarGestionAlerta(
+            @Path("id") long alertaId,
+            @Body IniciarGestionRequest request
+    );
+
+    // 2. Resolver y cerrar alerta (Pasa de EN_GESTION a RESUELTA)
+    @POST("alertas/{id}/resolver")
+    Call<ApiResponse<Alerta>> resolverAlerta(
+            @Path("id") long alertaId,
+            @Body ResolverAlertaRequest request
+    );
+
+    // 3. Descartar o rechazar alerta (Pasa a RECHAZADA)
+    @POST("alertas/{id}/rechazar")
+    Call<ApiResponse<Alerta>> rechazarAlerta(
+            @Path("id") long alertaId,
+            @Body RechazarAlertaRequest request
+    );
 }

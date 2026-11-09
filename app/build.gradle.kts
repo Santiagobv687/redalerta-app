@@ -32,7 +32,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"https://api.redalerta.com/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://redalerta-api.duckdns.org/api/v1/\"")
         }
     }
 
