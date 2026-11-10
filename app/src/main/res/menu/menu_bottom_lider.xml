@@ -11,6 +11,11 @@
         android:title="Mi Gestión" />
 
     <item
+        android:id="@+id/nav_notificaciones"
+        android:icon="@drawable/ic_notifications"
+        android:title="Notificaciones" />
+
+    <item
         android:id="@+id/nav_perfil"
         android:icon="@drawable/ic_person"
         android:title="Mi Perfil" />

@@ -2,6 +2,18 @@
 
     <!-- ═══ Estilo base vacío para herencia implícita ═══ -->
     <style name="Widget.RedAlerta" parent="" />
+
+    <!-- Diálogo superpuesto a pantalla completa (selector de ubicación en el mapa) -->
+    <style name="Theme.RedAlerta.FullScreenDialog" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/ra_light_bg</item>
+        <item name="android:statusBarColor">@color/ra_topbar</item>
+        <item name="android:navigationBarColor">@color/ra_light_card</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="colorPrimary">@color/ra_red</item>
+        <item name="colorOnPrimary">@color/ra_white</item>
+    </style>
     <!-- Tema principal dark, sin ActionBar -->
     <style name="Theme.RedAlerta" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/ra_red</item>
@@ -213,5 +225,19 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
+    <!-- Chip de filtro tipo píldora (identidad RedAlerta / M3) sin ícono de check -->
+    <style name="Widget.RedAlerta.Chip.Filter" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/selector_pill_filter_bg</item>
+        <item name="android:textColor">@color/selector_pill_filter_text</item>
+        <item name="chipStrokeColor">@color/selector_pill_filter_stroke</item>
+        <item name="chipStrokeWidth">1.2dp</item>
+        <item name="chipCornerRadius">18dp</item>
+        <item name="chipIconVisible">false</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">38dp</item>
     </style>
 </resources>

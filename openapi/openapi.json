@@ -10,7 +10,7 @@
         "license": {
             "name": "Uso Academico e Institucional"
         },
-        "version": "1.0.0"
+        "version": "2.0.0"
     },
     "servers": [
         {
@@ -1997,6 +1997,72 @@
                         "BearerAuth": []
                     }
                 ]
+            },
+            "delete": {
+                "tags": [
+                    "Notificaciones"
+                ],
+                "summary": "Eliminar notificación",
+                "description": "Elimina permanentemente una notificación específica del usuario autenticado.",
+                "operationId": "eliminarNotificacion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notificación eliminada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acceso denegado o token ausente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Notificación no encontrada o no pertenece al usuario",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
             }
         },
         "/notificaciones/no-leidas/conteo": {
@@ -2270,7 +2336,7 @@
                     "Alertas"
                 ],
                 "summary": "Feed comunitario con paginacion por cursor (Scroll Infinito)",
-                "description": "Retorna un lote de alertas empleando Keyset Pagination (WHERE id < cursor) sin OFFSET. Ideal para el scroll infinito en la aplicacion movil evitando alertas duplicadas y degradacion de lectura.",
+                "description": "Retorna un lote de alertas empleando Keyset Pagination (WHERE id \u003C cursor) sin OFFSET. Ideal para el scroll infinito en la aplicacion movil evitando alertas duplicadas y degradacion de lectura.",
                 "operationId": "listarFeedAlertas",
                 "parameters": [
                     {
@@ -2865,24 +2931,24 @@
                         "format": "double",
                         "description": "Latitud geodesica en grados decimales (WGS84)",
                         "example": 4.533889,
-                        "maximum": 90.0,
-                        "minimum": -90.0
+                        "maximum": 90,
+                        "minimum": -90
                     },
                     "longitud": {
                         "type": "number",
                         "format": "double",
                         "description": "Longitud geodesica en grados decimales (WGS84)",
                         "example": -75.681111,
-                        "maximum": 180.0,
-                        "minimum": -180.0
+                        "maximum": 180,
+                        "minimum": -180
                     },
                     "altitud": {
                         "type": "number",
                         "format": "double",
                         "description": "Altitud sobre el nivel del mar en metros (opcional)",
-                        "example": 1483.0,
-                        "maximum": 9000.0,
-                        "minimum": -500.0
+                        "example": 1483,
+                        "maximum": 9000,
+                        "minimum": -500
                     }
                 },
                 "required": [
@@ -3359,6 +3425,7 @@
                     "email",
                     "nombre",
                     "password",
+                    "telefono",
                     "ubicacion"
                 ]
             },

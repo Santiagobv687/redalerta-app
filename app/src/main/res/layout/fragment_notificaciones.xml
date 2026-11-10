@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorNotificaciones"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ra_light_bg"
+    tools:context=".ui.notificacion.NotificacionesFragment">
+
+    <!-- BARRA DE ENCABEZADO Y FILTROS DE BANDEJA -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarNotificaciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ra_light_card"
+        app:elevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Notificaciones"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvResumenNoLeidas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_status_pendiente"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/ra_status_pendiente_text"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:text="3 sin leer"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <!-- Pista sutil de gesto swipe (HCI Signifier) -->
+            <TextView
+                android:id="@+id/tvGuiaSwipe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/notif_guia_swipe"
+                android:textColor="@color/ra_text_muted"
+                android:textSize="12sp" />
+
+            <!-- Fila de Filtros (Chips) y Acción Secundaria "Marcar todas como leídas" -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Chips de filtro tipo píldora (activo: tinte rojo sutil y texto rojo, sin check) -->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupFiltroNotificaciones"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipNotifTodas"
+                        style="@style/Widget.RedAlerta.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Todas" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipNotifNoLeidas"
+                        style="@style/Widget.RedAlerta.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="No leídas" />
+                </com.google.android.material.chip.ChipGroup>
+
+                <!-- Acción secundaria: Marcar todas como leídas (Outlined suave, color claro) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMarcarTodasLeidas"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:minHeight="48dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/notif_marcar_todas_leidas"
+                    android:textColor="@color/ra_light_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_check"
+                    app:iconPadding="4dp"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/ra_light_text_secondary"
+                    app:strokeColor="@color/ra_light_border"
+                    app:strokeWidth="1dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvNotificaciones"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="96dp"
+                tools:listitem="@layout/item_notificacion" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <!-- Estado Cargando -->
+        <LinearLayout
+            android:id="@+id/layoutLoadingNotif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminate="true"
+                app:indicatorColor="@color/ra_red"
+                app:trackColor="@color/ra_light_border" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Cargando notificaciones…"
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Estado Vacío -->
+        <LinearLayout
+            android:id="@+id/layoutEmptyNotif"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_notifications"
+                app:tint="@color/ra_gray" />
+
+            <TextView
+                android:id="@+id/tvEmptyTituloNotif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="No tienes notificaciones"
+                android:textColor="@color/ra_light_text"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvEmptySubtituloNotif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.2"
+                android:text="Aquí aparecerán las actualizaciones de estado y seguimiento de tus alertas comunitarias."
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnActualizarEmptyNotif"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                android:minWidth="140dp"
+                android:text="@string/btn_actualizar"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp"
+                app:cornerRadius="24dp"
+                app:icon="@drawable/ic_refresh"
+                app:iconTint="@color/ra_light_text"
+                app:strokeColor="@color/ra_light_border" />
+        </LinearLayout>
+
+        <!-- Estado Error -->
+        <LinearLayout
+            android:id="@+id/layoutErrorNotif"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_warning"
+                app:tint="@color/ra_red" />
+
+            <TextView
+                android:id="@+id/tvErrorMensajeNotif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/error_conexion_subtitulo"
+                android:textColor="@color/ra_light_text"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReintentarNotif"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                android:minWidth="140dp"
+                android:text="@string/btn_actualizar"
+                android:textColor="@color/ra_white"
+                android:textSize="14sp"
+                app:backgroundTint="@color/ra_red"
+                app:cornerRadius="24dp"
+                app:icon="@drawable/ic_refresh"
+                app:iconTint="@color/ra_white" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

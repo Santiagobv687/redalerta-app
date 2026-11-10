@@ -276,6 +276,36 @@
     <string name="alerta_helper_ubicacion_gps">Determinado automáticamente por el mapa GPS</string>
     <string name="alerta_municipio_detectado">Municipio detectado: %1$s, %2$s</string>
     <string name="alerta_guia_cambiar_ubicacion">Para cambiar el municipio o departamento, mueva el puntero en el mapa con «Seleccionar en el mapa»</string>
+
+    <!-- Selector de ubicación en mapa superpuesto -->
+    <string name="mapa_selector_titulo">Seleccionar ubicación</string>
+    <string name="mapa_selector_cerrar_desc">Cerrar sin guardar la ubicación</string>
+    <string name="mapa_selector_puntero_desc">Puntero de ubicación del incidente</string>
+    <string name="mapa_selector_instruccion">Mueva el mapa hasta que el puntero marque el lugar exacto del incidente.</string>
+    <string name="mapa_selector_consultando_direccion">Consultando dirección…</string>
+    <string name="mapa_selector_zoom_mas_desc">Acercar mapa</string>
+    <string name="mapa_selector_zoom_menos_desc">Alejar mapa</string>
+    <string name="mapa_selector_mi_gps_desc">Centrar en mi ubicación GPS</string>
+    <string name="mapa_selector_confirmar">Confirmar ubicación</string>
+    <string name="mapa_selector_cancelar">Cancelar</string>
+    <string name="mapa_selector_abrir_desc">Abrir el mapa para seleccionar la ubicación exacta</string>
+    <string name="mapa_selector_permiso_gps_denegado">Permiso de GPS no concedido. Mueva el mapa para elegir el punto.</string>
+    <string name="mapa_selector_sin_senal_gps">No hay señal GPS disponible. Mueva el mapa para elegir el punto.</string>
+    <string name="mapa_selector_direccion_con_municipio">%1$s · %2$s</string>
+
+    <!-- Detalle de Notificaciones (HCI & BottomSheet) -->
+    <string name="notif_detalle_nuevo_estado">Nuevo estado:</string>
+    <string name="notif_detalle_gestionado_por">Gestionado por:</string>
+    <string name="notif_detalle_motivo_label">Motivo / Observación técnica:</string>
+    <string name="notif_detalle_btn_entendido">Entendido</string>
+    <string name="notif_detalle_btn_ver_alerta">Ver incidente</string>
+    <string name="notif_detalle_responsable_formato">%1$s (%2$s)</string>
+    <string name="notif_marcar_todas_leidas">Marcar todas como leídas</string>
+    <string name="notif_todas_marcadas_exito">Todas las notificaciones fueron marcadas como leídas</string>
+    <string name="notif_eliminada_exito">Notificación eliminada</string>
+    <string name="notif_accion_deshacer">Deshacer</string>
+    <string name="notif_guia_swipe">Desliza una notificación para eliminarla</string>
+    <string name="notif_detalle_eliminar_desc">Eliminar esta notificación</string>
     <string name="alerta_label_anonimo">Publicar de forma anónima</string>
     <string name="alerta_desc_anonimo">Al activar esta opción, su nombre no será visible para los demás miembros de la comunidad en el feed público. Los líderes comunitarios verán el reporte con la etiqueta «Anónimo».</string>
 
