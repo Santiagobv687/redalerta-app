@@ -143,6 +143,14 @@ public class MisPublicacionesAdapter extends RecyclerView.Adapter<MisPublicacion
                 binding.layoutAccionesModificar.setVisibility(View.GONE);
             }
 
+            binding.layoutVerDetalle.setOnClickListener(v -> {
+                if (listener != null) listener.onAlertaClick(alerta);
+            });
+
+            binding.cardMiAlerta.setOnClickListener(v -> {
+                if (listener != null) listener.onAlertaClick(alerta);
+            });
+
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onAlertaClick(alerta);
             });
