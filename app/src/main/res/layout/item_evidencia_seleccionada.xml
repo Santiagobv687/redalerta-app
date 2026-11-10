@@ -38,8 +38,8 @@
         <!-- Botón Eliminar ("X") -->
         <ImageButton
             android:id="@+id/btnEliminar"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="top|end"
             android:layout_margin="4dp"
             android:background="@drawable/bg_avatar_circle"

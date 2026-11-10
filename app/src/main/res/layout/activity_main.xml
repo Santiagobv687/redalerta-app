@@ -83,6 +83,6 @@
         app:itemIconTint="@color/ra_bottom_nav_colors"
         app:itemTextColor="@color/ra_bottom_nav_colors"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/menu_bottom_ciudadano" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
