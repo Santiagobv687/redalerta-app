@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -357,12 +358,61 @@ public class RegistroAlertaFragment extends Fragment {
         }
     }
 
+    private final Runnable limpiarEstadoSubidaRunnable = () -> {
+        if (binding != null) {
+            binding.tvEstadoSubidaFotos.setText("");
+            binding.tvEstadoSubidaFotos.setVisibility(View.GONE);
+        }
+    };
+
+    private void mostrarEstadoSubida(String mensaje, boolean temporal) {
+        if (binding == null) return;
+        binding.tvEstadoSubidaFotos.removeCallbacks(limpiarEstadoSubidaRunnable);
+        if (mensaje == null || mensaje.trim().isEmpty() || listaEvidencias.isEmpty()) {
+            binding.tvEstadoSubidaFotos.setText("");
+            binding.tvEstadoSubidaFotos.setVisibility(View.GONE);
+            return;
+        }
+        binding.tvEstadoSubidaFotos.setText(mensaje);
+        binding.tvEstadoSubidaFotos.setVisibility(View.VISIBLE);
+        if (temporal) {
+            binding.tvEstadoSubidaFotos.postDelayed(limpiarEstadoSubidaRunnable, 2500);
+        }
+    }
+
     private void setupEvidencias() {
         evidenciasAdapter = new EvidenciasSeleccionadasAdapter(listaEvidencias, position -> {
             if (position >= 0 && position < listaEvidencias.size()) {
-                listaEvidencias.remove(position);
+                EvidenciasSeleccionadasAdapter.EvidenciaItem itemEliminado = listaEvidencias.remove(position);
                 evidenciasAdapter.notifyDataSetChanged();
                 validarEstadoBotonPublicar();
+
+                if (listaEvidencias.isEmpty()) {
+                    mostrarEstadoSubida("", false);
+                } else {
+                    mostrarEstadoSubida("Evidencia descartada.", true);
+                }
+
+                // Si la evidencia ya había sido subida a AWS S3, solicitar su eliminación inmediata
+                if (itemEliminado != null && itemEliminado.getUrlSubida() != null
+                        && !itemEliminado.getUrlSubida().trim().isEmpty()) {
+                    viewModel.eliminarEvidencia(itemEliminado.getUrlSubida(), new AlertaViewModel.OnEvidenciaEliminadaListener() {
+                        @Override
+                        public void onExito() {
+                            Log.d("RegistroAlertaFragment", "Evidencia eliminada exitosamente de S3");
+                        }
+
+                        @Override
+                        public void onError(String mensajeError) {
+                            if (isAdded() && getContext() != null) {
+                                com.redalerta.client.util.AlertaMensajesHelper.mostrarError(
+                                        binding.getRoot(),
+                                        "No fue posible eliminar la evidencia del servidor: " + mensajeError
+                                );
+                            }
+                        }
+                    });
+                }
             }
         });
 
@@ -396,15 +446,23 @@ public class RegistroAlertaFragment extends Fragment {
         evidenciasAdapter.notifyItemInserted(pos);
         validarEstadoBotonPublicar();
 
-        binding.tvEstadoSubidaFotos.setText("Subiendo evidencia fotográfica...");
+        mostrarEstadoSubida("Subiendo evidencia fotográfica...", false);
 
         viewModel.subirEvidencia(uri, new AlertaViewModel.OnEvidenciaSubidaListener() {
             @Override
             public void onExito(String urlSubida) {
+                if (!listaEvidencias.contains(item)) {
+                    // El usuario descartó la foto mientras se subía; purgar del bucket S3 inmediatamente
+                    viewModel.eliminarEvidencia(urlSubida, null);
+                    return;
+                }
                 item.setSubiendo(false);
                 item.setUrlSubida(urlSubida);
-                evidenciasAdapter.notifyItemChanged(pos);
-                binding.tvEstadoSubidaFotos.setText("Foto subida exitosamente.");
+                int indexActual = listaEvidencias.indexOf(item);
+                if (indexActual != -1) {
+                    evidenciasAdapter.notifyItemChanged(indexActual);
+                }
+                mostrarEstadoSubida("Foto subida exitosamente.", true);
                 validarEstadoBotonPublicar();
             }
 
@@ -413,7 +471,7 @@ public class RegistroAlertaFragment extends Fragment {
                 item.setSubiendo(false);
                 listaEvidencias.remove(item);
                 evidenciasAdapter.notifyDataSetChanged();
-                binding.tvEstadoSubidaFotos.setText("No fue posible subir la imagen. Intente nuevamente.");
+                mostrarEstadoSubida("No fue posible subir la imagen.", true);
                 com.redalerta.client.util.AlertaMensajesHelper.mostrarError(binding.getRoot(), mensajeError);
                 validarEstadoBotonPublicar();
             }
@@ -575,6 +633,7 @@ public class RegistroAlertaFragment extends Fragment {
     public void onDestroyView() {
         detenerActualizacionesUbicacion();
         if (binding != null) {
+            binding.tvEstadoSubidaFotos.removeCallbacks(limpiarEstadoSubidaRunnable);
             binding.mapViewUbicacion.onDetach();
         }
         if (getActivity() instanceof MainActivity) {
