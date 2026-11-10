@@ -322,51 +322,8 @@ public class DetalleAlertaFragment extends Fragment {
     }
 
     private void mostrarImagenEnGrande(String urlImagen) {
-        if (urlImagen == null || urlImagen.trim().isEmpty()) return;
-
-        android.app.Dialog dialog = new android.app.Dialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_visualizador_imagen, null);
-        dialog.setContentView(dialogView);
-
-        ImageView imgGrande = dialogView.findViewById(R.id.imgFotoGrande);
-        View pbCarga = dialogView.findViewById(R.id.pbCargaImagen);
-        View btnCerrar = dialogView.findViewById(R.id.btnCerrarVisor);
-        View container = dialogView.findViewById(R.id.containerVisorImagen);
-
-        if (pbCarga != null) pbCarga.setVisibility(View.VISIBLE);
-
-        Glide.with(requireContext())
-                .load(urlImagen.trim())
-                .fitCenter()
-                .placeholder(R.drawable.ic_photo_library)
-                .error(R.drawable.ic_photo_library)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model,
-                                                Target<Drawable> target, boolean isFirstResource) {
-                        if (pbCarga != null) pbCarga.setVisibility(View.GONE);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model,
-                                                  Target<Drawable> target, DataSource dataSource,
-                                                  boolean isFirstResource) {
-                        if (pbCarga != null) pbCarga.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(imgGrande);
-
-        if (btnCerrar != null) {
-            btnCerrar.setOnClickListener(v -> dialog.dismiss());
-        }
-
-        if (container != null) {
-            container.setOnClickListener(v -> dialog.dismiss());
-        }
-
-        dialog.show();
+        if (urlImagen == null || urlImagen.trim().isEmpty() || !isAdded()) return;
+        com.redalerta.client.util.AlertaMensajesHelper.mostrarVisorImagen(requireContext(), urlImagen.trim());
     }
 
     private void configurarEstadoAccesible(String estado) {
