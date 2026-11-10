@@ -96,6 +96,12 @@ public interface ApiService {
     @POST("alertas/evidencias/upload")
     Call<ApiResponse<UploadEvidenciaResponse>> subirEvidencia(@Part MultipartBody.Part archivo);
 
+    @DELETE("alertas/evidencias")
+    Call<ApiResponse<Void>> eliminarEvidencia(
+            @Query("url") String url,
+            @Query("s3Key") String s3Key
+    );
+
     // ═══ Flujo del Líder Comunitario ═══
     @GET("alertas/organizaciones-elegibles")
     Call<ApiResponse<List<OrganizacionResponse>>> obtenerOrganizacionesElegibles();
