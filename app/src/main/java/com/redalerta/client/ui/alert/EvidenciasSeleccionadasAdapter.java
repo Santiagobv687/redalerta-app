@@ -90,6 +90,13 @@ public class EvidenciasSeleccionadasAdapter extends RecyclerView.Adapter<Evidenc
 
             binding.pbSubiendo.setVisibility(item.isSubiendo() ? View.VISIBLE : View.GONE);
 
+            // Al pulsar la miniatura, se expande la imagen a pantalla completa para visualizar el detalle
+            binding.imgThumbnail.setOnClickListener(v -> {
+                if (fuente != null) {
+                    com.redalerta.client.util.AlertaMensajesHelper.mostrarVisorImagen(v.getContext(), fuente);
+                }
+            });
+
             binding.btnEliminar.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onEliminar(position);

@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ra_light_bg"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".ui.alert.ModificarAlertaFragment">
 
     <!-- BARRA SUPERIOR -->
@@ -33,6 +35,8 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:isScrollContainer="true"
         android:paddingBottom="24dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -324,9 +328,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Puedes agregar o quitar imágenes en formato JPEG, PNG o WebP."
                 android:textColor="@color/ra_light_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="Foto subida exitosamente."
+                tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEvidencias"

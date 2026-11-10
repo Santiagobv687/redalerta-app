@@ -9,7 +9,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -327,6 +329,62 @@ public final class AlertaMensajesHelper {
             dialog.dismiss();
             listener.onConfirmar(valor);
         });
+
+        dialog.show();
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // 5. VISOR DE EVIDENCIA FOTOGRÁFICA AMPLIADA (Pantalla Completa)
+    // ══════════════════════════════════════════════════════════════════
+
+    public static void mostrarVisorImagen(@Nullable Context context, @Nullable Object fuenteImagen) {
+        if (context == null || fuenteImagen == null) return;
+
+        android.app.Dialog dialog = new android.app.Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_visualizador_imagen, null);
+        dialog.setContentView(dialogView);
+
+        ImageView imgGrande = dialogView.findViewById(R.id.imgFotoGrande);
+        View pbCarga = dialogView.findViewById(R.id.pbCargaImagen);
+        View btnCerrar = dialogView.findViewById(R.id.btnCerrarVisor);
+        View container = dialogView.findViewById(R.id.containerVisorImagen);
+
+        if (pbCarga != null) pbCarga.setVisibility(View.VISIBLE);
+
+        com.bumptech.glide.Glide.with(context)
+                .load(fuenteImagen)
+                .fitCenter()
+                .placeholder(R.drawable.ic_photo_library)
+                .error(R.drawable.ic_photo_library)
+                .listener(new com.bumptech.glide.request.RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable com.bumptech.glide.load.engine.GlideException e,
+                                                Object model,
+                                                com.bumptech.glide.request.target.Target<Drawable> target,
+                                                boolean isFirstResource) {
+                        if (pbCarga != null) pbCarga.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource,
+                                                  Object model,
+                                                  com.bumptech.glide.request.target.Target<Drawable> target,
+                                                  com.bumptech.glide.load.DataSource dataSource,
+                                                  boolean isFirstResource) {
+                        if (pbCarga != null) pbCarga.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(imgGrande);
+
+        if (btnCerrar != null) {
+            btnCerrar.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        if (container != null) {
+            container.setOnClickListener(v -> dialog.dismiss());
+        }
 
         dialog.show();
     }

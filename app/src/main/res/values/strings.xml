@@ -226,6 +226,7 @@
     <string name="mis_alertas_empty_subtitle">Puedes reportar un incidente de seguridad o desastre para recibir atención prioritaria.</string>
     <string name="btn_crear_primer_reporte">Crear mi primer reporte</string>
     <string name="mis_alertas_ver_seguimiento">Ver seguimiento</string>
+    <string name="accion_ver_detalle">Ver detalle</string>
 
     <!-- Inicio -->
     <string name="inicio_titulo">Inicio</string>

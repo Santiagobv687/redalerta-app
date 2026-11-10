@@ -151,10 +151,13 @@
             android:layout_marginBottom="8dp"
             android:background="@color/ra_light_border" />
 
-        <!-- Pie de la Tarjeta: Código e Indicador "Ver seguimiento" -->
+        <!-- Pie de la Tarjeta: Código e Indicador Unificado "Ver detalle" -->
         <LinearLayout
+            android:id="@+id/layoutVerDetalle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -175,7 +178,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/mis_alertas_ver_seguimiento"
+                android:text="@string/accion_ver_detalle"
                 android:textColor="@color/ra_summary_text"
                 android:textSize="12sp"
                 android:textStyle="bold" />

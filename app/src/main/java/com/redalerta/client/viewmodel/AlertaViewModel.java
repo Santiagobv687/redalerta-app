@@ -214,6 +214,54 @@ public class AlertaViewModel extends AndroidViewModel {
         return byteBuffer.toByteArray();
     }
 
+    public interface OnEvidenciaEliminadaListener {
+        void onExito();
+        void onError(String mensajeError);
+    }
+
+    // ══════════════════════════════════════════════════
+    // ELIMINAR EVIDENCIA (DELETE /api/v1/alertas/evidencias)
+    // Elimina el archivo de AWS S3 y lo desvincula de la alerta si ya estuviera asociado.
+    // ══════════════════════════════════════════════════
+    public void eliminarEvidencia(@Nullable String url, @Nullable OnEvidenciaEliminadaListener listener) {
+        eliminarEvidencia(url, null, listener);
+    }
+
+    public void eliminarEvidencia(@Nullable String url, @Nullable String s3Key, @Nullable OnEvidenciaEliminadaListener listener) {
+        if ((url == null || url.trim().isEmpty()) && (s3Key == null || s3Key.trim().isEmpty())) {
+            return;
+        }
+        ioExecutor.execute(() -> ApiClient.getApiService(getApplication())
+                .eliminarEvidencia(url, s3Key)
+                .enqueue(new Callback<ApiResponse<Void>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse<Void>> call,
+                                           @NonNull Response<ApiResponse<Void>> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                            Log.d("AlertaViewModel", "Evidencia eliminada de S3 exitosamente: " + (url != null ? url : s3Key));
+                            if (listener != null) {
+                                mainHandler.post(listener::onExito);
+                            }
+                        } else {
+                            String errorMsg = ManejadorErrores.obtenerMensajeAmigable(response, ContextoOperacion.ALERTAS);
+                            Log.w("AlertaViewModel", "No se pudo eliminar evidencia de S3: " + errorMsg);
+                            if (listener != null) {
+                                mainHandler.post(() -> listener.onError(errorMsg));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse<Void>> call, @NonNull Throwable t) {
+                        String errorMsg = ManejadorErrores.obtenerMensajeFalloRed(t);
+                        Log.e("AlertaViewModel", "Fallo de red al eliminar evidencia de S3", t);
+                        if (listener != null) {
+                            mainHandler.post(() -> listener.onError(errorMsg));
+                        }
+                    }
+                }));
+    }
+
     // ══════════════════════════════════════════════════
     // CREAR ALERTA (POST /api/v1/alertas)
     // ══════════════════════════════════════════════════
@@ -388,7 +436,7 @@ public class AlertaViewModel extends AndroidViewModel {
     public void cargarFeed(boolean forzarRecarga) {
         synchronized (alertasAcumuladas) {
             if (!forzarRecarga && feedInicializado && !alertasAcumuladas.isEmpty()) {
-                // Retención en memoria: mantener alertas visibles en 0ms sin emitir Loading
+                // Retención en memoria: mantener alertas visibles en 0 ms sin emitir Loading
                 if (!(feedUiState.getValue() instanceof FeedUiState.Success)) {
                     feedUiState.setValue(new FeedUiState.Success(
                             new ArrayList<>(alertasAcumuladas),

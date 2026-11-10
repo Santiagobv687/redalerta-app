@@ -1465,6 +1465,83 @@
                 ]
             }
         },
+        "/alertas/evidencias": {
+            "delete": {
+                "tags": [
+                    "Alertas"
+                ],
+                "summary": "Eliminar evidencia fotografica",
+                "description": "Elimina un archivo de evidencia de AWS S3 y lo desvincula de la alerta si ya estuviera asociado.",
+                "operationId": "eliminarEvidencia",
+                "parameters": [
+                    {
+                        "name": "url",
+                        "in": "query",
+                        "description": "URL publica de la evidencia en S3",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "s3Key",
+                        "in": "query",
+                        "description": "Clave de objeto en S3 alternativa",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Evidencia fotografica eliminada exitosamente",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "URL o clave de evidencia invalida",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado o usuario inactivo",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "No tiene permisos para eliminar evidencias asociadas a esta alerta",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
         "/admin/solicitudes-registro/{id}/rechazar": {
             "post": {
                 "tags": [

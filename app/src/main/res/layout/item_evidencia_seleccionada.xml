@@ -35,16 +35,16 @@
             app:trackThickness="3dp"
             android:visibility="gone" />
 
-        <!-- Botón Eliminar ("X") -->
+        <!-- Botón Eliminar ("X" compacta en esquina accesible) -->
         <ImageButton
             android:id="@+id/btnEliminar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:layout_gravity="top|end"
             android:layout_margin="4dp"
             android:background="@drawable/bg_avatar_circle"
             android:contentDescription="Eliminar foto"
-            android:padding="4dp"
+            android:padding="5dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_close"
             app:tint="@color/ra_white" />

@@ -60,35 +60,6 @@
                 android:textSize="11sp"
                 android:textStyle="bold"
                 tools:text="PENDIENTE REVISIÓN" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <!-- Tiempo Transcurrido Legible -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_marginEnd="4dp"
-                    android:src="@drawable/ic_schedule"
-                    app:tint="@color/ra_light_text_secondary"
-                    android:contentDescription="@null" />
-
-                <TextView
-                    android:id="@+id/tvTiempoTranscurrido"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/ra_light_text_secondary"
-                    android:textSize="12sp"
-                    tools:text="Hace 15 min" />
-            </LinearLayout>
         </LinearLayout>
 
         <!-- Título y Extracto de la Descripción del Incidente -->
@@ -196,7 +167,7 @@
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Footer / Metadatos: Autor y Código de Seguimiento -->
+        <!-- Footer / Metadatos: Autor, Tiempo Transcurrido y Código de Seguimiento -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -206,14 +177,45 @@
             android:paddingVertical="10dp"
             android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/tvAutor"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/ra_light_text_secondary"
-                android:textSize="12sp"
-                tools:text="Reportado por: María González" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAutor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ra_light_text_secondary"
+                    android:textSize="12sp"
+                    tools:text="Reportado por: María González" />
+
+                <!-- Tiempo Transcurrido Legible en la parte inferior -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_schedule"
+                        app:tint="@color/ra_light_text_secondary"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:id="@+id/tvTiempoTranscurrido"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ra_light_text_secondary"
+                        android:textSize="11sp"
+                        tools:text="Hace 15 min" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvCodigoAlerta"
