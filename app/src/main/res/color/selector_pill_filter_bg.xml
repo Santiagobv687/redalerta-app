@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Estado seleccionado: fondo rojo suave institucional (12% opacidad) -->
+    <item android:state_checked="true" android:color="#1FE53935" />
+    <item android:state_selected="true" android:color="#1FE53935" />
+    <!-- Estado reposo: fondo blanco neutro -->
+    <item android:color="@color/ra_light_card" />
+</selector>

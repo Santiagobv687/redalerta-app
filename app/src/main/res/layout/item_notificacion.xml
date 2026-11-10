@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardNotificacion"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="72dp"
+    app:cardBackgroundColor="@color/ra_light_card"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="1dp"
+    app:strokeColor="@color/ra_light_border"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="14dp">
+
+        <!-- Indicador lateral / punto discreto de no leída (estilo bandeja de correo) -->
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/bg_info_icon_circle">
+
+            <ImageView
+                android:id="@+id/ivIconoEstadoNotif"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_notifications"
+                app:tint="@color/ra_red" />
+
+            <View
+                android:id="@+id/viewPuntoNoLeida"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/bg_unread_dot"
+                android:visibility="visible" />
+        </FrameLayout>
+
+        <!-- Cuerpo de la notificación -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Fila 1: Título + Tiempo transcurrido -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTituloNotificacion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="Alerta Direccionada" />
+
+                <TextView
+                    android:id="@+id/tvFechaNotificacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/ra_text_muted"
+                    android:textSize="12sp"
+                    tools:text="Hace 15 min" />
+            </LinearLayout>
+
+            <!-- Fila 2: Mensaje corto descriptivo -->
+            <TextView
+                android:id="@+id/tvMensajeNotificacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:lineSpacingMultiplier="1.2"
+                android:maxLines="2"
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="13sp"
+                tools:text="Su alerta &quot;Hueco peligroso en vía principal...&quot; ha cambiado a estado DIRECCIONADA" />
+
+            <!-- Fila 3: Chip de nuevo estado + Responsable -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvEstadoBadgeNotif"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_status_verificada"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="3dp"
+                    android:textColor="@color/ra_status_verificada_text"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="DIRECCIONADA" />
+
+                <TextView
+                    android:id="@+id/tvResponsableNotif"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/ra_text_muted"
+                    android:textSize="12sp"
+                    tools:text="• Líder Comunitario Armenia" />
+            </LinearLayout>
+
+            <!-- Fila 4 opcional: Motivo / observación resumida -->
+            <TextView
+                android:id="@+id/tvMotivoNotif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/ra_light_label"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                android:visibility="gone"
+                tools:text="&quot;Asignado a la brigada de emergencias para señalización&quot;"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

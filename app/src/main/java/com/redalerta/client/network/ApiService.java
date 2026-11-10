@@ -3,6 +3,7 @@ package com.redalerta.client.network;
 import com.redalerta.client.model.alerta.*;
 import com.redalerta.client.model.auth.*;
 import com.redalerta.client.model.common.*;
+import com.redalerta.client.model.notificacion.*;
 import com.redalerta.client.model.usuario.*;
 import java.util.List;
 import okhttp3.MultipartBody;
@@ -150,5 +151,34 @@ public interface ApiService {
     Call<ApiResponse<Alerta>> rechazarAlerta(
             @Path("id") long alertaId,
             @Body RechazarAlertaRequest request
+    );
+
+    // ═══ Bandeja de Notificaciones ═══
+    @GET("notificaciones")
+    Call<ApiResponse<PageNotificacionResponse>> listarNotificaciones(
+            @Query("soloNoLeidas") Boolean soloNoLeidas,
+            @Query("page") Integer page,
+            @Query("size") Integer size
+    );
+
+    @GET("notificaciones/no-leidas/conteo")
+    Call<ApiResponse<Long>> contarNotificacionesNoLeidas();
+
+    @GET("notificaciones/{id}")
+    Call<ApiResponse<NotificacionResponse>> obtenerDetalleNotificacion(
+            @Path("id") long id
+    );
+
+    @PATCH("notificaciones/{id}/leer")
+    Call<ApiResponse<Void>> marcarNotificacionComoLeida(
+            @Path("id") long id
+    );
+
+    @PATCH("notificaciones/leer-todas")
+    Call<ApiResponse<Void>> marcarTodasNotificacionesComoLeidas();
+
+    @DELETE("notificaciones/{id}")
+    Call<ApiResponse<Void>> eliminarNotificacion(
+            @Path("id") long id
     );
 }

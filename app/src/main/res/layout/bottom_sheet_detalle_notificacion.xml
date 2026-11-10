@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingStart="20dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="24dp"
+    tools:theme="@style/Theme.RedAlerta.Light">
+
+    <!-- Indicador de arrastre táctil (Drag handle) -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@color/ra_light_border" />
+
+    <!-- Cabecera: Ícono de estado, título y botón de cierre -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivIconoDetalleNotif"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_notifications"
+            app:tint="@color/ra_red" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTituloDetalleNotif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ra_light_text"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                tools:text="Alerta Direccionada" />
+
+            <TextView
+                android:id="@+id/tvFechaDetalleNotif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/ra_light_text_secondary"
+                android:textSize="12sp"
+                tools:text="Hace 15 minutos • 09/11/2026 09:30" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnEliminarDetalleNotif"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/notif_detalle_eliminar_desc"
+            android:src="@drawable/ic_delete"
+            app:tint="@color/ra_red" />
+
+        <ImageButton
+            android:id="@+id/btnCerrarDetalleNotif"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/mapa_selector_cancelar"
+            android:src="@drawable/ic_close"
+            app:tint="@color/ra_light_text_secondary" />
+    </LinearLayout>
+
+    <!-- Indicador de carga -->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressDetalleNotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="24dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="@color/ra_red"
+        app:indicatorSize="32dp"
+        tools:visibility="gone" />
+
+    <!-- Mensaje descriptivo principal -->
+    <TextView
+        android:id="@+id/tvMensajeDetalleNotif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:lineSpacingExtra="3dp"
+        android:textColor="@color/ra_light_text"
+        android:textSize="15sp"
+        tools:text="Su alerta «Hueco peligroso en vía principal» ha cambiado a estado DIRECCIONADA." />
+
+    <!-- Tarjeta contextual con nuevo estado, responsable y motivo -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardInfoTransicion"
+        style="@style/Widget.RedAlerta.Card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="@color/ra_light_bg"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+        app:contentPadding="14dp"
+        app:strokeColor="@color/ra_light_border"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Fila: Nuevo estado resultante -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notif_detalle_nuevo_estado"
+                    android:textColor="@color/ra_light_label"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvEstadoBadgeDetalle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_status_verificada"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
+                    android:textAllCaps="true"
+                    android:textColor="@color/ra_status_verificada_text"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="DIRECCIONADA" />
+            </LinearLayout>
+
+            <!-- Fila: Responsable de la acción -->
+            <LinearLayout
+                android:id="@+id/layoutResponsableDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notif_detalle_gestionado_por"
+                    android:textColor="@color/ra_light_label"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvResponsableDetalle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="Carlos Ramírez (Líder Comunitario)" />
+            </LinearLayout>
+
+            <!-- Fila: Motivo o informe explicativo -->
+            <LinearLayout
+                android:id="@+id/layoutMotivoDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvLabelMotivoDetalle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notif_detalle_motivo_label"
+                    android:textColor="@color/ra_light_label"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvMotivoDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/bg_stat_card"
+                    android:lineSpacingExtra="2dp"
+                    android:padding="10dp"
+                    android:textColor="@color/ra_light_text"
+                    android:textSize="13sp"
+                    tools:text="Se asigna a la brigada comunitaria para inspección y señalización preventiva del área." />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Botones de Acción (Zona ergonómica del pulgar) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEntendidoNotif"
+            style="@style/Widget.RedAlerta.Button.Prev"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:minHeight="48dp"
+            android:text="@string/notif_detalle_btn_entendido" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVerAlertaNotif"
+            style="@style/Widget.RedAlerta.Button.Next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1.3"
+            android:minHeight="48dp"
+            android:text="@string/notif_detalle_btn_ver_alerta"
+            app:icon="@drawable/ic_chevron_right"
+            app:iconGravity="textEnd"
+            app:iconPadding="4dp"
+            app:iconSize="18dp" />
+    </LinearLayout>
+
+</LinearLayout>
