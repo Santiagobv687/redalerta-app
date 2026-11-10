@@ -436,7 +436,7 @@ public class AlertaViewModel extends AndroidViewModel {
     public void cargarFeed(boolean forzarRecarga) {
         synchronized (alertasAcumuladas) {
             if (!forzarRecarga && feedInicializado && !alertasAcumuladas.isEmpty()) {
-                // Retención en memoria: mantener alertas visibles en 0ms sin emitir Loading
+                // Retención en memoria: mantener alertas visibles en 0 ms sin emitir Loading
                 if (!(feedUiState.getValue() instanceof FeedUiState.Success)) {
                     feedUiState.setValue(new FeedUiState.Success(
                             new ArrayList<>(alertasAcumuladas),
