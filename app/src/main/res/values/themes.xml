@@ -14,20 +14,20 @@
         <item name="colorPrimary">@color/ra_red</item>
         <item name="colorOnPrimary">@color/ra_white</item>
     </style>
-    <!-- Tema principal dark, sin ActionBar -->
-    <style name="Theme.RedAlerta" parent="Theme.Material3.Dark.NoActionBar">
+    <!-- Tema principal institucional, sin ActionBar -->
+    <style name="Theme.RedAlerta" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/ra_red</item>
         <item name="colorOnPrimary">@color/ra_white</item>
         <item name="colorSecondary">@color/ra_red</item>
-        <item name="android:colorBackground">@color/ra_bg</item>
-        <item name="colorSurface">@color/ra_bg_input</item>
-        <item name="colorOnSurface">@color/ra_white</item>
-        <item name="android:statusBarColor">@color/ra_bg</item>
-        <item name="android:navigationBarColor">@color/ra_bg</item>
+        <item name="android:colorBackground">@color/ra_light_bg</item>
+        <item name="colorSurface">@color/ra_light_card</item>
+        <item name="colorOnSurface">@color/ra_light_text</item>
+        <item name="android:statusBarColor">@color/ra_topbar</item>
+        <item name="android:navigationBarColor">@color/ra_topbar</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:forceDarkAllowed">false</item>
-        <item name="isLightTheme">false</item>
+        <item name="isLightTheme">true</item>
     </style>
 
     <!-- Estilo de TextInputLayout para RedAlerta -->

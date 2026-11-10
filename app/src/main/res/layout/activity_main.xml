@@ -2,75 +2,17 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainCoordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ra_light_bg"
     tools:context=".ui.MainActivity">
 
-    <!-- Contenido Principal -->
-    <LinearLayout
+    <!-- Contenedor Principal de Fragmentos (Pantalla completa sin doble toolbar) -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <!-- Barra Superior (Topbar) -->
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/ra_topbar"
-            app:titleTextColor="@color/ra_white">
-
-            <!-- Logo y Título Institucional -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_warning"
-                    app:tint="@color/ra_red" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="RED ALERTA"
-                    android:textColor="@color/ra_white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- Botón Superior "Cerrar sesión" -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSalir"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="38dp"
-                android:layout_gravity="end"
-                android:layout_marginEnd="12dp"
-                android:paddingHorizontal="12dp"
-                android:text="Cerrar sesión"
-                android:textColor="@color/ra_white"
-                android:textSize="12sp"
-                app:cornerRadius="19dp"
-                app:icon="@drawable/ic_logout"
-                app:iconSize="16dp"
-                app:iconTint="@color/ra_white"
-                app:strokeColor="@color/ra_white" />
-        </com.google.android.material.appbar.MaterialToolbar>
-
-        <!-- Contenedor de Fragmentos -->
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
     <!-- BARRA DE NAVEGACIÓN INFERIOR PERSISTENTE (M3) -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

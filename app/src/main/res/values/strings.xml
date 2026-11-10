@@ -357,6 +357,12 @@
     <string name="cancelar_dir_dialog_confirmar">Confirmar cancelación</string>
     <string name="cancelar_dir_dialog_volver">Volver sin cancelar</string>
 
+    <!-- Bandeja Líder y Organización -->
+    <string name="bandeja_lider_titulo">Gestión de Alertas</string>
+    <string name="bandeja_lider_subtitulo">Alertas direccionadas por el líder</string>
+    <string name="bandeja_org_titulo">Bandeja de Entrada</string>
+    <string name="bandeja_org_subtitulo">Alertas asignadas para atención</string>
+
     <!-- Términos y condiciones -->
     <string name="terminos_dialog_titulo">Términos y Tratamiento de Datos</string>
     <string name="terminos_dialog_contenido">1. Finalidad del sistema RedAlerta\nRedAlerta es una plataforma comunitaria para el reporte temprano, verificación y direccionamiento de incidentes y emergencias en el territorio.\n\n2. Tratamiento de Datos Personales (Ley 1581 de 2012)\nSus datos de identificación, contacto, ubicación residencial y caracterización social serán tratados de forma confidencial con el único propósito de gestionar reportes comunitarios, validar la autenticidad de las alertas y facilitar la atención por parte de líderes comunitarios y organismos de socorro.\n\n3. Reportes Anónimos\nAl publicar una alerta de forma anónima, su nombre completo se ocultará en el feed público para proteger su identidad ante la comunidad.\n\n4. Uso Responsable\nEl usuario se compromete a suministrar información veraz y abstenerse de generar falsas alarmas que afecten la operación de las entidades de respuesta.</string>
