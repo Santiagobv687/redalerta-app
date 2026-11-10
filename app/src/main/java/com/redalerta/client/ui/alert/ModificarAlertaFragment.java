@@ -634,7 +634,12 @@ public class ModificarAlertaFragment extends Fragment {
                         requireActivity(),
                         "Alerta modificada exitosamente"
                 );
-                cancelarYVolver();
+                requireActivity().getSupportFragmentManager().popBackStack();
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 

@@ -606,6 +606,11 @@ public class RegistroAlertaFragment extends Fragment {
                         "Alerta publicada exitosamente"
                 );
                 requireActivity().getSupportFragmentManager().popBackStack();
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, DetalleAlertaFragment.newInstance(alerta))
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }
