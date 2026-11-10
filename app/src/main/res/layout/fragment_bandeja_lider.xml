@@ -6,11 +6,66 @@
     android:layout_height="match_parent"
     android:background="@color/ra_light_bg">
 
+    <!-- BARRA SUPERIOR (TopAppBar M3) -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayoutBandejaLider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarBandejaLider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="@color/ra_topbar"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_warning"
+                    app:tint="@color/ra_red" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bandeja_lider_titulo"
+                        android:textColor="@color/ra_white"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bandeja_lider_subtitulo"
+                        android:textColor="@color/ra_gray_light"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshBandeja"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="80dp">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvBandeja"
@@ -18,7 +73,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingTop="8dp"
-            android:paddingBottom="24dp"
+            android:paddingBottom="88dp"
             tools:listitem="@layout/item_alerta" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -31,14 +86,15 @@
         android:orientation="vertical"
         android:padding="32dp"
         android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:visibility="visible">
 
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:contentDescription="@null"
             android:src="@drawable/ic_empty_inbox"
-            app:tint="@color/ra_gray"
-            android:contentDescription="@null" />
+            app:tint="@color/ra_gray" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -67,7 +123,9 @@
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:visibility="visible">
+
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

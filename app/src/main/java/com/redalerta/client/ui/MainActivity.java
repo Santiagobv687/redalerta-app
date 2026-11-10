@@ -117,11 +117,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // ══════════════════════════════════════════════════
-        // Botón Superior "Cerrar sesión" con confirmación
-        // ══════════════════════════════════════════════════
-        binding.btnSalir.setOnClickListener(v -> confirmarYCerrarSesion());
-
-        // ══════════════════════════════════════════════════
         // Manejo del botón "atrás" físico y visibilidad del BottomNav
         // ══════════════════════════════════════════════════
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
@@ -178,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void confirmarYCerrarSesion() {
+    public void cerrarSesionConConfirmacion() {
         CerrarSesionDialog.mostrar(this, this::ejecutarLogoutBackendYSalir);
     }
 
