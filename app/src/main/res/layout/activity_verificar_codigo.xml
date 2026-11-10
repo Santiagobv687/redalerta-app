@@ -315,7 +315,7 @@
                             tools:text="5" />
                     </LinearLayout>
 
-                    <!-- Mensaje de error dinámico (sin espacio fantasma cuando está oculto) -->
+                    <!-- Mensaje de error dinámico -->
                     <TextView
                         android:id="@+id/tvErrorOtp"
                         android:layout_width="match_parent"

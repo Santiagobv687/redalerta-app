@@ -6,9 +6,12 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.badge.BadgeDrawable;
 import com.redalerta.client.R;
 import com.redalerta.client.databinding.ActivityMainBinding;
 import com.redalerta.client.network.ApiClient;
@@ -18,9 +21,11 @@ import com.redalerta.client.ui.alert.InicioFragment;
 import com.redalerta.client.ui.alert.MiPerfilFragment;
 import com.redalerta.client.ui.alert.MisPublicacionesFragment;
 import com.redalerta.client.ui.auth.LoginActivity;
+import com.redalerta.client.ui.notificacion.NotificacionesFragment;
 import com.redalerta.client.ui.org.BandejaOrganizacionFragment;
 import com.redalerta.client.util.CerrarSesionDialog;
 import com.redalerta.client.util.SessionManager;
+import com.redalerta.client.viewmodel.NotificacionViewModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private SessionManager session;
+    private NotificacionViewModel notificacionViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         session = new SessionManager(this);
-
-        // ══════════════════════════════════════════════════
-        // Configurar Toolbar Superior
-        // ══════════════════════════════════════════════════
-        setSupportActionBar(binding.toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
+        notificacionViewModel = new ViewModelProvider(this).get(NotificacionViewModel.class);
 
         // ══════════════════════════════════════════════════
         // Evaluación Reactiva del Rol de Usuario
@@ -65,10 +64,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // ══════════════════════════════════════════════════
-        // Escuchador de Selección de la Barra Inferior (M3)
+        // Indicador de Notificaciones No Leídas
+        // ══════════════════════════════════════════════════
+        observarConteoNotificacionesNoLeidas();
+
+        // ══════════════════════════════════════════════════
+        // Escuchador de Selección de la Barra Inferior
         // ══════════════════════════════════════════════════
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
+            // Refrescar de forma discreta el conteo al cambiar de pestaña
+            notificacionViewModel.cargarConteoNoLeidas();
+
             if (id == R.id.nav_inicio) {
                 mostrarFragmentInternal(new InicioFragment());
                 return true;
@@ -80,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_bandeja_org) {
                 mostrarFragmentInternal(new BandejaOrganizacionFragment());
+                return true;
+            } else if (id == R.id.nav_notificaciones) {
+                mostrarFragmentInternal(new NotificacionesFragment());
                 return true;
             } else if (id == R.id.nav_perfil) {
                 mostrarFragmentInternal(new MiPerfilFragment());
@@ -112,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
             boolean esPantallaRaiz = getSupportFragmentManager().getBackStackEntryCount() == 0;
             setBottomNavigationVisible(esPantallaRaiz);
+            if (esPantallaRaiz) {
+                notificacionViewModel.cargarConteoNoLeidas();
+            }
         });
 
         getOnBackPressedDispatcher().addCallback(this,
@@ -125,6 +138,33 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (notificacionViewModel != null) {
+            notificacionViewModel.cargarConteoNoLeidas();
+        }
+    }
+
+    private void observarConteoNotificacionesNoLeidas() {
+        notificacionViewModel.getConteoNoLeidas().observe(this, conteo -> {
+            if (binding == null) return;
+            long total = conteo != null ? conteo : 0L;
+            if (total <= 0) {
+                binding.bottomNavigation.removeBadge(R.id.nav_notificaciones);
+            } else {
+                BadgeDrawable badge = binding.bottomNavigation.getOrCreateBadge(R.id.nav_notificaciones);
+                badge.setVisible(true);
+                badge.setMaxCharacterCount(3); // Muestra "99+" si supera 99
+                badge.setNumber((int) Math.min(total, Integer.MAX_VALUE));
+                badge.setBackgroundColor(ContextCompat.getColor(this, R.color.ra_red));
+                badge.setBadgeTextColor(ContextCompat.getColor(this, R.color.ra_white));
+                badge.setHorizontalOffset(4);
+                badge.setVerticalOffset(4);
+            }
+        });
     }
 
     public void setBottomNavigationVisible(boolean visible) {

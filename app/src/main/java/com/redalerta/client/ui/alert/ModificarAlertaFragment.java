@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -39,9 +38,6 @@ import com.redalerta.client.util.GeocodificacionHelper;
 import com.redalerta.client.viewmodel.AlertaViewModel;
 
 import org.osmdroid.config.Configuration;
-import org.osmdroid.events.MapListener;
-import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
@@ -72,7 +68,6 @@ public class ModificarAlertaFragment extends Fragment {
     private double longitudConfirmada = DEFAULT_LONGITUD;
     @Nullable
     private Double altitudConfirmada = DEFAULT_ALTITUD;
-    private boolean modoSeleccionMapaActivo = false;
 
     private LocationManager locationManager;
     private LocationListener activeLocationListener;
@@ -137,88 +132,43 @@ public class ModificarAlertaFragment extends Fragment {
     private void setupMapaInteractivo() {
         binding.mapViewUbicacion.setTileSource(TileSourceFactory.MAPNIK);
         binding.mapViewUbicacion.setMultiTouchControls(true);
-        binding.mapViewUbicacion.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
+        binding.mapViewUbicacion.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         binding.mapViewUbicacion.getController().setZoom(DEFAULT_ZOOM);
 
-        // Cuando está en modo selección, evitar que el NestedScrollView robe los gestos de desplazamiento del mapa
-        binding.mapViewUbicacion.setOnTouchListener((v, event) -> {
-            if (modoSeleccionMapaActivo) {
-                int action = event.getActionMasked();
-                if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
-                    binding.nestedScrollModificarAlerta.requestDisallowInterceptTouchEvent(true);
-                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-                    binding.nestedScrollModificarAlerta.requestDisallowInterceptTouchEvent(false);
+        // La vista previa es de solo lectura: tocarla o pulsar el botón abre el selector superpuesto
+        binding.btnSeleccionarEnMapa.setOnClickListener(v -> abrirSelectorUbicacion());
+        binding.viewBloqueoMapa.setOnClickListener(v -> abrirSelectorUbicacion());
+
+        // Resultado del selector: solo se aplica si el usuario pulsa "Confirmar ubicación"
+        getParentFragmentManager().setFragmentResultListener(
+                SeleccionarUbicacionDialogFragment.RESULT_KEY,
+                getViewLifecycleOwner(),
+                (requestKey, result) -> {
+                    if (binding == null) return;
+                    latitudConfirmada = result.getDouble(SeleccionarUbicacionDialogFragment.RESULT_LATITUD);
+                    longitudConfirmada = result.getDouble(SeleccionarUbicacionDialogFragment.RESULT_LONGITUD);
+                    altitudConfirmada = null;
+
+                    centrarMapaEnCoordenadas(latitudConfirmada, longitudConfirmada);
+                    actualizarTextoCoordenadas(latitudConfirmada, longitudConfirmada, null);
+                    ejecutarGeocodificacionInversa(latitudConfirmada, longitudConfirmada, null);
                 }
-                return false;
-            }
-            return true;
-        });
-
-        // Actualizar la vista previa de coordenadas en tiempo real mientras el usuario mueve el mapa
-        binding.mapViewUbicacion.addMapListener(new MapListener() {
-            @Override
-            public boolean onScroll(ScrollEvent event) {
-                if (modoSeleccionMapaActivo && binding != null) {
-                    GeoPoint centro = (GeoPoint) binding.mapViewUbicacion.getMapCenter();
-                    actualizarTextoCoordenadas(centro.getLatitude(), centro.getLongitude(), null);
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onZoom(ZoomEvent event) {
-                return false;
-            }
-        });
-
-        // Botón "Seleccionar en el mapa": activa el modo de corrección manual del puntero
-        binding.btnSeleccionarEnMapa.setOnClickListener(v -> activarModoSeleccionMapa(true));
-
-        // Botón "Cancelar": descarta el movimiento del puntero y restaura la coordenada previa
-        binding.btnCancelarMapa.setOnClickListener(v -> {
-            activarModoSeleccionMapa(false);
-            centrarMapaEnCoordenadas(latitudConfirmada, longitudConfirmada);
-            actualizarTextoCoordenadas(latitudConfirmada, longitudConfirmada, altitudConfirmada);
-        });
-
-        // Botón "Guardar": confirma la nueva posición del puntero y ejecuta geocodificación inversa
-        binding.btnGuardarMapa.setOnClickListener(v -> {
-            GeoPoint nuevoCentro = (GeoPoint) binding.mapViewUbicacion.getMapCenter();
-            latitudConfirmada = redondearCoordenada(nuevoCentro.getLatitude());
-            longitudConfirmada = redondearCoordenada(nuevoCentro.getLongitude());
-            altitudConfirmada = null;
-
-            activarModoSeleccionMapa(false);
-            actualizarTextoCoordenadas(latitudConfirmada, longitudConfirmada, null);
-            ejecutarGeocodificacionInversa(latitudConfirmada, longitudConfirmada, null);
-        });
+        );
 
         // Botón "Mi GPS": captura la ubicación actual del dispositivo y actualiza el formulario
-        binding.btnUsarMiGps.setOnClickListener(v -> {
-            if (modoSeleccionMapaActivo) {
-                activarModoSeleccionMapa(false);
-            }
-            solicitarUbicacionGpsActual();
-        });
+        binding.btnUsarMiGps.setOnClickListener(v -> solicitarUbicacionGpsActual());
     }
 
-    private void activarModoSeleccionMapa(boolean activar) {
-        modoSeleccionMapaActivo = activar;
-        if (binding == null) return;
+    private boolean selectorUbicacionAbierto() {
+        return getParentFragmentManager().findFragmentByTag(SeleccionarUbicacionDialogFragment.TAG) != null;
+    }
 
-        binding.viewBloqueoMapa.setVisibility(activar ? View.GONE : View.VISIBLE);
-        binding.tvBannerModoEdicionMapa.setVisibility(activar ? View.VISIBLE : View.GONE);
-
-        binding.btnSeleccionarEnMapa.setVisibility(activar ? View.GONE : View.VISIBLE);
-        binding.layoutBotonesEdicionMapa.setVisibility(activar ? View.VISIBLE : View.GONE);
-
-        float density = getResources().getDisplayMetrics().density;
-        binding.ivPunteroMapa.animate()
-                .translationY(activar ? (-24f * density) : (-18f * density))
-                .setDuration(150)
-                .start();
-
-        validarEstadoBotonGuardar();
+    private void abrirSelectorUbicacion() {
+        if (!isAdded() || selectorUbicacionAbierto()) return;
+        detenerActualizacionesUbicacion();
+        SeleccionarUbicacionDialogFragment.newInstance(
+                latitudConfirmada, longitudConfirmada, departamentoDetectado, municipioDetectado
+        ).show(getParentFragmentManager(), SeleccionarUbicacionDialogFragment.TAG);
     }
 
     private void setupPermisosYGps() {
@@ -288,7 +238,7 @@ public class ModificarAlertaFragment extends Fragment {
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         detenerActualizacionesUbicacion();
-                        if (!modoSeleccionMapaActivo && isAdded()) {
+                        if (!selectorUbicacionAbierto() && isAdded()) {
                             aplicarUbicacionGpsObtenida(location);
                         }
                     }
@@ -553,7 +503,7 @@ public class ModificarAlertaFragment extends Fragment {
             }
         }
 
-        binding.btnGuardarModificacion.setEnabled(descValida && ubValida && !subiendo && !modoSeleccionMapaActivo);
+        binding.btnGuardarModificacion.setEnabled(descValida && ubValida && !subiendo);
     }
 
     private void procesarGuardarModificacion() {

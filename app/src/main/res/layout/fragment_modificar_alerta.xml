@@ -200,34 +200,14 @@
                                 android:src="@drawable/ic_map_pin"
                                 android:translationY="-18dp" />
 
-                            <!-- Banner flotante de instrucción cuando está activo el modo de edición -->
-                            <TextView
-                                android:id="@+id/tvBannerModoEdicionMapa"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="top"
-                                android:layout_margin="10dp"
-                                android:background="@drawable/bg_dropdown_popup"
-                                android:elevation="3dp"
-                                android:gravity="center"
-                                android:paddingStart="12dp"
-                                android:paddingTop="8dp"
-                                android:paddingEnd="12dp"
-                                android:paddingBottom="8dp"
-                                android:text="Mueva el mapa para ubicar el puntero en el lugar exacto y pulse Guardar"
-                                android:textColor="@color/ra_light_text"
-                                android:textSize="12sp"
-                                android:textStyle="bold"
-                                android:visibility="gone"
-                                tools:visibility="visible" />
-
-                            <!-- Capa de bloqueo en modo vista previa para no interferir con el scroll del formulario -->
+                            <!-- Capa sobre la vista previa: evita conflicto con el scroll y abre el selector al tocarla -->
                             <View
                                 android:id="@+id/viewBloqueoMapa"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:clickable="true"
-                                android:focusable="false" />
+                                android:contentDescription="@string/mapa_selector_abrir_desc"
+                                android:focusable="true" />
 
                         </FrameLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -277,37 +257,6 @@
                         app:rippleColor="#1AE53935"
                         app:strokeColor="@color/ra_red"
                         app:strokeWidth="1.5dp" />
-
-                    <!-- Botones explícitos modo ajuste manual: "Cancelar" y "Guardar" -->
-                    <LinearLayout
-                        android:id="@+id/layoutBotonesEdicionMapa"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCancelarMapa"
-                            style="@style/Widget.RedAlerta.Button.Prev"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="6dp"
-                            android:layout_weight="1"
-                            android:minHeight="48dp"
-                            android:text="Cancelar" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnGuardarMapa"
-                            style="@style/Widget.RedAlerta.Button.Next"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:layout_weight="1"
-                            android:minHeight="48dp"
-                            android:text="Guardar" />
-                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
